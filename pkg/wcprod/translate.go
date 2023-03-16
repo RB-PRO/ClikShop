@@ -16,6 +16,19 @@ func ProductTranslate(prod bases.Product2) bases.Product2 {
 	prod.FullName, _ = gt.Translate(prod.FullName, "en", "ru")
 	prod.FullName = strings.ReplaceAll(prod.FullName, "Артикул:", "")
 
+	for indexKey := range prod.Item {
+		// Если есть мапа с таким-же ключом, то копируем во вторичную переменную значение этой мапы по ключу
+		if entry, ok := prod.Item[indexKey]; ok {
+
+			// Корректируем данные
+			// Курс доллара * цена в долларах * наценка + цена доставки
+			entry.ColorEng, _ = gt.Translate(entry.ColorEng, "en", "ru")
+
+			// Обновляем данные
+			prod.Item[indexKey] = entry
+		}
+	}
+
 	//tr := translate.New("trnsl.1.1.20170505T201046Z.765061fd7d327f2f.c80d8b95dd956de79d7f9537011fcd3cc802e6e2")
 	//tr := translate.New("trnsl.1.1.20191023T124920Z.63524b1f3817bdc2.1719c9be2a2e95a9ce652519943ee104fb9e0a56")
 	//tr := translate.New("trnsl.1.1.20190120T184305Z.c3a652a65ff5dac8.3a47d3f48cf9619b3a0d89ad5296f28c220f85ad")

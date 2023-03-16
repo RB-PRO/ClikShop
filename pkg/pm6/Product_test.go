@@ -1,6 +1,7 @@
 package pm6
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
@@ -13,7 +14,13 @@ func TestParseProduct(t *testing.T) {
 	prod.Item = make(map[string]bases.ProdParam)
 	prod.Specifications = make(map[string]string)
 	link := "/p/1-state-balloon-sleeve-crew-neck-sweater-wild-oak/product/9621708/color/836781"
+	link = "/p/1-state-tie-romper-delightful-ditsy/product/9571065/color/931516"
+	link = "/p/47-college-florida-gators-fade-out-boyfriend-tee-royal/product/9236666/color/604"
+	link = "/p/47-nhl-vegas-golden-knights-atlas-striker-1-4-zip-jet-black/product/9235558/color/42005"
+	//link = "/p/1-state-3-4-sleeve-lace-inset-festival-roses-blouse-soft-ecru-veridian-emerald-multi/product/9413304/color/876048"
 	ParseProduct(&prod, link)
+
+	fmt.Printf("\n\n\n\n%+v\n\n\n\n\n\n\n", prod)
 
 	// Артикул
 	answerArcticle := "9621708"
@@ -74,7 +81,7 @@ func TestParseProduct(t *testing.T) {
 			t.Error("Для цвета \""+color+"\" цена должна быть:", answerPrice, "а получена\n>", prod.Item[color].Price)
 		}
 		// Размеры
-		answerSize := []string{"SM", "LG", "XL"}
+		answerSize := []string{"XS", "SM", "LG", "XL"}
 		if !Equal(entityColor.Size, answerSize) {
 			t.Error("Для цвета \""+color+"\" должны быть размеры:", answerSize, "а получены\n>", prod.Item[color].Size)
 		}

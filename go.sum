@@ -42,8 +42,6 @@ github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
 github.com/hiscaler/gox v0.0.0-20220607093548-75ae453f938c h1:NSoN9OYN9pDGggbus8KuiXnFpXQmjOdGm9guSulzikY=
 github.com/hiscaler/gox v0.0.0-20220607093548-75ae453f938c/go.mod h1:iRF5RHS6v2n6uYqZb3LZse6H9I9U3Wz98HA/kLDW6EE=
-github.com/hiscaler/woocommerce-go v1.0.3 h1:fVkH4s/C/4IHjA9H1YWL8MlvtD2VWX5kSwrfcARJc2A=
-github.com/hiscaler/woocommerce-go v1.0.3/go.mod h1:OcvKkxdeTdlnvoNzVODs7p9gkBo2rYo6V6DKzMdb8YI=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/kennygrant/sanitize v1.2.4 h1:gN25/otpP5vAsO2djbMhF/LQX6R7+O1TB4yv8NzpJ3o=

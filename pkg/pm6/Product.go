@@ -22,9 +22,9 @@ func ParseProduct(prod *bases.Product2, ProductColorLink string) {
 
 	// Создаём структуру цвета
 	c.OnHTML("form[method='POST']>div[class]:first-of-type>div[class]>span:last-of-type", func(e *colly.HTMLElement) {
-		tecalColor = e.DOM.Text()
-		tecalColor = bases.FormingColorEng(tecalColor)
-		prod.Item[tecalColor] = bases.ProdParam{ColorEng: tecalColor}
+		ColorFull := e.DOM.Text()
+		tecalColor = bases.FormingColorEng(ColorFull)
+		prod.Item[tecalColor] = bases.ProdParam{ColorEng: ColorFull}
 		prod.Specifications = make(map[string]string)
 
 	})
@@ -129,13 +129,23 @@ func ParseProduct(prod *bases.Product2, ProductColorLink string) {
 	// Гендер товара
 	c.OnHTML("form[id=buyBoxForm] div fieldset", func(e *colly.HTMLElement) {
 		// В блоке размеров есть тег legend с аттрибутом id="sizingChooser"
-		if _, isFind := e.DOM.Find("legend").Attr("id"); isFind {
+		if _, isFind := e.DOM.Find("legend[id='sizingChooser']").Attr("id"); isFind {
 			textSize := e.DOM.Find("legend span").Text()
 			textSize = strings.ReplaceAll(textSize, "'s Sizes:", "") // Удалить лишнее из гендера
-			prod.Cat[0].Name, _ = bases.GenderBook(textSize)         // Название главной категории товара
-			textSize = strings.ToLower(textSize)                     // Понизить регистр
-			prod.Cat[0].Slug = textSize                              // Название главной ссылки категории товара
-			prod.GenderLabel = textSize                              // Заполнить гендер
+			textSize = strings.ReplaceAll(textSize, "s Sizes:", "")  // Удалить лишнее из гендера
+			textSize = strings.ReplaceAll(textSize, "s Size:", "")   // Удалить лишнее из гендера
+			textSize = strings.ReplaceAll(textSize, "Size:", "")     // Удалить лишнее из гендера
+			textSize = strings.ReplaceAll(textSize, "'s sizes:", "") // Удалить лишнее из гендера
+			textSize = strings.ReplaceAll(textSize, "s sizes:", "")  // Удалить лишнее из гендера
+			textSize = strings.ReplaceAll(textSize, "s size:", "")   // Удалить лишнее из гендера
+			textSize = strings.ReplaceAll(textSize, "size:", "")     // Удалить лишнее из гендера
+			textSize = strings.ReplaceAll(textSize, "Little ", "")   // Удалить лишнее из гендера
+
+			textSize = strings.TrimSpace(textSize)           // Удалить лишнее из гендера
+			prod.Cat[0].Name, _ = bases.GenderBook(textSize) // Название главной категории товара
+			textSize = strings.ToLower(textSize)             // Понизить регистр
+			prod.Cat[0].Slug = textSize                      // Название главной ссылки категории товара
+			prod.GenderLabel = textSize                      // Заполнить гендер
 
 		}
 	})
@@ -169,10 +179,11 @@ func ParseProduct(prod *bases.Product2, ProductColorLink string) {
 		}
 	})
 
-	fmt.Println("Product.go", URL+ProductColorLink)
+	fmt.Println("Захожу:", URL+ProductColorLink)
 	c.Visit(URL + ProductColorLink)
 
 	prod.Link = ProductColorLink
+	prod.Size = bases.RemoveDuplicateStr(prod.Size)
 }
 
 // Перевести /sweaters/CKvXARDQ1wHiAgIBAg.zso в sweaters

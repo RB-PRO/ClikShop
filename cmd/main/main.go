@@ -1,8 +1,6 @@
 package main
 
-import (
-	pm6wp "github.com/RB-PRO/SanctionedClothing/internal/pm6wp"
-)
+import "github.com/RB-PRO/SanctionedClothing/internal/pm6wp"
 
 func main() {
 	//app.Run(os.Args[1])

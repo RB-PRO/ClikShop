@@ -8,9 +8,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
@@ -26,6 +26,7 @@ type WcAdd struct {
 	Tags           []woocommerce.Tag      // Массив тегов, которые присутствуют в WordPress
 	TagMap         map[string]int         // Мапа тегов. Вообще бы её вывести отсюда нахрен
 	Sttr           woocommerce.Attributes // Структура аттрибутов, которые лежат на WP
+	Plc            woocommerce.Categorys  // Массив категорий товара
 
 	// ID аттрибутов в WordPress.
 	IdAttrColor int
@@ -41,8 +42,8 @@ func New() (*WcAdd, error) {
 	b, err := os.ReadFile("config_test.json")
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Read config error: %s", err.Error()))
-
 	}
+
 	var c config.Config
 	err = json.Unmarshal(b, &c)
 	if err != nil {
@@ -118,15 +119,15 @@ func New() (*WcAdd, error) {
 // Функция добавления товара
 func (woo *WcAdd) AddProduct(product bases.Product2) error {
 
-	ManufrId, ManufName, ManufSlug := AddAttr(woo.WooClient, woo.IdAttrColor, "Производитель", product.Manufacturer)
-	fmt.Println("Для данного товара Аттрибуты Производителя:", ManufrId, ManufName, ManufSlug)
-
 	// Создать категории для товаров и получить её ID
-	idCat, errorAddCat := woo.UserWC.AddCat(woo.NodeCategoryes, product.Cat)
-	if errorAddCat != nil {
-		fmt.Println("Error IDCAT")
+	idCat, AddNewId2 := woo.UserWC.AddCat2(&woo.Plc, product.Cat)
+	if AddNewId2 != nil {
+		return AddNewId2
 	}
 	fmt.Println("ID категории", idCat)
+
+	ManufrId, ManufName, ManufSlug := AddAttr(woo.WooClient, woo.IdAttrColor, "Производитель", product.Manufacturer)
+	fmt.Println("Для данного товара Аттрибуты Производителя:", ManufrId, ManufName, ManufSlug)
 
 	// Создаём аттрибуты товара для цвета
 	for key := range product.Item {
@@ -138,6 +139,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug := AddAttr(woo.WooClient, woo.IdAttrSize, valSize, bases.FormingColorEng(valSize))
 		fmt.Println("Для данного товара Аттрибуты размера будут:", tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug)
 	}
+	/**/
 
 	// Собираем гендер для загрузки в теги товара
 	idGender, isGenderSlug := bases.GenderBook(product.GenderLabel)
@@ -172,6 +174,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		}
 	}
 	fmt.Println(product.GenderLabel)
+
 	// Структура с исходным товаром
 	paramVariableProduct := wc.CreateProductRequest{
 		Name:             product.Name,
@@ -208,18 +211,36 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		},
 	}
 
-	//asd := entity.ProductVariation{}
-
-	item, errorItem := woo.WooClient.Services.Product.Create(paramVariableProduct)
-	if errorItem != nil {
-		log.Fatal(errorItem)
+	time.Sleep(time.Second)
+	var item entity.Product
+	var errCreate error
+	var itemID int
+	iterPage := 20
+	for i := 0; i < iterPage; i++ {
+		fmt.Println("Повторяю запрос на добавление товара.", i, "/", iterPage)
+		if item, errCreate = woo.WooClient.Services.Product.Create(paramVariableProduct); errCreate == nil {
+			break
+		}
 	}
-	itemID := item.ID
+	if errCreate != nil {
+		return errCreate
+	}
+	itemID = item.ID
+
+	/*
+		item, errorItem := woo.WooClient.Services.Product.Create(paramVariableProduct)
+		if errorItem != nil {
+			return errorItem
+		}
+		itemID = item.ID
+	*/
 	fmt.Println("Done itemID", itemID)
 
-	// Вариационные товары
-	for colorKey, colorItemValue := range product.Item {
-		itemVar, errvar := woo.WooClient.Services.ProductVariation.Create(itemID, wc.CreateProductVariationRequest{
+	// Теперь редактируем вариационные товары
+	VarientCreateBatch := make([]wc.CreateProductVariationRequest, 0) // Составляем массив с обновлением товаров вариационных
+	// Составляем запрос на обновление товаро из вариаций товара
+	for colorKey, colorItemValue := range product.Item { // Цикл по вариантам товаров
+		VarientCreateBatch = append(VarientCreateBatch, wc.CreateProductVariationRequest{
 			SKU:          product.Article + colorKey,
 			RegularPrice: colorItemValue.Price,
 			Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
@@ -228,13 +249,50 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 				Name: colorItemValue.ColorEng + ".jpg",
 				Alt:  colorItemValue.ColorEng,
 			},
-			//Images: imageInput,
-		})
-		if errvar != nil {
-			fmt.Println(errvar)
-		}
-		fmt.Println("Add variation product", itemVar.ID)
+		},
+		)
 	}
+
+	time.Sleep(time.Second)
+
+	/*
+		// VarientUpdateBatchReq := wc.BatchProductVariationsRequest{Create: VarientCreateBatch}
+		_, errCreateArr := woo.WooClient.Services.ProductVariation.CreateArr(itemID, VarientCreateBatch) // Обновляем товары одним запросом
+		if errCreateArr != nil {
+			return errCreateArr
+		}
+	*/
+
+	var errCreateArrWhile error
+	iterPageArrWhile := 20
+	for i := 0; i < iterPageArrWhile; i++ {
+		fmt.Println("Повторяю запрос на добавление вариации товара.", i, "/", iterPageArrWhile)
+		_, errCreateArrWhile = woo.WooClient.Services.ProductVariation.CreateArr(itemID, VarientCreateBatch) // Обновляем товары одним запросом
+		if errCreateArrWhile == nil {
+			break
+		}
+	}
+
+	/*
+		// Вариационные товары
+		for colorKey, colorItemValue := range product.Item {
+			itemVar, errvar := woo.WooClient.Services.ProductVariation.Create(itemID, wc.CreateProductVariationRequest{
+				SKU:          product.Article + colorKey,
+				RegularPrice: colorItemValue.Price,
+				Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
+				Image: &entity.ProductImage{
+					Src:  colorItemValue.Image[0],
+					Name: colorItemValue.ColorEng + ".jpg",
+					Alt:  colorItemValue.ColorEng,
+				},
+				//Images: imageInput,
+			})
+			if errvar != nil {
+				fmt.Println(errvar)
+			}
+			fmt.Println("Add variation product", itemVar.ID)
+		}
+	*/
 
 	PostSmartImageErr := woo.UserWC.PostSmartImage(itemID)
 	if PostSmartImageErr != nil {

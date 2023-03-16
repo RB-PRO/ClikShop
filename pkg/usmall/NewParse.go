@@ -137,19 +137,6 @@ func (product *Product) WareInProduct(ware WareUsmall) {
 }
 */
 
-// Удалить дубликаты в слайсе
-func RemoveDuplicateStr(strSlice []string) []string {
-	allKeys := make(map[string]bool)
-	list := []string{}
-	for _, item := range strSlice {
-		if _, value := allKeys[item]; !value {
-			allKeys[item] = true
-			list = append(list, item)
-		}
-	}
-	return list
-}
-
 // Получить код товара из полной ссылки на товар
 //
 //	https://usmall.ru/product/477964-cropped-faux-fur-jacket-avec-les-filles?color=red
@@ -267,5 +254,5 @@ func WareInProduct2(product *bases.Product2, ware WareUsmall) {
 			product.Item[colorKey] = entry
 		}
 	}
-	product.Size = RemoveDuplicateStr(product.Size)
+	product.Size = bases.RemoveDuplicateStr(product.Size)
 }

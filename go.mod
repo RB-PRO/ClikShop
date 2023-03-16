@@ -2,6 +2,10 @@ module github.com/RB-PRO/SanctionedClothing
 
 go 1.20
 
+replace github.com/hiscaler/woocommerce-go => ./pkg/woocommerce-go
+
+// C:\Users\roman\Desktop\go\SanctionedClothing\pkg\woocommerce-go
+
 require (
 	github.com/bas24/googletranslatefree v0.0.0-20220326200502-05ed9e639439
 	github.com/cheggaaa/pb v1.0.29

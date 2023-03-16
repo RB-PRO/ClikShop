@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
 	"github.com/RB-PRO/SanctionedClothing/pkg/pm6"
 	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
 	//"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
@@ -16,17 +17,15 @@ import (
 // walrus float64 // Моржа
 // delivery int   // Стоймость доставки
 func Work(PageStart int, walrus float64, delivery int) {
-	Adding, errorInitWcAdd := wcprod.New()
+	usd := cbbank.USD()                    // Получить курс валюты
+	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {
 		log.Fatalln(errorInitWcAdd)
 	}
-	fmt.Println(Adding.IdAttrColor,
-		Adding.IdAttrSize,
-		Adding.IdManuf)
 
 	linkPages := "/null/.zso?s=brandNameFacetLC/asc/productName/asc/"  // Ссылка на страницу товаров
 	PageEnd := pm6.AllPages(linkPages)                                 // Получить сколько всего страниц товаров есть
-	PageEnd = 5                                                        // До этого мы парсим
+	PageEnd = 1142                                                     // До этого мы парсим
 	var varient bases.Variety2                                         // Массив базы данных товаров
 	varient = pm6.ParsePageWithVarienty(varient, linkPages, PageStart) // Парсим первую страницу товаров
 	for i := PageStart + 1; i <= PageEnd; i++ {                        // Цикл по всем страницам товаров
@@ -48,10 +47,31 @@ func Work(PageStart int, walrus float64, delivery int) {
 		// Загружаем товары
 		for i := 0; i < len(varient.Product)-2; i++ {
 			if !varient.Product[i].Upload {
-				Adding.AddProduct(varient.Product[i]) //.AddAttr()
+				varient.Product[i] = EditCoast(varient.Product[i], usd, walrus, delivery)
+				errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(varient.Product[i])) //.AddAttr()
+				if errorAddProductWC != nil {
+					varient.Product[i].Upload = true
+				}
 			}
 		}
 	}
 
 	varient.SaveXlsxCsvs("TEST")
+}
+
+// Дактирование цены по товарам
+func EditCoast(prod bases.Product2, usd float64, walrus float64, delivery int) bases.Product2 {
+	for indexKey := range prod.Item {
+		// Если есть мапа с таким-же ключом, то копируем во вторичную переменную значение этой мапы по ключу
+		if entry, ok := prod.Item[indexKey]; ok {
+
+			// Корректируем данные
+			// Курс доллара * цена в долларах * наценка + цена доставки
+			entry.Price = usd*entry.Price*walrus + float64(delivery)
+
+			// Обновляем данные
+			prod.Item[indexKey] = entry
+		}
+	}
+	return prod
 }

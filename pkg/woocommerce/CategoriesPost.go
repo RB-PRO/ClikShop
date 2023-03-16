@@ -74,26 +74,28 @@ func (user *User) AddCat_WC(valetCat MeCat) (int, error) {
 //
 // Используется в качестве внешнего интерфейса для добавления категории товара по методике - добавил - проверил - получил ID
 func (user *User) AddCat(NodeCategoryes *Node, NewCategory bases.Cat) (CatIDcreate int, err error) {
-	//var CatIDcreate int // ID новой или старой категории
-	for i := 0; i < 4; i++ {
-		findNode, findNodeBool := NodeCategoryes.FindSlug(NewCategory[i].Slug)
+	// var CatIDcreate int // ID новой или старой категории
+	for _, NewCat := range NewCategory {
+		findNode, findNodeBool := NodeCategoryes.FindSlug(NewCat.Slug)
 		if !findNodeBool { // Если категория не добавлена
-
-			// Добавляем в дерево категорий
-			NodeCategoryes.Add(CatIDcreate, MeCat{Id: CatIDcreate, Name: NewCategory[i].Name, Slug: NewCategory[i].Slug})
-
 			// То добавляем её в WC
-			cat := MeCat{
-				Name:     NewCategory[i].Name,
-				Slug:     NewCategory[i].Slug,
-				ParentID: CatIDcreate,
-			}
-
 			// Добавить категорию на WP
-			CatIDcreate, err = user.AddCat_WC(cat)
+			CatIDcreate, err = user.AddCat_WC(MeCat{
+				Name:        NewCat.Name,
+				Slug:        NewCat.Slug,
+				Description: "Создано автоматически при добавлении товара",
+			})
 			if err != nil {
 				return 0, err
 			}
+
+			// Добавляем в дерево категорий
+			NodeCategoryes.Add(findNode.Id, MeCat{
+				Id:   CatIDcreate,
+				Name: NewCat.Name,
+				Slug: NewCat.Slug,
+			})
+
 		} else {
 			CatIDcreate = findNode.Id
 		}
@@ -101,3 +103,59 @@ func (user *User) AddCat(NodeCategoryes *Node, NewCategory bases.Cat) (CatIDcrea
 	// fmt.Println("ID новой актуальной категории товара - ", CatIDcreate)
 	return CatIDcreate, nil
 }
+
+// ******************************************************************
+
+// Создать дерево категорий по полученому массиву категорий
+func (plc Categorys) FormingNode(NodeCategoryes *Node) (*Node, error) {
+	var errorAddWithParent error
+	NodeCategoryes, errorAddWithParent = plc.addWithParent(NodeCategoryes, 0)
+	if errorAddWithParent != nil {
+		return nil, errorAddWithParent
+	}
+
+	// Цикл по потомкам
+	for i := 0; i < 4; i++ {
+		for indexCat, cat := range plc.Category {
+			if !plc.Category[indexCat].IsAdd {
+				FindNode, errorFInd := NodeCategoryes.find(cat.ID)
+				if errorFInd == nil { // Если найдено
+					errorAddNode := NodeCategoryes.Add(FindNode.ParentID, MeCat{
+						Id:       cat.ID,
+						Name:     cat.Name,
+						Slug:     cat.Slug,
+						ParentID: FindNode.ParentID,
+					})
+					if errorAddNode != nil {
+						return nil, errorAddNode
+					}
+					plc.Category[indexCat].IsAdd = true
+				}
+			}
+		}
+	}
+	return NodeCategoryes, nil
+}
+
+// Добавить данные в категорию, учитывая ID Родительского элемента,
+// в котором и происходит добавление категории
+func (plc *Categorys) addWithParent(NodeCategoryes *Node, parent int) (*Node, error) {
+	for _, categ := range plc.Category { // Цикл по структуре категории WC
+		if categ.Parent == parent { // Если это тот самый родитель
+			errorAddNode := NodeCategoryes.Add(parent, MeCat{
+				Id:   categ.ID,
+				Name: categ.Name,
+				Slug: categ.Slug,
+			})
+			if errorAddNode != nil {
+				return nil, errorAddNode
+			}
+		}
+	}
+	return NodeCategoryes, nil
+}
+
+// Проблема в том, что когда я добавляю товары через эту залупень, то товары не учитывают,
+// что они могут отноиться к категории, которая ещё не добавлена в мою структуру.
+// Поэтому программа падает в случае, когда добавлена 4-я категория, с родителем в 3 категории, который ещё не добавлен
+// Решение: добавление в структуру товаров с родителем ID 0.

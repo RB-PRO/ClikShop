@@ -28,11 +28,12 @@ type Node struct {
 
 // Внутренняя структура данных
 type MeCat struct {
-	Id       int    `json:"-"`                // ID в системе WC
-	ParentID int    `json:"parent,omitempty"` // ID родителя - используется только при загрузке категории ан WC
-	Name     string `json:"name"`             // Название категории
-	Slug     string `json:"slug"`             // Label
-	Image    string `json:"image,omitempty"`  // Ссылка на картинку
+	Id          int    `json:"-"`               // ID в системе WC
+	ParentID    int    `json:"parent"`          // ID родителя - используется только при загрузке категории ан WC
+	Name        string `json:"name"`            // Название категории
+	Slug        string `json:"slug"`            // Label
+	Image       string `json:"image,omitempty"` // Ссылка на картинку
+	Description string `json:"description"`
 }
 
 // Создать новый список категорий.
@@ -98,6 +99,21 @@ func (root *Node) PrintInorderName(prefix string) {
 	for _, val := range root.Children {
 		val.PrintInorderName(prefix + "-")
 	}
+}
+
+// Поиск длины
+func (root *Node) Len() (totalLen int) {
+	return root.len(0)
+}
+func (root *Node) len(totalLen int) int {
+	if root == nil {
+		return totalLen
+	}
+	for _, val := range root.Children {
+		totalLen++
+		totalLen = val.len(totalLen)
+	}
+	return totalLen
 }
 
 ///////////////////////////////////////////////////////////////////

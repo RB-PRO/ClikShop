@@ -153,11 +153,13 @@ func AddProd() {
 	fmt.Println("ID аттрибута Производителя", idManuf)
 
 	//
+	//fmt.Println("1")
 	wooClient := wc.NewClient(c)
+	//fmt.Println("2")
 
 	translateProduct := ProductTranslate(variet.Product[0])
 
-	fmt.Println(AddProduct(userWC, wooClient, translateProduct, tagMap, NodeCategoryes, idAttrColor, idAttrSize, idManuf))
+	fmt.Println(AddProduct(userWC, plc, wooClient, translateProduct, tagMap, NodeCategoryes, idAttrColor, idAttrSize, idManuf))
 
 	//paramAttr:=wc.Term
 
@@ -224,15 +226,21 @@ func ProductTranslate(prod bases.Product2) bases.Product2 {
 	return prod
 }
 
-func AddProduct(userWC *woocommerce.User, wooC *wc.WooCommerce, product bases.Product2, tagMap map[string]int, NodeCategoryes *woocommerce.Node, idAttrColor int, idAttrSize int, idManuf int) error {
+func AddProduct(userWC *woocommerce.User, plc woocommerce.Categorys, wooC *wc.WooCommerce, product bases.Product2, tagMap map[string]int, NodeCategoryes *woocommerce.Node, idAttrColor int, idAttrSize int, idManuf int) error {
 
 	ManufrId, ManufName, ManufSlug := AddAttr(wooC, idAttrColor, "Производитель", product.Manufacturer)
 	fmt.Println("Для данного товара Аттрибуты Производителя:", ManufrId, ManufName, ManufSlug)
-
-	// Создать категории для товаров и получить её ID
-	idCat, errorAddCat := userWC.AddCat(NodeCategoryes, product.Cat)
-	if errorAddCat != nil {
-		fmt.Println("Error IDCAT")
+	/*
+		// Создать категории для товаров и получить её ID
+		idCat, errorAddCat := userWC.AddCat(NodeCategoryes, product.Cat)
+		if errorAddCat != nil {
+			fmt.Println("Error IDCAT")
+		}
+		fmt.Println("ID категории", idCat)
+	*/
+	idCat, AddNewId2 := userWC.AddCat2(&plc, product.Cat)
+	if AddNewId2 != nil {
+		return AddNewId2
 	}
 	fmt.Println("ID категории", idCat)
 
@@ -280,6 +288,16 @@ func AddProduct(userWC *woocommerce.User, wooC *wc.WooCommerce, product bases.Pr
 		}
 	}
 	fmt.Println(product.GenderLabel)
+
+	/*
+		degAttr := make([]entity.ProductDefaultAttribute, 0)
+		for ind, TecalProduct := range product.Item {
+			degAttr = append(degAttr, entity.ProductDefaultAttribute{
+				Name: product.Name,
+			})
+		}
+	*/
+
 	// Структура с исходным товаром
 	paramVariableProduct := wc.CreateProductRequest{
 		Name:             product.Name,
@@ -314,6 +332,8 @@ func AddProduct(userWC *woocommerce.User, wooC *wc.WooCommerce, product bases.Pr
 				Options:   product.Size,
 			},
 		},
+		//DefaultAttributes: []entity.ProductDefaultAttribute{},
+
 	}
 
 	//asd := entity.ProductVariation{}

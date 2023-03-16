@@ -32,54 +32,7 @@ type ProductListCategory struct {
 			Href string `json:"href"`
 		} `json:"up"`
 	} `json:"_links,omitempty"`
-	Links0 struct {
-		Self []struct {
-			Href string `json:"href"`
-		} `json:"self"`
-		Collection []struct {
-			Href string `json:"href"`
-		} `json:"collection"`
-	} `json:"_links,omitempty"`
-	Links1 struct {
-		Self []struct {
-			Href string `json:"href"`
-		} `json:"self"`
-		Collection []struct {
-			Href string `json:"href"`
-		} `json:"collection"`
-	} `json:"_links,omitempty"`
-	Links2 struct {
-		Self []struct {
-			Href string `json:"href"`
-		} `json:"self"`
-		Collection []struct {
-			Href string `json:"href"`
-		} `json:"collection"`
-	} `json:"_links,omitempty"`
-	Links3 struct {
-		Self []struct {
-			Href string `json:"href"`
-		} `json:"self"`
-		Collection []struct {
-			Href string `json:"href"`
-		} `json:"collection"`
-	} `json:"_links,omitempty"`
-	Links4 struct {
-		Self []struct {
-			Href string `json:"href"`
-		} `json:"self"`
-		Collection []struct {
-			Href string `json:"href"`
-		} `json:"collection"`
-	} `json:"_links,omitempty"`
-	Links5 struct {
-		Self []struct {
-			Href string `json:"href"`
-		} `json:"self"`
-		Collection []struct {
-			Href string `json:"href"`
-		} `json:"collection"`
-	} `json:"_links,omitempty"`
+	IsAdd bool `json:"-"` // Фиксирование того, что это
 }
 
 // Метод [product/categories] позволяет Вам извлекать все категории продуктов.
@@ -88,8 +41,7 @@ type ProductListCategory struct {
 //
 // [Orders]: http://woocommerce.github.io/woocommerce-rest-api-docs/?shell#list-all-product-categories
 func (user *User) ProductsCategories() (Categorys, error) {
-	// Структура по категории
-	var category Categorys
+	var category Categorys // Структура по категории
 	var TotalPages int = 2
 
 	for i := 1; i <= TotalPages; i++ {
@@ -100,22 +52,12 @@ func (user *User) ProductsCategories() (Categorys, error) {
 		if errData != nil {
 			return Categorys{}, errData
 		}
-
 		errUnmarshal := json.Unmarshal(bodyBytes, &categ)
 		if errUnmarshal != nil { // Если ошибка
 			return Categorys{}, errUnmarshal
 		}
-
-		/*for _, val := range categ {
-			if val.Name == "tree" {
-				fmt.Println(">>>>>>>>>>>>>>>>>>>" + string(bodyBytes) + "<<<<<<<<<<<<<<<<<<")
-			}
-		}*/
-
 		category.Category = append(category.Category, categ...)
-
 	}
-
 	// Если всё верно сработало
 	return category, nil
 }
@@ -127,7 +69,7 @@ func (user *User) ProductsCategories() (Categorys, error) {
 func (user *User) queringProductsCategories(methodURL, methodApi string, page int) ([]byte, int, error) {
 	var TotalPages int
 	client := &http.Client{}
-	req, errReq := http.NewRequest(methodURL, URL+REQ+methodApi+"?page="+strconv.Itoa(page), nil)
+	req, errReq := http.NewRequest(methodURL, URL+REQ+methodApi+"?per_page=100&page="+strconv.Itoa(page), nil)
 	if errReq != nil {
 		return nil, 0, errReq
 	}
@@ -137,6 +79,7 @@ func (user *User) queringProductsCategories(methodURL, methodApi string, page in
 	if errRes != nil {
 		return nil, 0, errRes
 	}
+	defer res.Body.Close()
 
 	for name, values := range res.Header {
 		if name == "X-Wp-Totalpages" {
@@ -147,7 +90,6 @@ func (user *User) queringProductsCategories(methodURL, methodApi string, page in
 			}
 		}
 	}
-	defer res.Body.Close()
 
 	body, errBody := io.ReadAll(res.Body)
 	if errBody != nil {
