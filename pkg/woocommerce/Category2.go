@@ -70,7 +70,7 @@ func (plc Categorys) FindName(Name string) (ProductListCategory, error) {
 // Поиск в массиве категорий по Slug + Name
 func (plc Categorys) FindSlugName(Name, Slug string) (ProductListCategory, error) {
 	for index := range plc.Category {
-		if plc.Category[index].Name == Name {
+		if plc.Category[index].Name == Name && plc.Category[index].Slug == Slug {
 			return plc.Category[index], nil
 		}
 	}

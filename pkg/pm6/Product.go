@@ -3,6 +3,7 @@ package pm6
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -10,23 +11,34 @@ import (
 	"time"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+
 	"github.com/gocolly/colly"
+	"github.com/gocolly/colly/proxy"
 )
 
 // Парсинг страницы товара
 // Парсинг будет выглядеть в виде редактирования структуры bases.Product2 со своевременным добавлением цвета
 func ParseProduct(prod *bases.Product2, ProductColorLink string) {
-	c := colly.NewCollector()
+	c := colly.NewCollector(colly.AllowURLRevisit()) // Instantiate default collector
 	c.UserAgent = "Golang"
 	var tecalColor string // Цвет текущей страницы
+
+	// Rotate two socks5 proxies
+	rp, err := proxy.RoundRobinProxySwitcher("http://95.164.111.109:9914")
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.SetProxyFunc(rp)
 
 	// Создаём структуру цвета
 	c.OnHTML("form[method='POST']>div[class]:first-of-type>div[class]>span:last-of-type", func(e *colly.HTMLElement) {
 		ColorFull := e.DOM.Text()
-		tecalColor = bases.FormingColorEng(ColorFull)
-		prod.Item[tecalColor] = bases.ProdParam{ColorEng: ColorFull}
-		prod.Specifications = make(map[string]string)
-
+		ColorFull = strings.TrimSpace(ColorFull)
+		if ColorFull != "" {
+			tecalColor = bases.FormingColorEng(ColorFull)
+			prod.Item[tecalColor] = bases.ProdParam{ColorEng: ColorFull}
+			prod.Specifications = make(map[string]string)
+		}
 	})
 
 	// Артикул
@@ -141,13 +153,16 @@ func ParseProduct(prod *bases.Product2, ProductColorLink string) {
 			textSize = strings.ReplaceAll(textSize, "size:", "")     // Удалить лишнее из гендера
 			textSize = strings.ReplaceAll(textSize, "Little ", "")   // Удалить лишнее из гендера
 
-			textSize = strings.TrimSpace(textSize)           // Удалить лишнее из гендера
-			prod.Cat[0].Name, _ = bases.GenderBook(textSize) // Название главной категории товара
-			textSize = strings.ToLower(textSize)             // Понизить регистр
-			prod.Cat[0].Slug = textSize                      // Название главной ссылки категории товара
-			prod.GenderLabel = textSize                      // Заполнить гендер
-
+			textSize = strings.TrimSpace(textSize)                               // Удалить лишнее из гендера
+			prod.Cat[0].Name, textSize, _ = bases.GenderBook(textSize, textSize) // Название главной категории товара
+			textSize = strings.ToLower(textSize)                                 // Понизить регистр
+			prod.Cat[0].Slug = textSize                                          // Название главной ссылки категории товара
+			prod.GenderLabel = textSize                                          // Заполнить гендер
 		}
+
+		// Для товара с одним цветом, по типу https://www.6pm.com/p/2xu-non-stirrup-calf-guard-white-white/product/7892154/color/1001
+		//if _, isFind := e.DOM.Find("legend[id='screenReadersOnly']"); isFind {
+		//}
 	})
 
 	// Цена
@@ -161,6 +176,17 @@ func ParseProduct(prod *bases.Product2, ProductColorLink string) {
 					entry.Price = floaCoast
 					prod.Item[tecalColor] = entry
 				}
+			}
+		}
+	})
+
+	// Размеры для товаров по типу https://www.6pm.com/p/2xu-non-stirrup-calf-guard-white-white/product/7892154/color/1001
+	c.OnHTML("select[id='pdp-size-select']>option[value]", func(e *colly.HTMLElement) {
+		if entry, ok := prod.Item[tecalColor]; ok {
+			if e.DOM.Text() != "Select a Size" {
+				entry.Size = append(entry.Size, e.DOM.Text())
+				prod.Size = append(prod.Size, e.DOM.Text())
+				prod.Item[tecalColor] = entry
 			}
 		}
 	})

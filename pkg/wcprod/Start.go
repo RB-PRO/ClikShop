@@ -126,23 +126,25 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	}
 	fmt.Println("ID категории", idCat)
 
-	ManufrId, ManufName, ManufSlug := AddAttr(woo.WooClient, woo.IdAttrColor, "Производитель", product.Manufacturer)
-	fmt.Println("Для данного товара Аттрибуты Производителя:", ManufrId, ManufName, ManufSlug)
+	/*
+		ManufrId, ManufName, ManufSlug := AddAttr(woo.WooClient, woo.IdAttrColor, "Производитель", product.Manufacturer)
+		fmt.Println("Для данного товара Аттрибуты Производителя:", ManufrId, ManufName, ManufSlug)
 
-	// Создаём аттрибуты товара для цвета
-	for key := range product.Item {
-		tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug := AddAttr(woo.WooClient, woo.IdAttrColor, product.Item[key].ColorEng, key)
-		fmt.Println("Для данного товара Аттрибуты цвета будут:", tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug)
-	}
-	// Создаём аттрибуты товара для Размера
-	for _, valSize := range product.Size {
-		tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug := AddAttr(woo.WooClient, woo.IdAttrSize, valSize, bases.FormingColorEng(valSize))
-		fmt.Println("Для данного товара Аттрибуты размера будут:", tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug)
-	}
+		// Создаём аттрибуты товара для цвета
+		for key := range product.Item {
+			tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug := AddAttr(woo.WooClient, woo.IdAttrColor, product.Item[key].ColorEng, key)
+			fmt.Println("Для данного товара Аттрибуты цвета будут:", tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug)
+		}
+		// Создаём аттрибуты товара для Размера
+		for _, valSize := range product.Size {
+			tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug := AddAttr(woo.WooClient, woo.IdAttrSize, valSize, bases.FormingColorEng(valSize))
+			fmt.Println("Для данного товара Аттрибуты размера будут:", tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug)
+		}
+	*/
 	/**/
 
 	// Собираем гендер для загрузки в теги товара
-	idGender, isGenderSlug := bases.GenderBook(product.GenderLabel)
+	idGender, _, isGenderSlug := bases.GenderBook(product.GenderLabel, "")
 	if !isGenderSlug {
 		fmt.Println("Не найден гендер.", idGender)
 	}
@@ -215,7 +217,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	var item entity.Product
 	var errCreate error
 	var itemID int
-	iterPage := 20
+	iterPage := 50
 	for i := 0; i < iterPage; i++ {
 		fmt.Println("Повторяю запрос на добавление товара.", i, "/", iterPage)
 		if item, errCreate = woo.WooClient.Services.Product.Create(paramVariableProduct); errCreate == nil {
@@ -264,7 +266,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	*/
 
 	var errCreateArrWhile error
-	iterPageArrWhile := 20
+	iterPageArrWhile := 50
 	for i := 0; i < iterPageArrWhile; i++ {
 		fmt.Println("Повторяю запрос на добавление вариации товара.", i, "/", iterPageArrWhile)
 		_, errCreateArrWhile = woo.WooClient.Services.ProductVariation.CreateArr(itemID, VarientCreateBatch) // Обновляем товары одним запросом

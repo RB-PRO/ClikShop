@@ -1,7 +1,5 @@
 package bases
 
-import "strings"
-
 // Структура массива товаров
 type Variety2 struct {
 	Product []Product2 // Массив продуктов
@@ -49,32 +47,4 @@ type ProdParam struct {
 	Price    float64  // Цена
 	Size     []string // Размеры
 	Image    []string // Картинки
-}
-
-// Перевести /sweaters/CKvXARDQ1wHiAgIBAg.zso в sweaters
-func FormingColorEng(input string) (output string) {
-	input = strings.ReplaceAll(input, " ", "-")
-	input = strings.ReplaceAll(input, "'", "")
-	input = strings.ReplaceAll(input, "/", "_")
-	output = strings.ToLower(input)
-	return output
-}
-
-// Словарь, который используется для Name в GenderLabel
-// и
-// роидетльской категории. Например Женщины/woman
-//
-//	Функция принимает Woman[или]woman, а отдаёт Женщины
-func GenderBook(key string) (string, bool) {
-	keyLower := strings.ToLower(key) // Сделать нижний шрифт
-	switch keyLower {
-	case "women":
-		return "Женщины", true
-	case "man":
-		return "Мужчины", true
-	case "kid":
-		return "Дети", true
-	default:
-		return key, false
-	}
 }

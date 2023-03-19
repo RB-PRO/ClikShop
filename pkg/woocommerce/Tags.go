@@ -86,7 +86,7 @@ func FindIdTagSlug(tags []Tag, slug string) int {
 func MapTags(tags []Tag) map[string]int {
 	tagMap := make(map[string]int)
 	for _, tagValue := range tags {
-		if _, isTag := bases.GenderBook(tagValue.Slug); isTag {
+		if _, _, isTag := bases.GenderBook(tagValue.Slug, ""); isTag {
 			tagMap[tagValue.Slug] = tagValue.Id
 		}
 	}
