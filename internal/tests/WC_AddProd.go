@@ -256,7 +256,7 @@ func AddProduct(userWC *woocommerce.User, plc woocommerce.Categorys, wooC *wc.Wo
 	}
 
 	// Собираем гендер для загрузки в теги товара
-	idGender, isGenderSlug := bases.GenderBook(product.GenderLabel)
+	idGender, _, isGenderSlug := bases.GenderBook(product.GenderLabel, "")
 	if !isGenderSlug {
 		fmt.Println("Не найден гендер.", idGender)
 	}
