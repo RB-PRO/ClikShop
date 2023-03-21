@@ -33,6 +33,8 @@ type WcAdd struct {
 	IdAttrSize  int
 	IdManuf     int
 
+	Delivery map[string]int // Мапа цен доставки для товаров
+
 	WooClient *wc.WooCommerce // Клиент пользовательской библиотеки, с помощью которой добавляю товар
 }
 
@@ -58,6 +60,12 @@ func New() (*WcAdd, error) {
 	userWC, _ := woocommerce.New(consumer_key, secret_key) // Авторизация
 	if okErr := userWC.IsOrder(); okErr != nil {           // Проверка на авторизацию
 		return nil, okErr
+	}
+
+	// Мапа цены доставки
+	Delivery, ErrorDelivery := XlsxDelivery()
+	if ErrorDelivery != nil {
+		return nil, ErrorDelivery
 	}
 
 	// Теги
@@ -113,6 +121,7 @@ func New() (*WcAdd, error) {
 		IdAttrColor:    idAttrColor,
 		IdAttrSize:     idAttrSize,
 		IdManuf:        idManuf,
+		Delivery:       Delivery,
 	}, nil
 }
 
@@ -185,7 +194,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		Description:      product.Description.Rus,
 		Tags:             []entity.ProductTag{{Name: idGender, Slug: product.GenderLabel}},
 		ShortDescription: product.FullName,
-		RegularPrice:     228.0,
+		RegularPrice:     420.0,
 		Slug:             bases.FormingColorEng(product.Name),
 
 		Images: imageInput,
@@ -302,4 +311,13 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	}
 
 	return nil
+}
+
+// Сличение данных и возврат актуальной цены товара для данной категории товара
+func (woo *WcAdd) EditDelivery(categorys bases.Cat, delivery int) int {
+	if val, ok := woo.Delivery[categorys[2].Name]; ok {
+		return val
+	} else {
+		return delivery
+	}
 }

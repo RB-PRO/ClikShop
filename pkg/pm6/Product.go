@@ -17,19 +17,13 @@ import (
 // Парсинг страницы товара
 // Парсинг будет выглядеть в виде редактирования структуры bases.Product2 со своевременным добавлением цвета
 func ParseProduct(prod *bases.Product2, ProductColorLink string) {
-	//c := colly.NewCollector(colly.AllowURLRevisit()) // Instantiate default collector
-	c := colly.NewCollector() // Instantiate default collector
+	c := colly.NewCollector(colly.AllowURLRevisit()) // Instantiate default collector
+	//c := colly.NewCollector() // Instantiate default collector
 	c.UserAgent = "Golang"
 	var tecalColor string // Цвет текущей страницы
 
-	/*
-		// Rotate two socks5 proxies
-		rp, err := proxy.RoundRobinProxySwitcher("http://95.164.111.109:9914")
-		if err != nil {
-			log.Fatal(err)
-		}
-		c.SetProxyFunc(rp)
-	*/
+	c.SetRequestTimeout(30 * time.Second)
+	c.SetProxy("http://tLzkV0:JdMQ9h@95.164.111.109:9914") // Set Proxy
 
 	// Создаём структуру цвета
 	c.OnHTML("form[method='POST']>div[class]:first-of-type>div[class]>span:last-of-type", func(e *colly.HTMLElement) {

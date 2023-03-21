@@ -1,6 +1,7 @@
 package wcprod_test
 
 import (
+	"fmt"
 	"log"
 	"testing"
 
@@ -15,8 +16,29 @@ func TestAddProduct(t *testing.T) {
 		log.Fatalln(errorInitWcAdd)
 	}
 
-	// Создать тестовый товар
-	variet := bases.Variety2{
+	variet := varietBasesVariety2() // Получаем товар
+
+	errAdd := Adding.AddProduct(variet.Product[0])
+	if errAdd != nil {
+		t.Error(errAdd)
+	}
+}
+
+func TestEditDelivery(t *testing.T) {
+	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
+	if errorInitWcAdd != nil {
+		log.Fatalln(errorInitWcAdd)
+	}
+	variet := varietBasesVariety2() // Получаем товар
+
+	delivery := Adding.EditDelivery(variet.Product[0].Cat, 500)
+	fmt.Println("Получил цену доставки", delivery, ". Для категории:\n", variet.Product[0].Cat[2])
+}
+
+// Создать тестовый товар
+
+func varietBasesVariety2() bases.Variety2 {
+	return bases.Variety2{
 		[]bases.Product2{
 			bases.Product2{
 				Manufacturer:   "1.STATE",
@@ -32,15 +54,15 @@ func TestAddProduct(t *testing.T) {
 					Eng string
 					Rus string
 				}{Eng: `Complete your cool-weather look with the soft and cozy 1.STATE™ Balloon Sleeve Crew Neck Sweater.
-				SKU: #9621708
-				Pull-over design with ribbed crew neckline.
-				Long balloon sleeves with elongated, ribbed cuffs.
-				Classic fit with straight hemline.
-				73% acrylic, 24% polyester, 3% spandex.
-				Hand wash, dry flat.
-				Imported.
-				Product measurements were taken using size SM. Please note that measurements may vary by size.
-				 Length: 23 in`},
+			SKU: #9621708
+			Pull-over design with ribbed crew neckline.
+			Long balloon sleeves with elongated, ribbed cuffs.
+			Classic fit with straight hemline.
+			73% acrylic, 24% polyester, 3% spandex.
+			Hand wash, dry flat.
+			Imported.
+			Product measurements were taken using size SM. Please note that measurements may vary by size.
+			 Length: 23 in`},
 				Item: map[string]bases.ProdParam{
 					"wild-oak": bases.ProdParam{
 						Link:     "/product/9621708/color/836781",
@@ -59,10 +81,5 @@ func TestAddProduct(t *testing.T) {
 				},
 			},
 		},
-	}
-
-	errAdd := Adding.AddProduct(variet.Product[0])
-	if errAdd != nil {
-		t.Error(errAdd)
 	}
 }

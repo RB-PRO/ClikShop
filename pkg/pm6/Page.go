@@ -45,7 +45,13 @@ func ParsePageWithVarienty(varient bases.Variety2, link string, page int) bases.
 	if LenProds != 0 {
 		TecalName = varient.Product[LenProds-1].Name
 	}
-	c := colly.NewCollector()
+
+	//c := colly.NewCollector()
+	c := colly.NewCollector(colly.AllowURLRevisit()) // Instantiate default collector
+	//c := colly.NewCollector() // Instantiate default collector
+	c.UserAgent = "Golang"
+
+	c.SetProxy("http://tLzkV0:JdMQ9h@95.164.111.109:9914") // Set Proxy
 
 	// Поиск и добавление самой ссылки на товар
 	c.OnHTML("div[id=products] article", func(e *colly.HTMLElement) {

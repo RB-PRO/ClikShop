@@ -47,8 +47,11 @@ func Work(PageStart int, walrus float64, delivery int) {
 		// Загружаем товары
 		for i := 0; i < len(varient.Product)-2; i++ {
 			if !varient.Product[i].Upload {
-				varient.Product[i] = EditCoast(varient.Product[i], usd, walrus, delivery)
-				errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(varient.Product[i])) //.AddAttr()
+				// Формирование адекватной цены доставки из файла
+				ActualDelivery := Adding.EditDelivery(varient.Product[i].Cat, delivery)
+				varient.Product[i] = EditCoast(varient.Product[i], usd, walrus, ActualDelivery)
+				//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(varient.Product[i])) //.AddAttr()
+				errorAddProductWC := Adding.AddProduct(varient.Product[i]) //.AddAttr()
 				if errorAddProductWC != nil {
 					varient.Product[i].Upload = true
 				}
@@ -59,7 +62,7 @@ func Work(PageStart int, walrus float64, delivery int) {
 	varient.SaveXlsxCsvs("TEST")
 }
 
-// Дактирование цены по товарам
+// Редактирование цены по товарам
 func EditCoast(prod bases.Product2, usd float64, walrus float64, delivery int) bases.Product2 {
 	for indexKey := range prod.Item {
 		// Если есть мапа с таким-же ключом, то копируем во вторичную переменную значение этой мапы по ключу
