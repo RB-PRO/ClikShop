@@ -8,8 +8,9 @@ import (
 )
 
 func Run_pm6() {
+	pmm, _ := pm6.NewPM()
 	linkPages := "/null/.zso?s=brandNameFacetLC/asc/productName/asc/" // Ссылка на страницу товаров
-	pagesInt := pm6.AllPages(linkPages)                               // Получить сколько всего страниц товаров есть
+	pagesInt := pmm.AllPages(linkPages)                               // Получить сколько всего страниц товаров есть
 
 	var AddProducts []bases.Product2          // дополнительный массив товаров
 	var varient bases.Variety2                // Массив базы данных товаров
@@ -25,23 +26,24 @@ func Run_pm6() {
 
 }
 func Run_pm6_adventing_Sortered() {
+	pmm, _ := pm6.NewPM()
 	linkPages := "/null/.zso?s=brandNameFacetLC/asc/productName/asc/" // Ссылка на страницу товаров
-	pagesInt := pm6.AllPages(linkPages)                               // Получить сколько всего страниц товаров есть
+	pagesInt := pmm.AllPages(linkPages)                               // Получить сколько всего страниц товаров есть
 	pagesInt = 5
 
 	var varient bases.Variety2                                 // Массив базы данных товаров
-	varient = pm6.ParsePageWithVarienty(varient, linkPages, 0) // Парсим первую страницу товаров
+	varient = pmm.ParsePageWithVarienty(varient, linkPages, 0) // Парсим первую страницу товаров
 	for i := 1; i <= pagesInt; i++ {                           // Цикл по всем страницам товаров
 		fmt.Println(i, "/", pagesInt)
 		// Сортируем товары и записываем их в готовую базу данных varient
-		varient = pm6.ParsePageWithVarienty(varient, linkPages, i) // Парсим первую страницу товаров
+		varient = pmm.ParsePageWithVarienty(varient, linkPages, i) // Парсим первую страницу товаров
 
 		for j := 0; j < len(varient.Product); j++ {
 			fmt.Println(">>", j, "/", len(varient.Product))
 			if varient.Product[j].Manufacturer == "" {
 				for key := range varient.Product[j].Item {
 					//fmt.Println("parse", varient.Product[j].Item[key].Link)
-					pm6.ParseProduct(&varient.Product[j], varient.Product[j].Item[key].Link)
+					pmm.ParseProduct(&varient.Product[j], varient.Product[j].Item[key].Link)
 				}
 
 			}
