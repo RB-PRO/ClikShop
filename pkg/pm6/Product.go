@@ -14,16 +14,32 @@ import (
 	"github.com/gocolly/colly"
 )
 
+type pm struct {
+	proxy string
+}
+
+// Создаём экземпляр структуры парсинга pm6 со встроенным proxy
+func NewPM() (*pm, error) {
+	proxy, ErrorFile := bases.DataFile("proxy")
+	if ErrorFile != nil {
+		return nil, errors.New("Не удалось открыть файл \"proxy\"")
+	}
+	return &pm{proxy}, nil
+}
+
 // Парсинг страницы товара
 // Парсинг будет выглядеть в виде редактирования структуры bases.Product2 со своевременным добавлением цвета
-func ParseProduct(prod *bases.Product2, ProductColorLink string) {
-	c := colly.NewCollector(colly.AllowURLRevisit()) // Instantiate default collector
-	//c := colly.NewCollector() // Instantiate default collector
-	c.UserAgent = "Golang"
+func (pmm pm) ParseProduct(prod *bases.Product2, ProductColorLink string) {
 	var tecalColor string // Цвет текущей страницы
-
-	c.SetRequestTimeout(30 * time.Second)
-	c.SetProxy("http://tLzkV0:JdMQ9h@95.164.111.109:9914") // Set Proxy
+	var c *colly.Collector
+	if pmm.proxy == "" { // Если без прокси
+		c = colly.NewCollector() // Instantiate default collector
+	} else {
+		c = colly.NewCollector(colly.AllowURLRevisit()) // Instantiate default collector
+		c.SetProxy(pmm.proxy)                           // Set Proxy
+	}
+	c.UserAgent = "Golang"
+	c.SetRequestTimeout(30 * time.Second) // Установить таймауты 30 секунд
 
 	// Создаём структуру цвета
 	c.OnHTML("form[method='POST']>div[class]:first-of-type>div[class]>span:last-of-type", func(e *colly.HTMLElement) {

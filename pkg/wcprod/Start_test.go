@@ -36,7 +36,6 @@ func TestEditDelivery(t *testing.T) {
 }
 
 // Создать тестовый товар
-
 func varietBasesVariety2() bases.Variety2 {
 	return bases.Variety2{
 		[]bases.Product2{

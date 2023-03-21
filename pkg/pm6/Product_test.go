@@ -1,13 +1,15 @@
-package pm6
+package pm6_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/SanctionedClothing/pkg/pm6"
 )
 
 func TestParseProduct(t *testing.T) {
+	pmm, _ := pm6.NewPM()
 
 	// Обычный тест артикла товара
 	var prod bases.Product2
@@ -19,7 +21,7 @@ func TestParseProduct(t *testing.T) {
 	link = "/p/47-nhl-vegas-golden-knights-atlas-striker-1-4-zip-jet-black/product/9235558/color/42005"
 	link = "/p/2xu-non-stirrup-calf-guard-white-white/product/7892154/color/1001"
 	//link = "/p/1-state-3-4-sleeve-lace-inset-festival-roses-blouse-soft-ecru-veridian-emerald-multi/product/9413304/color/876048"
-	ParseProduct(&prod, link)
+	pmm.ParseProduct(&prod, link)
 
 	fmt.Printf("\n\n\n\n%+v\n\n\n\n\n\n", prod)
 
@@ -117,7 +119,7 @@ func TestPictureCode(t *testing.T) {
 
 	input = "https://m.media-amazon.com/images/I/91GJ2hRcTeL._AC_SR58.88,73.60000000000001_.jpg"
 	output = "91GJ2hRcTeL"
-	if result, err = PictureCode(input); err != nil {
+	if result, err = pm6.PictureCode(input); err != nil {
 		t.Error("Преобразователь ссылка в код картинки: из входного", input, "должно было получиться:", output, "\nОднако получена ошибка:", err)
 	} else {
 		if result != output {

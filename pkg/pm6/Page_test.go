@@ -1,4 +1,4 @@
-package pm6
+package pm6_test
 
 import (
 	"fmt"
@@ -6,23 +6,30 @@ import (
 	"testing"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/SanctionedClothing/pkg/pm6"
 )
 
 func TestAllPages(t *testing.T) {
-	pagesInt := AllPages("/null/.zso?s=brandNameFacetLC/asc/productName/asc/")
+	pmm, ErrorPMM := pm6.NewPM()
+	if ErrorPMM != nil {
+		t.Error(ErrorPMM)
+	}
+	pagesInt := pmm.AllPages("/null/.zso?s=isNew/desc/goLiveDate/desc/recentSalesStyle/desc/")
+	fmt.Println("Всего страниц:", pagesInt)
 	if pagesInt == 0 {
-		t.Error("Неправильное к-во товаров. По ссылке https://www.6pm.com/null/.zso?s=brandNameFacetLC/asc/productName/asc/ Должно быть \"[не ноль]\", а получено " + "\"" + strconv.Itoa(pagesInt) + "\"")
+		t.Error("Неправильное к-во товаров. По ссылке https://www.6pm.com/null/.zso?s=isNew/desc/goLiveDate/desc/recentSalesStyle/desc/ Должно быть \"[не ноль]\", а получено " + "\"" + strconv.Itoa(pagesInt) + "\"")
 	}
 }
 func TestParsePageWithVarienty(t *testing.T) {
-	linkPages := "/null/.zso?s=brandNameFacetLC/asc/productName/asc/" // Ссылка на страницу товаров
-	pagesInt := 2                                                     // Получить сколько всего страниц товаров есть
+	pmm, _ := pm6.NewPM()
+	linkPages := "/null/.zso?s=isNew/desc/goLiveDate/desc/recentSalesStyle/desc/" // Ссылка на страницу товаров
+	pagesInt := 2                                                                 // Получить сколько всего страниц товаров есть
 
-	var varient bases.Variety2                             // Массив базы данных товаров
-	varient = ParsePageWithVarienty(varient, linkPages, 0) // Парсим первую страницу товаров
-	for i := 1; i <= pagesInt; i++ {                       // Цикл по всем страницам товаров
+	var varient bases.Variety2                                 // Массив базы данных товаров
+	varient = pmm.ParsePageWithVarienty(varient, linkPages, 0) // Парсим первую страницу товаров
+	for i := 1; i <= pagesInt; i++ {                           // Цикл по всем страницам товаров
 		// Сортируем товары и записываем их в готовую базу данных varient
-		varient = ParsePageWithVarienty(varient, linkPages, i) // Парсим первую страницу товаров
+		varient = pmm.ParsePageWithVarienty(varient, linkPages, i) // Парсим первую страницу товаров
 	}
 	PrintVarient(varient) // Печать
 }

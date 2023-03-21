@@ -39,19 +39,22 @@ func ParsePage(link string, page int) (prod []bases.Product2) {
 }
 
 // Пропасить стрицу с товарами
-func ParsePageWithVarienty(varient bases.Variety2, link string, page int) bases.Variety2 {
+func (pmm pm) ParsePageWithVarienty(varient bases.Variety2, link string, page int) bases.Variety2 {
 	var TecalName string             // Текущее имя, используемое для осозначения цветов
 	LenProds := len(varient.Product) // Получаем к-во товаров
 	if LenProds != 0 {
 		TecalName = varient.Product[LenProds-1].Name
 	}
 
-	//c := colly.NewCollector()
-	c := colly.NewCollector(colly.AllowURLRevisit()) // Instantiate default collector
-	//c := colly.NewCollector() // Instantiate default collector
+	var c *colly.Collector
+	if pmm.proxy == "" { // Если без прокси
+		c = colly.NewCollector() // Instantiate default collector
+	} else {
+		c = colly.NewCollector(colly.AllowURLRevisit()) // Instantiate default collector
+		c.SetProxy(pmm.proxy)                           // Set Proxy
+	}
 	c.UserAgent = "Golang"
-
-	c.SetProxy("http://tLzkV0:JdMQ9h@95.164.111.109:9914") // Set Proxy
+	c.SetRequestTimeout(30 * time.Second) // Установить таймауты 30 секунд
 
 	// Поиск и добавление самой ссылки на товар
 	c.OnHTML("div[id=products] article", func(e *colly.HTMLElement) {
@@ -91,12 +94,27 @@ func ParsePageWithVarienty(varient bases.Variety2, link string, page int) bases.
 }
 
 // Получить все страницы с товарами на сайте
-func AllPages(link string) (pages int) {
-	c := colly.NewCollector()
-	c.OnHTML("span[class='vm-z']", func(e *colly.HTMLElement) {
-		pagesStr := e.DOM.Find("a:last-of-type").Text()
-		pages, _ = strconv.Atoi(pagesStr)
+func (pmm pm) AllPages(link string) (pages int) {
+	fmt.Println(pmm)
 
+	var c *colly.Collector
+	if pmm.proxy == "" { // Если без прокси
+		c = colly.NewCollector() // Instantiate default collector
+	} else {
+		c = colly.NewCollector(colly.AllowURLRevisit()) // Instantiate default collector
+		c.SetProxy(pmm.proxy)                           // Set Proxy
+	}
+	c.UserAgent = "Golang"
+	c.SetRequestTimeout(30 * time.Second) // Установить таймауты 30 секунд
+
+	//>div>span>a:last-of-type
+	c.OnHTML("div[id='searchPagination']>div>span>a:last-of-type", func(e *colly.HTMLElement) {
+		pagesStr := e.DOM.Text()
+		fmt.Println(pagesStr)
+		var ErrorPages error
+		pages, ErrorPages = strconv.Atoi(pagesStr)
+		if ErrorPages != nil {
+		}
 	})
 	c.Visit(URL + link)
 	return pages
