@@ -20,6 +20,8 @@ func TestParseProduct(t *testing.T) {
 	link = "/p/47-college-florida-gators-fade-out-boyfriend-tee-royal/product/9236666/color/604"
 	link = "/p/47-nhl-vegas-golden-knights-atlas-striker-1-4-zip-jet-black/product/9235558/color/42005"
 	link = "/p/2xu-non-stirrup-calf-guard-white-white/product/7892154/color/1001"
+	link = "/p/dakine-penelope-beanie-black/product/9266320/color/3"
+	link = "/p/adidas-eclipse-reversible-3-beanie-black-onix-grey-grey-f22/product/9782703/color/1015554"
 	//link = "/p/1-state-3-4-sleeve-lace-inset-festival-roses-blouse-soft-ecru-veridian-emerald-multi/product/9413304/color/876048"
 	pmm.ParseProduct(&prod, link)
 
