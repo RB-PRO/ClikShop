@@ -9,9 +9,14 @@ import (
 
 func (user *User) AddCat2(plc *Categorys, cat bases.Cat) (NewAddParentId int, errorAdd error) {
 	for itteration, NewCat := range cat {
-		Find, errorFInd := plc.FindSlugName(NewCat.Name, NewCat.Slug) // Поиск по имени и Ссылке
-		//Find, errorFInd := plc.FindSlugNameParent(NewCat.Name, NewCat.Slug, NewCat.Parent) //  Поиск по имени и Ссылке и родительской категории
-		if errorFInd != nil { // Если найдено
+		var FindParent int
+		if itteration == 0 {
+			FindParent = 0
+		}
+
+		//Find, errorFInd := plc.FindSlugName(NewCat.Name, NewCat.Slug)                   // Поиск по имени и Ссылке
+		Find, errorFInd := plc.FindSlugNameParent(NewCat.Name, NewCat.Slug, FindParent) //  Поиск по имени и Ссылке и родительской категории
+		if errorFInd != nil {                                                           // Если найдено
 			// Добавляем товар
 			if itteration == 0 {
 				NewAddParentId = 0
@@ -22,6 +27,7 @@ func (user *User) AddCat2(plc *Categorys, cat bases.Cat) (NewAddParentId int, er
 		} else {
 			NewAddParentId = Find.ID
 		}
+		FindParent = NewAddParentId // Пhисваение ID поиска по родительской категории
 	}
 	return NewAddParentId, nil
 }
@@ -78,7 +84,6 @@ func (plc Categorys) FindSlugName(Name, Slug string) (ProductListCategory, error
 	return ProductListCategory{}, errors.New("plc.FindSlug: Не нашёл категории с таким Name = " + Name + ", с таким SLUG = " + Slug)
 }
 
-/*
 // Поиск в массиве категорий по Slug + Name
 func (plc Categorys) FindSlugNameParent(Name, Slug string, Parent int) (ProductListCategory, error) {
 	for index := range plc.Category {
@@ -88,4 +93,3 @@ func (plc Categorys) FindSlugNameParent(Name, Slug string, Parent int) (ProductL
 	}
 	return ProductListCategory{}, errors.New("plc.FindSlug: Не нашёл категории с таким Name = " + Name + ", с таким SLUG = " + Slug)
 }
-*/

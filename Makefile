@@ -32,6 +32,7 @@ build-car:
 	set GOOS=linux
 	export GOARCH=amd64
 	export GOOS=linux
+	export CGO_ENABLED=0
 	go env GOOS GOARCH
-	go build ./cmd/main/main.go
+	go build -o main ./cmd/main/main.go
 	scp main Delivery.xlsx config_test.json consumer_key secret_key proxy root@194.87.107.129:go/SanctionedClothing/
