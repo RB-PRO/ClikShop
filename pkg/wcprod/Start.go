@@ -121,6 +121,7 @@ func New() (*WcAdd, error) {
 		IdAttrSize:     idAttrSize,
 		IdManuf:        idManuf,
 		Delivery:       Delivery,
+		Plc:            plc,
 	}, nil
 }
 
@@ -187,7 +188,6 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 			chet++
 		}
 	}
-	fmt.Println(product.GenderLabel)
 
 	// Структура с исходным товаром
 	paramVariableProduct := wc.CreateProductRequest{
@@ -197,7 +197,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		Description:      product.Description.Rus,
 		Tags:             []entity.ProductTag{{Name: idGender, Slug: product.GenderLabel}},
 		ShortDescription: product.FullName,
-		RegularPrice:     420.0,
+		RegularPrice:     200.0,
 		Slug:             bases.FormingColorEng(product.Name),
 
 		Images: imageInput,
@@ -228,16 +228,6 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	var item entity.Product
 	var errCreate error
 	var itemID int
-	/*
-		iterPage := 50
-		for i := 0; i < iterPage; i++ {
-			fmt.Println("Повторяю запрос на добавление товара.", i, "/", iterPage)
-			if item, errCreate = woo.WooClient.Services.Product.Create(paramVariableProduct); errCreate == nil {
-				break
-			}
-			fmt.Println("--->", errCreate)
-		}
-	*/
 	item, errCreate = woo.WooClient.Services.Product.Create(paramVariableProduct)
 	if errCreate != nil {
 		fmt.Println("--->", errCreate)
@@ -245,13 +235,6 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	}
 	itemID = item.ID
 
-	/*
-		item, errorItem := woo.WooClient.Services.Product.Create(paramVariableProduct)
-		if errorItem != nil {
-			return errorItem
-		}
-		itemID = item.ID
-	*/
 	fmt.Println("Done itemID", itemID)
 
 	// Теперь редактируем вариационные товары
@@ -270,50 +253,25 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		},
 		)
 	}
-
-	/*
-		// VarientUpdateBatchReq := wc.BatchProductVariationsRequest{Create: VarientCreateBatch}
-		_, errCreateArr := woo.WooClient.Services.ProductVariation.CreateArr(itemID, VarientCreateBatch) // Обновляем товары одним запросом
-		if errCreateArr != nil {
-			return errCreateArr
+	// Вариационные товары
+	for colorKey, colorItemValue := range product.Item {
+		fmt.Println("Start var prod", colorKey, "-")
+		itemVar, errvar := woo.WooClient.Services.ProductVariation.Create(itemID, wc.CreateProductVariationRequest{
+			SKU:          product.Article + colorKey,
+			RegularPrice: colorItemValue.Price,
+			Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
+			Image: &entity.ProductImage{
+				Src:  colorItemValue.Image[0],
+				Name: colorItemValue.ColorEng + ".jpg",
+				Alt:  colorItemValue.ColorEng,
+			},
+			//Images: imageInput,
+		})
+		if errvar != nil {
+			fmt.Println(errvar)
 		}
-	*/
-
-	var errCreateArrWhile error
-	/*
-		iterPageArrWhile := 50
-		for i := 0; i < iterPageArrWhile; i++ {
-			fmt.Println("Повторяю запрос на добавление вариации товара.", i, "/", iterPageArrWhile)
-			_, errCreateArrWhile = woo.WooClient.Services.ProductVariation.CreateArr(itemID, VarientCreateBatch) // Обновляем товары одним запросом
-			if errCreateArrWhile == nil {
-				break
-			}
-			fmt.Println("--->", errCreateArrWhile)
-		}
-	*/
-	_, errCreateArrWhile = woo.WooClient.Services.ProductVariation.CreateArr(itemID, VarientCreateBatch) // Обновляем товары одним запросом
-	if errCreateArrWhile != nil {
-		fmt.Println("--->", errCreateArrWhile)
+		fmt.Println("Add variation product", itemVar.ID)
 	}
-	// // Вариационные товары
-	// for colorKey, colorItemValue := range product.Item {
-	// 	fmt.Println("Start var prod", colorKey, "-")
-	// 	itemVar, errvar := woo.WooClient.Services.ProductVariation.Create(itemID, wc.CreateProductVariationRequest{
-	// 		SKU:          product.Article + colorKey,
-	// 		RegularPrice: colorItemValue.Price,
-	// 		Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
-	// 		Image: &entity.ProductImage{
-	// 			Src:  colorItemValue.Image[0],
-	// 			Name: colorItemValue.ColorEng + ".jpg",
-	// 			Alt:  colorItemValue.ColorEng,
-	// 		},
-	// 		//Images: imageInput,
-	// 	})
-	// 	if errvar != nil {
-	// 		fmt.Println(errvar)
-	// 	}
-	// 	fmt.Println("Add variation product", itemVar.ID)
-	// }
 
 	/*
 		PostSmartImageErr := woo.UserWC.PostSmartImage(itemID)

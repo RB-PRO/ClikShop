@@ -30,8 +30,9 @@ func Work(PageStart int, walrus float64, delivery int) {
 	linkPages := "/null/.zso?s=brandNameFacetLC/asc/productName/asc/" // Ссылка на страницу товаров
 
 	linkPages = "/hats/COfWARCJ1wHiAgIBAg.zso?s=brandNameFacetLC/asc/productName/asc/"
+	linkPages = "/men-jeans/CKvXARDI1wHAAQLiAgMBAhg.zso?s=brandNameFacetLC/asc/productName/asc/"
 	PageEnd := pmm.AllPages(linkPages)                                 // Получить сколько всего страниц товаров есть
-	PageEnd = 13                                                       // До этого мы парсим
+	PageEnd = 3                                                        // До этого мы парсим
 	var varient bases.Variety2                                         // Массив базы данных товаров
 	varient = pmm.ParsePageWithVarienty(varient, linkPages, PageStart) // Парсим первую страницу товаров
 	for i := PageStart + 1; i <= PageEnd; i++ {                        // Цикл по всем страницам товаров

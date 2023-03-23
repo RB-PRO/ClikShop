@@ -25,4 +25,13 @@ build-windows-to-linux:
 	set GOARCH=amd64 set GOOS=linux go build .\cmd\main\main.go  
 
 build-linux-to-windows:
-	export GOARCH=amd64 export GOOS=windows go build .\cmd\main\main.go  
+	export GOARCH=amd64 export GOOS=windows go build .\cmd\main\main.go
+
+build-car:
+	set GOARCH=amd64
+	set GOOS=linux
+	export GOARCH=amd64
+	export GOOS=linux
+	go env GOOS GOARCH
+	go build ./cmd/main/main.go
+	scp main Delivery.xlsx config_test.json consumer_key secret_key proxy root@194.87.107.129:go/SanctionedClothing/
