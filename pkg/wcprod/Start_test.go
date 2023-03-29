@@ -22,7 +22,6 @@ func TestAddProduct(t *testing.T) {
 	if errAdd != nil {
 		t.Error(errAdd)
 	}
-	t.Error()
 }
 
 func TestEditDelivery(t *testing.T) {
