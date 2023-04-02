@@ -36,7 +36,7 @@ func TestAddCat2(t *testing.T) {
 	if AddNewId != nil {
 		t.Error(AddNewId)
 	}
-	fmt.Println("Новый добавленный ID =", NewId)
+	fmt.Println("Новый добавленный ID1 =", NewId)
 	fmt.Println("Длина массива plc =", len(plc.Category))
 
 	fmt.Println("Добавляю второй раз категорию")
@@ -44,11 +44,26 @@ func TestAddCat2(t *testing.T) {
 	if AddNewId2 != nil {
 		t.Error(AddNewId2)
 	}
-	fmt.Println("Новый добавленный ID =", NewId2)
+	fmt.Println("Новый добавленный ID2 =", NewId2)
 	fmt.Println("Длина массива plc =", len(plc.Category))
 
 	if NewId2 != NewId {
 		t.Error("NewId2 и NewId не совпали, что означает, что категория создатся в другом месте")
 	}
 
+	var categ2 bases.Cat
+	categ2[0].Name = "Test0"
+	categ2[0].Slug = "test0"
+	categ2[1].Name = "Test11"
+	categ2[1].Slug = "test11"
+	categ2[2].Name = "Test2"
+	categ2[2].Slug = "test2"
+	categ2[3].Name = "Test3"
+	categ2[3].Slug = "test3"
+	fmt.Println("Добавляю впервые")
+	NewId3, AddNewId := userWC.AddCat2(&plc, categ)
+	if AddNewId != nil {
+		t.Error(AddNewId)
+	}
+	fmt.Println("Новый добавленный ID3 =", NewId3)
 }

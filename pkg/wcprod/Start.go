@@ -35,6 +35,8 @@ type WcAdd struct {
 	Delivery map[string]int // Мапа цен доставки для товаров
 
 	WooClient *wc.WooCommerce // Клиент пользовательской библиотеки, с помощью которой добавляю товар
+
+	Cat3 map[int]*Category3Base // Мапа категории
 }
 
 // Инициализации базовой структуры загрузки товара
@@ -129,7 +131,7 @@ func New() (*WcAdd, error) {
 func (woo *WcAdd) AddProduct(product bases.Product2) error {
 
 	if product.Article == "" {
-		return errors.New("Нет в товаре артикула")
+		return errors.New("нет в товаре артикула")
 	}
 
 	// Создать категории для товаров и получить её ID

@@ -32,7 +32,8 @@ type ProductListCategory struct {
 			Href string `json:"href"`
 		} `json:"up"`
 	} `json:"_links,omitempty"`
-	IsAdd bool `json:"-"` // Фиксирование того, что это
+	IsAdd  bool `json:"-"` // Фиксирование того, что это
+	IsAdd3 bool `json:"-"` // Если true, то такой товар добавлен в категорию товаров
 }
 
 // Метод [product/categories] позволяет Вам извлекать все категории продуктов.
