@@ -43,7 +43,7 @@ type ProductListCategory struct {
 // [Orders]: http://woocommerce.github.io/woocommerce-rest-api-docs/?shell#list-all-product-categories
 func (user *User) ProductsCategories() (Categorys, error) {
 	var category Categorys // Структура по категории
-	var TotalPages int = 2
+	var TotalPages int = 2 // /!!!
 
 	for i := 1; i <= TotalPages; i++ {
 		var categ []ProductListCategory
