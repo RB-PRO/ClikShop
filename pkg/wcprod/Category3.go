@@ -23,54 +23,58 @@ func (woo *WcAdd) FormMapCat3() error {
 		fmt.Println(ValPlc.ID, ValPlc.Name, ValPlc.Parent)
 	}
 
-	//LenPlc := len(plc.Category)
-	var LenCat3 int = 0
-	Cat := make(map[int]*Category3Base)
-	Cat[0] = &Category3Base{Parent: 0}
+	var LenCat3 int = 1
 
 	// Идём по массиву
 	for len(plc.Category) != LenCat3 {
-		fmt.Println("->", len(plc.Category), LenCat3, len(plc.Category) != LenCat3)
 		for IndexPlc, PlcVal := range plc.Category {
-			if !PlcVal.IsAdd3 { // Если товар не добавлен в категории
-				ErrorAdd := woo.AddCategory3(&Cat, PlcVal.ID, plc2cat3(PlcVal)) // Добавить товар
-				if ErrorAdd != nil {
-					return ErrorAdd
-				}
+			// fmt.Println(IndexPlc, PlcVal.Parent, PlcVal.ID, PlcVal.Name, PlcVal.Slug, "---", len(plc.Category), LenCat3)
 
+			if !PlcVal.IsAdd3 { // Если товар не добавлен в категории
+
+				AddCat := Plc2cat3(PlcVal)
+				fmt.Println(AddCat, &AddCat)
+
+				ErrorAdd := woo.AddCategory3(PlcVal.ID, AddCat) // Добавить товар
+				if ErrorAdd != nil {
+					continue
+					// 	fmt.Println(ErrorAdd)
+					//return ErrorAdd
+				}
 				plc.Category[IndexPlc].IsAdd3 = true // Поставить чек, то товар добавлен
 				LenCat3++
 			}
 		}
 	}
 
-	woo.Cat3 = Cat
-
 	return nil
 }
 
 // Преобразовать результат категорий в своё дерево категорий
-func plc2cat3(PlcCat woocommerce.ProductListCategory) Category3Base {
-	return Category3Base{
+func Plc2cat3(PlcCat woocommerce.ProductListCategory) *Category3Base {
+	return &Category3Base{
 		Name:   PlcCat.Name,
 		Slug:   PlcCat.Slug,
 		Parent: PlcCat.Parent,
+		Cat3:   make(map[int]*Category3Base),
 	}
 }
 
 // Добавить категорию в товар
-func (woo *WcAdd) AddCategory3(cat *map[int]*Category3Base, NewID int, NewCat3 Category3Base) error {
+func (woo *WcAdd) AddCategory3(NewId int, NewCat3 *Category3Base) error {
+	if NewCat3.Parent == 0 {
+		woo.Cat3[0].Cat3 = make(map[int]*Category3Base)
+		woo.Cat3[0].Cat3[NewId] = NewCat3
+		return nil
+	}
 
 	// Если это базовая категория с ID 0
-	FindMap, ErrorFindCat := woo.FindCat3(NewID)
-	if errors.Is(ErrorFindCat, ErrorNotFoundCatId) {
+	FindMap, ErrorFindCat := woo.FindCat3(NewCat3.Parent)
+	if ErrorFindCat != nil {
 		return ErrorFindCat
 	}
-	if errors.Is(ErrorFindCat, ErrorNotFoundCatfindCategory3Base) {
-		return ErrorFindCat
-	}
-
-	FindMap.Cat3[NewID] = &NewCat3
+	FindMap.Cat3[NewId] = NewCat3
+	FindMap.Cat3[NewId].Cat3 = make(map[int]*Category3Base)
 
 	return nil
 }
@@ -81,15 +85,15 @@ var ErrorNotFoundCatId error = errors.New("FindCat3: Not found Category3Base in 
 
 // Поиск по ID в дереве категорий
 func (woo *WcAdd) FindCat3(FindId int) (*Category3Base, error) {
-	fmt.Println(" woo.Cat3", woo.Cat3)
+	//fmt.Println(" woo.Cat3", woo.Cat3)
 	for Id, CatBase := range woo.Cat3 {
 		if Id == FindId { // Если это этот ID
 			return CatBase, nil
 		}
-
-		fmt.Println("CatBase", CatBase.Cat3)
+		//fmt.Println("CatBase", CatBase.Cat3)
 		FindCat, ErrorFind := findCategory3Base(CatBase, FindId)
-		if ErrorFind != nil {
+		//fmt.Println("CatBase!!!", FindCat, ErrorFind)
+		if ErrorFind == nil {
 			return FindCat, nil
 		}
 	}
@@ -100,21 +104,23 @@ var ErrorNotFoundCatfindCategory3Base error = errors.New("findCategory3Base: not
 
 // Поиск именно в ячейке
 func findCategory3Base(cat *Category3Base, FindId int) (*Category3Base, error) {
-	fmt.Println("cat.Cat3", cat.Cat3)
+	//fmt.Println("cat.Cat3", cat.Cat3)
 	for Id, CatBase := range cat.Cat3 {
-		fmt.Println("ID", Id)
+		//fmt.Println("ID", Id == FindId, Id, FindId)
 		if Id == FindId { // Если это этот ID
 			return CatBase, nil
 		}
 		//if len(CatBase.Cat3) != 0 {
-		if CatBase.Cat3 != nil {
+		if CatBase.Cat3 != nil && len(CatBase.Cat3) != 0 {
 			FindCat, ErrorFindCat := findCategory3Base(CatBase, FindId)
-			if ErrorFindCat != nil { // Если не нашёл
+			//fmt.Println("---FindCat", FindCat, ErrorFindCat, " -- ", FindCat.Name, FindCat.Slug, FindCat.Parent)
+			if ErrorFindCat == nil { // Если не нашёл
 				return FindCat, nil
 			}
 		}
+		//fmt.Println("Exit")
 	}
-	return nil, ErrorNotFoundCatfindCategory3Base
+	return &Category3Base{}, ErrorNotFoundCatfindCategory3Base
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -132,10 +138,7 @@ func findCategory3Base(cat *Category3Base, FindId int) (*Category3Base, error) {
 // ---- 44 Test44 test44`
 func (woo *WcAdd) PrintCat3() {
 	var prefix string = "-"
-
-	for Id, CatBase := range woo.Cat3 {
-		fmt.Println(Id)
-
+	for _, CatBase := range woo.Cat3 {
 		printCategory3Base(CatBase, prefix)
 	}
 }

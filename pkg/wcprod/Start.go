@@ -124,6 +124,7 @@ func New() (*WcAdd, error) {
 		IdManuf:        idManuf,
 		Delivery:       Delivery,
 		Plc:            plc,
+		Cat3:           make(map[int]*Category3Base),
 	}, nil
 }
 
