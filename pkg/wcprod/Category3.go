@@ -1,7 +1,5 @@
 package wcprod
 
-import "fmt"
-
 // # Структура дерева категорий с ключом - ID ключа мапы подкатегории
 //
 //	Дерево категорий - сложная структура данных, которая содержит информацию о категории и может сожержать ссылки на дочерние категории
@@ -28,10 +26,10 @@ type Category3Base struct {
 //	}
 func (woo *WcAdd) FormMapCat3() error {
 	plc := woo.Plc.Category // Входной массив данных
-	for index, value := range plc {
-		fmt.Println(index, value.ID, value.Name, value.Parent)
-	}
-	fmt.Println("len(plc)", len(plc))
+	// for index, value := range plc {
+	// fmt.Println(index, value.ID, value.Name, value.Parent)
+	// }
+	//fmt.Println("len(plc)", len(plc))
 
 	var LenCat3 int = 1       // Переменная-счётчик, которая сравнивается с общим к-вом входных данных из исходного массива
 	for len(plc) >= LenCat3 { // Пока не добавили все товары в дерево категорий
@@ -52,11 +50,11 @@ func (woo *WcAdd) FormMapCat3() error {
 				LenCat3++
 
 			}
-			//woo.PrintCat3()
 		}
 	}
 	return nil
 }
+
 /*
 >>> 8 4 5 false Test3
 ADD 3686 Test3 3685

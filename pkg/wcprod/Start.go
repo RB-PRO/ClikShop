@@ -139,10 +139,19 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		return errors.New("нет в товаре артикула")
 	}
 
-	// Создать категории для товаров и получить её ID
-	idCat, AddNewId2 := woo.UserWC.AddCat2(&woo.Plc, product.Cat)
-	if AddNewId2 != nil {
-		return AddNewId2
+	/*
+		// Создать категории для товаров и получить её ID
+		idCat, AddNewId2 := woo.UserWC.AddCat2(&woo.Plc, product.Cat)
+		if AddNewId2 != nil {
+			return AddNewId2
+		}
+		fmt.Println("ID категории", idCat)
+	*/
+
+	// Создать категории для товаров и получить её ID по версии 3
+	idCat, AddNewId3 := woo.AddCategoryWC(product.Cat)
+	if AddNewId3 != nil {
+		return AddNewId3
 	}
 	fmt.Println("ID категории", idCat)
 
@@ -168,7 +177,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	if !isGenderSlug {
 		fmt.Println("Не найден гендер.", idGender)
 	}
-	fmt.Println("Гендр:", idGender)
+	fmt.Print("Гендр: " + idGender + ". ")
 
 	// Создаём массив цветов с полными назвавниями
 	var colors []string

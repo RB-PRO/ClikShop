@@ -79,7 +79,7 @@ func TestFindCat3_WithParam(t *testing.T) { // Поиск товара по ID
 	fmt.Println("FindCat3_WithParam: 1")
 	Adding := newCat3() // Создаём экземпляр загрузчика данных
 
-	FindProd, ErrorFind := Adding.FindCat3_WithParam(2, "Test3", "test3")
+	FindProd, _, ErrorFind := Adding.FindCat3_WithParam(2, "Test3", "test3")
 	if ErrorFind != nil {
 		t.Error(ErrorFind)
 	}
@@ -90,7 +90,7 @@ func TestFindCat3_WithParam(t *testing.T) { // Поиск товара по ID
 	fmt.Println("FindCat3_WithParam: 2")
 	Adding2 := newCat3() // Создаём экземпляр загрузчика данных
 
-	FindProd2, ErrorFind2 := Adding2.FindCat3_WithParam(1, "Test2", "test2")
+	FindProd2, _, ErrorFind2 := Adding2.FindCat3_WithParam(1, "Test2", "test2")
 	if ErrorFind2 != nil {
 		t.Error(ErrorFind2)
 	}
@@ -177,18 +177,19 @@ func TestAddCategoryWC(t *testing.T) {
 	Adding.PrintCat3()
 
 	var AddCat bases.Cat
-	AddCat[0].Name = "Test111"
-	AddCat[0].Slug = "test111"
-	AddCat[1].Name = "Test222"
-	AddCat[1].Slug = "test222"
-	AddCat[2].Name = "Test333"
-	AddCat[2].Slug = "test333"
-	AddCat[3].Name = "Test444"
-	AddCat[3].Slug = "test444"
+	AddCat[0].Name = "Test0"
+	AddCat[0].Slug = "test0"
+	AddCat[1].Name = "Test1"
+	AddCat[1].Slug = "test1"
+	AddCat[2].Name = "Test222"
+	AddCat[2].Slug = "test222"
+	AddCat[3].Name = "Test333"
+	AddCat[3].Slug = "test333"
 
 	NewId, ErrorAdd := Adding.AddCategoryWC(AddCat)
 	if ErrorAdd != nil {
 		t.Error(ErrorAdd)
 	}
 	fmt.Println("Новый ID добавленной категории", NewId)
+	Adding.PrintCat3()
 }
