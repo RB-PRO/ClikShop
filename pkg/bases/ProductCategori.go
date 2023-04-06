@@ -9,6 +9,7 @@ type Variety2 struct {
 type Cat [4]struct { // Категория товаров
 	Name string // Название подкатегории
 	Slug string // транслитом категория
+	ID   int    // ID товара
 }
 
 // Структура товара

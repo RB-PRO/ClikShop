@@ -1,152 +1,67 @@
 package wcprod
 
-import (
-	"errors"
-	"fmt"
+import "fmt"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
-)
-
-// Структура категории
+// # Структура дерева категорий с ключом - ID ключа мапы подкатегории
+//
+//	Дерево категорий - сложная структура данных, которая содержит информацию о категории и может сожержать ссылки на дочерние категории
+//
+// В данной структуре категорий имеется ряд особенностей. Например базовая категория имеет ID 0 и создаётся изначально.
 type Category3Base struct {
-	Name   string
-	Slug   string
+	// Содержимое категории:
+	Name string // Навазние категории
+	Slug string // Ярлык(ссылка)
+
+	// Системная информация
 	Parent int                    // Родитель
 	Cat3   map[int]*Category3Base // Мапа потомков
 }
 
-// Сформировать дерево категорий
+// ### Сформировать дерево категорий из массива входных данных.
+//
+// Пример массива входных данных:
+//
+//	[]ArrData{
+//		ID     int    // id категории
+//		Name   string // Название категории
+//		Parent int    // id родительской категории
+//	}
 func (woo *WcAdd) FormMapCat3() error {
-	plc := woo.Plc
-	fmt.Println("Длина входного массива категорий:", len(plc.Category))
-	for _, ValPlc := range plc.Category {
-		fmt.Println(ValPlc.ID, ValPlc.Name, ValPlc.Parent)
+	plc := woo.Plc.Category // Входной массив данных
+	for index, value := range plc {
+		fmt.Println(index, value.ID, value.Name, value.Parent)
 	}
+	fmt.Println("len(plc)", len(plc))
 
-	var LenCat3 int = 1
-
-	// Идём по массиву
-	for len(plc.Category) != LenCat3 {
-		for IndexPlc, PlcVal := range plc.Category {
-			// fmt.Println(IndexPlc, PlcVal.Parent, PlcVal.ID, PlcVal.Name, PlcVal.Slug, "---", len(plc.Category), LenCat3)
-
+	var LenCat3 int = 1       // Переменная-счётчик, которая сравнивается с общим к-вом входных данных из исходного массива
+	for len(plc) >= LenCat3 { // Пока не добавили все товары в дерево категорий
+		for IndexPlc, PlcVal := range plc { // Цикл по всем полям входной структуры
+			//fmt.Println(">>>", len(plc), LenCat3, IndexPlc, plc[IndexPlc].IsAdd3, plc[IndexPlc].Name)
 			if !PlcVal.IsAdd3 { // Если товар не добавлен в категории
 
-				AddCat := Plc2cat3(PlcVal)
-				fmt.Println(AddCat, &AddCat)
-
-				ErrorAdd := woo.AddCategory3(PlcVal.ID, AddCat) // Добавить товар
-				if ErrorAdd != nil {
+				// Добавить товар. Передаём ID нового товара и элемент массива входного, который и планируем добавить
+				// В элементе входного массива обязательно должна быть переменная Parent, которая содержит ID родителя
+				// Если получаем ошибку в результате добавления товара, то продолжаем иттерацию по входному массиву
+				//fmt.Println("ADD", PlcVal.ID, PlcVal.Name, PlcVal.Parent)
+				if ErrorAdd := woo.AddCategory3(PlcVal.ID, Plc2cat3(PlcVal)); ErrorAdd != nil {
 					continue
-					// 	fmt.Println(ErrorAdd)
-					//return ErrorAdd
 				}
-				plc.Category[IndexPlc].IsAdd3 = true // Поставить чек, то товар добавлен
+
+				// Фиксируем во входной структуре, что товар добавлен в категорию товаров.
+				plc[IndexPlc].IsAdd3 = true
 				LenCat3++
+
 			}
+			//woo.PrintCat3()
 		}
 	}
-
 	return nil
 }
-
-// Преобразовать результат категорий в своё дерево категорий
-func Plc2cat3(PlcCat woocommerce.ProductListCategory) *Category3Base {
-	return &Category3Base{
-		Name:   PlcCat.Name,
-		Slug:   PlcCat.Slug,
-		Parent: PlcCat.Parent,
-		Cat3:   make(map[int]*Category3Base),
-	}
-}
-
-// Добавить категорию в товар
-func (woo *WcAdd) AddCategory3(NewId int, NewCat3 *Category3Base) error {
-	if NewCat3.Parent == 0 {
-		woo.Cat3[0].Cat3 = make(map[int]*Category3Base)
-		woo.Cat3[0].Cat3[NewId] = NewCat3
-		return nil
-	}
-
-	// Если это базовая категория с ID 0
-	FindMap, ErrorFindCat := woo.FindCat3(NewCat3.Parent)
-	if ErrorFindCat != nil {
-		return ErrorFindCat
-	}
-	FindMap.Cat3[NewId] = NewCat3
-	FindMap.Cat3[NewId].Cat3 = make(map[int]*Category3Base)
-
-	return nil
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-var ErrorNotFoundCatId error = errors.New("FindCat3: Not found Category3Base in Cat3")
-
-// Поиск по ID в дереве категорий
-func (woo *WcAdd) FindCat3(FindId int) (*Category3Base, error) {
-	//fmt.Println(" woo.Cat3", woo.Cat3)
-	for Id, CatBase := range woo.Cat3 {
-		if Id == FindId { // Если это этот ID
-			return CatBase, nil
-		}
-		//fmt.Println("CatBase", CatBase.Cat3)
-		FindCat, ErrorFind := findCategory3Base(CatBase, FindId)
-		//fmt.Println("CatBase!!!", FindCat, ErrorFind)
-		if ErrorFind == nil {
-			return FindCat, nil
-		}
-	}
-	return nil, ErrorNotFoundCatId
-}
-
-var ErrorNotFoundCatfindCategory3Base error = errors.New("findCategory3Base: not found Category3Base in Cat3")
-
-// Поиск именно в ячейке
-func findCategory3Base(cat *Category3Base, FindId int) (*Category3Base, error) {
-	//fmt.Println("cat.Cat3", cat.Cat3)
-	for Id, CatBase := range cat.Cat3 {
-		//fmt.Println("ID", Id == FindId, Id, FindId)
-		if Id == FindId { // Если это этот ID
-			return CatBase, nil
-		}
-		//if len(CatBase.Cat3) != 0 {
-		if CatBase.Cat3 != nil && len(CatBase.Cat3) != 0 {
-			FindCat, ErrorFindCat := findCategory3Base(CatBase, FindId)
-			//fmt.Println("---FindCat", FindCat, ErrorFindCat, " -- ", FindCat.Name, FindCat.Slug, FindCat.Parent)
-			if ErrorFindCat == nil { // Если не нашёл
-				return FindCat, nil
-			}
-		}
-		//fmt.Println("Exit")
-	}
-	return &Category3Base{}, ErrorNotFoundCatfindCategory3Base
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-// ## Печать категорий товаров.
-//
-// Пример:
-// `0
-// - 1 Test1 test1
-// -- 2 Test2 test2
-// --- 3 Test3 test3
-// ---- 4 Test4 test4
-// -- 22 Test22 test22
-// --- 33 Test33 test33
-// ---- 44 Test44 test44`
-func (woo *WcAdd) PrintCat3() {
-	var prefix string = "-"
-	for _, CatBase := range woo.Cat3 {
-		printCategory3Base(CatBase, prefix)
-	}
-}
-
-// Обход всех потомков и вывод на экран
-func printCategory3Base(cat *Category3Base, prefix string) {
-	for Id, CatBase := range cat.Cat3 {
-		fmt.Println(prefix, Id, CatBase.Name, CatBase.Slug)
-		printCategory3Base(CatBase, prefix+"-")
-	}
-}
+/*
+>>> 8 4 5 false Test3
+ADD 3686 Test3 3685
+>>> 8 4 6 true TestBase
+- 3683 Test0 test0
+- 3709 TestBase testbase
+- 15 Товары без категории misc
+*/

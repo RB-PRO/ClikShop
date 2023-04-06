@@ -168,7 +168,7 @@ func ParsePage(variety *bases.Variety2, link string) {
 		if isHref {
 			variety.Product = append(variety.Product, bases.Product2{
 				Link: hrefLink,
-				Cat:  bases.Cat{{catalog, ""}, {podcatalog, ""}, {section, ""}, {podsection, ""}},
+				Cat:  bases.Cat{{catalog, "", 0}, {podcatalog, "", 0}, {section, "", 0}, {podsection, "", 0}},
 			})
 		}
 	})
@@ -178,7 +178,7 @@ func ParsePage(variety *bases.Variety2, link string) {
 		if isHref {
 			variety.Product = append(variety.Product, bases.Product2{
 				Link: hrefLink,
-				Cat:  bases.Cat{{catalog, ""}, {podcatalog, ""}, {section, ""}, {podsection, ""}},
+				Cat:  bases.Cat{{catalog, "", 0}, {podcatalog, "", 0}, {section, "", 0}, {podsection, "", 0}},
 			})
 		}
 	})

@@ -113,6 +113,10 @@ func New() (*WcAdd, error) {
 		return nil, isFind_AttrManuf
 	}
 
+	Cat3 := make(map[int]*Category3Base)
+	Cat3[0] = &Category3Base{}
+	Cat3[0].Cat3 = make(map[int]*Category3Base)
+
 	return &WcAdd{
 		WooClient:      wooClient,
 		UserWC:         userWC,
@@ -124,7 +128,7 @@ func New() (*WcAdd, error) {
 		IdManuf:        idManuf,
 		Delivery:       Delivery,
 		Plc:            plc,
-		Cat3:           make(map[int]*Category3Base),
+		Cat3:           Cat3,
 	}, nil
 }
 

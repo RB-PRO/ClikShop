@@ -40,12 +40,13 @@ func varietBasesVariety2() bases.Variety2 {
 	return bases.Variety2{
 		[]bases.Product2{
 			bases.Product2{
-				Manufacturer:   "1.STATE",
-				Name:           "Balloon Sleeve Crew Neck Sweater",
-				FullName:       "Complete your cool-weather look with the soft and cozy 1.STATE™ Balloon Sleeve Crew Neck Sweater.",
-				Link:           "/p/1-state-balloon-sleeve-crew-neck-sweater-antique-white/product/9621708/color/26216",
-				Article:        "9621708",
-				Cat:            bases.Cat{{"Женщины", "women"}, {"Clothing", "clothing"}, {"Sweaters", "sweaters"}, {"1.STATE", "1-state"}},
+				Manufacturer: "1.STATE",
+				Name:         "Balloon Sleeve Crew Neck Sweater",
+				FullName:     "Complete your cool-weather look with the soft and cozy 1.STATE™ Balloon Sleeve Crew Neck Sweater.",
+				Link:         "/p/1-state-balloon-sleeve-crew-neck-sweater-antique-white/product/9621708/color/26216",
+				Article:      "9621708",
+				//Cat3:            bases.Cat{{"Женщины", "women"}, {"Clothing", "clothing"}, {"Sweaters", "sweaters"}, {"1.STATE", "1-state"}},
+				Cat:            bases.Cat{{"Женщины", "women", 0}, {"Clothing", "clothing", 0}, {"Sweaters", "sweaters", 0}, {"1.STATE", "1-state", 0}},
 				GenderLabel:    "women",
 				Specifications: map[string]string{"Length": "23 in"},
 				Size:           []string{"SM", "LG", "XL"},

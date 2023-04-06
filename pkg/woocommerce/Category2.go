@@ -2,7 +2,6 @@ package woocommerce
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
@@ -14,7 +13,7 @@ func (user *User) AddCat2(plc *Categorys, cat bases.Cat) (NewAddParentId int, er
 			FindParent = 0
 		}
 
-		//Find, errorFInd := plc.FindSlugName(NewCat.Name, NewCat.Slug)                   // Поиск по имени и Ссылке
+		//Find, errorFInd := plc.FindSlugName(NewCat.Name, NewCat.Slug)                 // Поиск по имени и Ссылке
 		Find, errorFInd := plc.FindSlugNameParent(NewCat.Name, NewCat.Slug, FindParent) //  Поиск по имени и Ссылке и родительской категории
 		if errorFInd != nil {                                                           // Если найдено
 			// Добавляем товар
@@ -27,14 +26,14 @@ func (user *User) AddCat2(plc *Categorys, cat bases.Cat) (NewAddParentId int, er
 		} else {
 			NewAddParentId = Find.ID
 		}
-		FindParent = NewAddParentId // Пhисваение ID поиска по родительской категории
+		FindParent = NewAddParentId // Присваение ID поиска по родительской категории
 	}
 	return NewAddParentId, nil
 }
 
 func (user *User) localAdd(plc *Categorys, parentId int, NewName string, NewSlug string) (NewId int, errorAdd error) {
 
-	fmt.Println("AddCat_WC", parentId, NewName, NewSlug)
+	//fmt.Println("AddCat_WC", parentId, NewName, NewSlug)
 	NewId, errorAdd = user.AddCat_WC(MeCat{
 		ParentID:    parentId,
 		Name:        NewName,
