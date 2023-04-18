@@ -1,0 +1,17 @@
+package zaratr_test
+
+import (
+	"testing"
+
+	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
+)
+
+func TestLoadLine(t *testing.T) {
+	lin, ErrorCat := zaratr.LoadLine("2184443")
+	if ErrorCat != nil {
+		t.Error(ErrorCat)
+	}
+	if len(lin.ProductGroups) == 0 {
+		t.Error("Неправльный ответ")
+	}
+}

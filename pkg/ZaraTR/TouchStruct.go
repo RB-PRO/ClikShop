@@ -2,7 +2,7 @@ package zaratr
 
 import "time"
 
-const TouchURL string = "https://www.zara.com/tr/en/%v?ajax=true" // Ссылка на каждый товар
+const TouchURL string = "https://www.zara.com/tr/en/%v.html?ajax=true" // Ссылка на каждый товар
 
 type Touch struct {
 	Product struct {
