@@ -16,15 +16,8 @@ func LoadTouch(id string) (tou Touch, ErrorLine error) {
 		return Touch{}, err
 	}
 
-	fmt.Println(fmt.Sprintf(TouchURL, id))
-
 	// Добавляем необходимые атрибуты
-	req.Header.Add("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
 	req.Header.Add("accept-encoding", "application/json; charset=utf-8")
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("accept-language", "ru,en;q=0.9,lt;q=0.8,it;q=0.7")
-	req.Header.Add("cache-control", "max-age=0")
-	req.Header.Add("if-none-match", "W/\"1bc40-w61OAi8lxCDjiaUhCCc+WLVUdKQ\"")
 	req.Header.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.1.895 Yowser/2.5 Safari/537.36")
 
 	// Выполнить запрос
@@ -45,8 +38,6 @@ func LoadTouch(id string) (tou Touch, ErrorLine error) {
 	if err != nil {
 		return Touch{}, err
 	}
-
-	fmt.Println(string(bodyBytes))
 
 	// Декодируем полученный json и получаем данные
 	err = json.Unmarshal(bodyBytes, &tou)

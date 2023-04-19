@@ -1,6 +1,9 @@
 package zaratr
 
-const LineURL string = "https://www.zara.com/tr/en/category/%v/products" // Ссылка на категории
+// Ссылка на категорию, [пример].
+//
+// [пример]: https://www.zara.com/tr/en/category/2184443/products
+const LineURL string = "https://www.zara.com/tr/en/category/%v/products"
 
 // Структура всех записей по ссылке всех товаров из категории
 type Line struct {

@@ -1,12 +1,16 @@
 package zaratr
 
+// Ссылка на все категории, [пример].
+//
+// [пример]: https://www.zara.com/tr/en/categories?ajax=true
 const CategoriesURL string = "https://www.zara.com/tr/en/categories?ajax=true"
 
-// Главная категория
+// Массив категорий
 type Category struct {
 	Categories []Subcategories `json:"categories"`
 }
 
+// Подкатегория
 type Subcategories struct {
 	Subcategories []Subcategories `json:"subcategories"` // Массив ссылок на каждую категорию
 	Item                          // Наполнение для каждой категории
