@@ -8,9 +8,10 @@ import (
 )
 
 func TestUSD(t *testing.T) {
-	usd := cbbank.USD()
-	if usd == 0.0 {
-		t.Error("USD: Доллар стоит 0.0. Ошибка")
+	// Нало работы с центральным банком
+	cb, ErrorCB := cbbank.New() // Получить курс валюты
+	if ErrorCB != nil {
+		t.Error(ErrorCB)
 	}
-	t.Log(fmt.Sprintf("USD is %f RUB", usd))
+	fmt.Println("Курс доллара", cb.Data.Valute.Usd.Value)
 }

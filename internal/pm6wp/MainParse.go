@@ -21,7 +21,13 @@ func Work(PageStart int, walrus float64, delivery int) {
 	if ErrorPMM != nil {
 		log.Fatalln(ErrorPMM)
 	}
-	usd := cbbank.USD()                    // Получить курс валюты
+
+	cb, ErrorCB := cbbank.New() // Получить курс валюты
+	if ErrorCB != nil {
+		log.Fatalln(ErrorCB)
+	}
+	usd := cb.Data.Valute.Usd.Value
+
 	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {
 		log.Fatalln(errorInitWcAdd)
