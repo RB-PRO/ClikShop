@@ -73,7 +73,7 @@ func (user *User) AddCat_WC(valetCat MeCat) (int, error) {
 // Функция добавления категории с обновлением домашней структуры данных
 //
 // Используется в качестве внешнего интерфейса для добавления категории товара по методике - добавил - проверил - получил ID
-func (user *User) AddCat(NodeCategoryes *Node, NewCategory bases.Cat) (CatIDcreate int, err error) {
+func (user *User) AddCat(NodeCategoryes *Node, NewCategory []bases.Cat) (CatIDcreate int, err error) {
 	// var CatIDcreate int // ID новой или старой категории
 	for _, NewCat := range NewCategory {
 		findNode, findNodeBool := NodeCategoryes.FindSlug(NewCat.Slug)

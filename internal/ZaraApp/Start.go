@@ -1,8 +1,9 @@
 package zaraapp
 
 import (
+	"bufio"
 	"fmt"
-	"log"
+	"os"
 
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
 	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
@@ -17,23 +18,27 @@ func Start() {
 	if ErrorCB != nil {
 		panic(ErrorCB)
 	}
-	fmt.Println("Курс доллара", cb.Data.Valute.Usd.Value)
+	fmt.Println("Курс лиры", cb.Data.Valute.Try.Value)
 
-	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
-	if errorInitWcAdd != nil {
-		log.Fatalln(errorInitWcAdd)
+	// Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
+	// if errorInitWcAdd != nil {
+	// 	log.Fatalln(errorInitWcAdd)
+	// }
+
+	Variety := zaratr.Parsing()
+
+	Variety.SaveXlsxCsvs("Zara")
+
+	// "Мягкий" выход из программы
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		exit := scanner.Text()
+		if exit == "q" {
+			break
+		} else {
+			fmt.Println("Press 'q' to quit")
+		}
 	}
-
-	Category, ErrorCat := zaratr.LoadCategory()
-	if ErrorCat != nil {
-		panic(ErrorCat)
-	}
-
-	ErrorCat = LoadCat3(Adding, Category)
-	if ErrorCat != nil {
-		panic(ErrorCat)
-	}
-
 }
 
 // Получить категории и создать из них структуру категорий

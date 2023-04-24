@@ -154,7 +154,6 @@ func LenPodSection(link string) int {
 //
 // Спарсить один подраздел и создать карточку с товарами
 // [PodSection]: /products/boy/clothes/kids-robes
-
 func ParsePage(variety *bases.Variety2, link string) {
 	c := colly.NewCollector()
 	c.UserAgent = "Golang"
@@ -166,9 +165,15 @@ func ParsePage(variety *bases.Variety2, link string) {
 	c.OnHTML("a[class='__img __fg']", func(e *colly.HTMLElement) {
 		hrefLink, isHref := e.DOM.Attr("href")
 		if isHref {
+			AddCat := make([]bases.Cat, 4)
+			AddCat[0].Name = catalog
+			AddCat[1].Name = podcatalog
+			AddCat[2].Name = section
+			AddCat[3].Name = podsection
+
 			variety.Product = append(variety.Product, bases.Product2{
 				Link: hrefLink,
-				Cat:  bases.Cat{{catalog, "", 0}, {podcatalog, "", 0}, {section, "", 0}, {podsection, "", 0}},
+				Cat:  AddCat,
 			})
 		}
 	})
@@ -176,9 +181,15 @@ func ParsePage(variety *bases.Variety2, link string) {
 	c.OnHTML("a[class='__img __fg']", func(e *colly.HTMLElement) {
 		hrefLink, isHref := e.DOM.Attr("href")
 		if isHref {
+			AddCat := make([]bases.Cat, 4)
+			AddCat[0].Name = catalog
+			AddCat[1].Name = podcatalog
+			AddCat[2].Name = section
+			AddCat[3].Name = podsection
+
 			variety.Product = append(variety.Product, bases.Product2{
 				Link: hrefLink,
-				Cat:  bases.Cat{{catalog, "", 0}, {podcatalog, "", 0}, {section, "", 0}, {podsection, "", 0}},
+				Cat:  AddCat,
 			})
 		}
 	})

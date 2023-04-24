@@ -299,7 +299,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 }
 
 // Сличение данных и возврат актуальной цены товара для данной категории товара
-func (woo *WcAdd) EditDelivery(categorys bases.Cat, delivery int) int {
+func (woo *WcAdd) EditDelivery(categorys []bases.Cat, delivery int) int {
 	if val, ok := woo.Delivery[categorys[2].Name]; ok {
 		return val
 	} else {

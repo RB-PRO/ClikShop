@@ -4,12 +4,13 @@
     // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
         {
-            "name": "Launch",
+            "name": "Parse",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}/pkg/wcprod/Category3_test.go",
+            "program": "${workspaceFolder}\\pkg\\ZaraTR\\Parse_test.go",
             "showLog": true
         }
     ]

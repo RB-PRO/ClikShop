@@ -8,7 +8,7 @@ import (
 // Добавть категорию товара на WC из массива категорий
 // и вернуть ID новой категории
 // Передаём в эту функцию bases.Cat и получаем на выходе ID категории.
-func (woo *WcAdd) AddCategoryWC(cat bases.Cat) (NewId int, ErrorAddCat error) {
+func (woo *WcAdd) AddCategoryWC(cat []bases.Cat) (NewId int, ErrorAddCat error) {
 	for _, Category := range cat {
 		// Поиск ID категории
 		//	Идём дальше по категории товара

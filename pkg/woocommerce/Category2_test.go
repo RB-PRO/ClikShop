@@ -14,7 +14,8 @@ func TestAddCat2(t *testing.T) {
 	// Авторизация
 	userWC, _ := woocommerce.New(consumer_key, secret_key)
 	// [{Name:Men Slug:men} {Name:Clothing Slug:clothing} {Name:Hoodies & Sweatshirts Slug:hoodies-sweatshirts} {Name:'47 NHL Slug:47-nhl}]
-	var categ bases.Cat
+
+	categ := make([]bases.Cat, 4)
 	categ[0].Name = "Test0"
 	categ[0].Slug = "test0"
 	categ[1].Name = "Test1"
@@ -51,7 +52,7 @@ func TestAddCat2(t *testing.T) {
 		t.Error("NewId2 и NewId не совпали, что означает, что категория создатся в другом месте")
 	}
 
-	var categ2 bases.Cat
+	categ2 := make([]bases.Cat, 4)
 	categ2[0].Name = "Test0"
 	categ2[0].Slug = "test0"
 	categ2[1].Name = "Test11"

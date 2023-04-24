@@ -1,69 +1,56 @@
 package zaratr
 
-import "fmt"
+import (
+	"fmt"
 
-func Parsing() {
+	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/cheggaaa/pb"
+)
 
-	//
+func Parsing() bases.Variety2 {
 
-	Items := CatCycle() // Наполнить цикл
-	fmt.Println(len(Items))
-}
+	// Категории
+	CatArr := CatCycle() // Получить все категории
+	fmt.Println("Всего", len(CatArr.Items), "категорий")
 
-func CatCycle() []Item {
-	Cat, ErrorCategory := LoadCategory()
-	if ErrorCategory != nil {
-		panic(ErrorCategory)
-	}
-	Items := make([]Item, 0) // Массив конечных категорий
+	// Все товары
+	ProductsLine := make([]CommercialComponents, 0)
+	bar := pb.StartNew(len(CatArr.Items))
+	for _, cat := range CatArr.Items {
+		line, ErrorLine := LoadLine(fmt.Sprintf("%v", cat.ID.value))
+		if ErrorLine != nil {
+			fmt.Println(ErrorLine)
+		}
+		bar.Increment()
 
-	for _, catCaters := range Cat.Categories {
-		cycle(&catCaters, &Items)
-	}
-
-	return Items
-}
-
-func cycle(catCaters *Subcategories, Items *[]Item) {
-	for _, c := range catCaters.Subcategories {
-		if len(c.Subcategories) == 0 {
-
+		if len(line.ProductGroups) != 0 {
+			if len(line.ProductGroups) != 0 {
+				if len(line.ProductGroups[0].Elements) != 0 {
+					for ind := range line.ProductGroups[0].Elements[0].CommercialComponents { // Циклом обновляем категории
+						if line.ProductGroups[0].Elements[0].CommercialComponents[ind].Type == "Product" { // Если это сам товар
+							line.ProductGroups[0].Elements[0].CommercialComponents[ind].Cat = cat.Cat
+						}
+					}
+					ProductsLine = append(ProductsLine, line.ProductGroups[0].Elements[0].CommercialComponents...)
+				}
+			}
 		}
 	}
-}
+	bar.Finish()
+	fmt.Println("Всего", len(ProductsLine), "товара(ов)")
 
-/*
-// Перебрать все категории циклом и на выходе получить массив категорий
-func CatCycle() []Item {
-	// Загрузить категории
-	Cat, ErrorCategory := LoadCategory()
-	if ErrorCategory != nil {
-		panic(ErrorCategory)
+	// парсим товары
+	var Variety bases.Variety2
+	bar2 := pb.StartNew(len(ProductsLine))
+	for _, prod := range ProductsLine {
+		touch, _ := LoadTouch(prod.Seo.Keyword + "-p" + prod.Seo.SeoProductID)
+		Prod2 := Touch2Product2(touch)
+		Prod2.Cat = prod.Cat // Обновляем категнории
+
+		Variety.Product = append(Variety.Product, Prod2)
+		bar2.Increment()
 	}
+	bar2.Finish()
 
-	Items := make([]Item, 0) // Массив конечных категорий
-
-	for _, catCaters := range Cat.Categories {
-		Items = append(Items, cycle(&catCaters)...)
-	}
-
-	return Items
+	return Variety
 }
-
-func cycle(subs *Subcategories) []Item {
-	Items := make([]Item, 0) // Массив конечных категорий
-	for _, cat := range subs.Subcategories {
-
-		// Если это конечная папка, то добавляем категорию
-		if len(cat.Subcategories) == 0 {
-			Items = append(Items)
-			return nil
-		}
-
-		// Цикл по потомку
-		cycle(subs)
-	}
-
-	return Items
-}
-*/

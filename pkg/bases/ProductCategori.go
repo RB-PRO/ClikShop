@@ -6,7 +6,7 @@ type Variety2 struct {
 }
 
 // Категория Name Slug
-type Cat [4]struct { // Категория товаров
+type Cat struct { // Категория товаров
 	Name string // Название подкатегории
 	Slug string // транслитом категория
 	ID   int    // ID товара
@@ -14,7 +14,7 @@ type Cat [4]struct { // Категория товаров
 
 // Структура товара
 type Product2 struct {
-	Cat // Подкатегория
+	Cat []Cat // Подкатегория
 
 	Name         string // Название товара
 	FullName     string // Полное название товара

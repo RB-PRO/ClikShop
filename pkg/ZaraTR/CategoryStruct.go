@@ -1,5 +1,7 @@
 package zaratr
 
+import "github.com/RB-PRO/SanctionedClothing/pkg/bases"
+
 // Ссылка на все категории, [пример].
 //
 // [пример]: https://www.zara.com/tr/en/categories?ajax=true
@@ -16,24 +18,28 @@ type Subcategories struct {
 	Item                          // Наполнение для каждой категории
 }
 type Item struct {
-	ID                 int         `json:"id"`
-	Name               string      `json:"name"`
-	SectionName        string      `json:"sectionName"`
-	Layout             string      `json:"layout"`
-	ContentType        string      `json:"contentType"`
-	GridLayout         string      `json:"gridLayout"`
-	Seo                SeoCategory `json:"seo"`
-	Attributes         Attributes  `json:"attributes"`
-	Key                string      `json:"key"`
-	IsRedirected       bool        `json:"isRedirected"`
-	IsCurrent          bool        `json:"isCurrent"`
-	IsSelected         bool        `json:"isSelected"`
-	HasSubcategories   bool        `json:"hasSubcategories"`
-	Irrelevant         bool        `json:"irrelevant"`
-	ViewOptions        ViewOptions `json:"viewOptions"`
-	MenuLevel          int         `json:"menuLevel"`
-	RedirectCategoryID int         `json:"redirectCategoryId,omitempty"`
+	ID                 CustomIntToString `json:"id"`
+	Name               string            `json:"name"`
+	SectionName        string            `json:"sectionName"`
+	Layout             string            `json:"layout"`
+	ContentType        string            `json:"contentType"`
+	GridLayout         string            `json:"gridLayout"`
+	Seo                SeoCategory       `json:"seo"`
+	Attributes         Attributes        `json:"attributes"`
+	Key                string            `json:"key"`
+	IsRedirected       bool              `json:"isRedirected"`
+	IsCurrent          bool              `json:"isCurrent"`
+	IsSelected         bool              `json:"isSelected"`
+	HasSubcategories   bool              `json:"hasSubcategories"`
+	Irrelevant         bool              `json:"irrelevant"`
+	ViewOptions        ViewOptions       `json:"viewOptions"`
+	MenuLevel          int               `json:"menuLevel"`
+	RedirectCategoryID int               `json:"redirectCategoryId,omitempty"`
+
+	// массив категорий
+	Cat []bases.Cat `json:"-"`
 }
+
 type SeoCategory struct {
 	SeoCategoryID  int    `json:"seoCategoryId"`
 	Keyword        string `json:"keyword"`

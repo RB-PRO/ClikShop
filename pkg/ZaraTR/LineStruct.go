@@ -1,5 +1,12 @@
 package zaratr
 
+import (
+	"encoding/json"
+	"errors"
+
+	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+)
+
 // Ссылка на категорию, [пример].
 //
 // [пример]: https://www.zara.com/tr/en/category/2184443/products
@@ -41,8 +48,37 @@ type ColorInfo struct {
 	MainColorHexCode              string `json:"mainColorHexCode"`
 	ShouldUseColorcutInColorLabel bool   `json:"shouldUseColorcutInColorLabel"`
 }
+
+type ID_int_or_string string // Тип для ID, который возможно int или string
+type CustomIntToString struct {
+	value string
+}
+
+// Кастомное декодирование JSON для ключа SearchID
+func (cis *CustomIntToString) UnmarshalJSON(data []byte) error {
+	if data[0] == 34 { // Если первый символ - Кавычка
+		err := json.Unmarshal(data, &cis.value)
+		if err != nil {
+			return errors.New("CustomIntToString: UnmarshalJSON: Find 34: " + err.Error())
+		}
+	} else {
+		// Добавление Кавычек в начале и в конце массива byte
+		newData := make([]byte, 1)
+		newData[0] = 34
+		newData = append(newData, data...)
+		newData = append(newData, 34)
+		//newData[len(data)] = 34
+
+		err := json.Unmarshal(newData, &cis.value)
+		if err != nil {
+			return errors.New("CustomIntToString: UnmarshalJSON: Find't 34: " + err.Error())
+		}
+	}
+	return nil
+}
+
 type CommercialComponents struct {
-	ID                     int                           `json:"id"`
+	ID                     CustomIntToString             `json:"id"`
 	Reference              string                        `json:"reference"`
 	Type                   string                        `json:"type"`
 	Kind                   string                        `json:"kind"`
@@ -72,6 +108,9 @@ type CommercialComponents struct {
 	ShowExtraImageOnHover  bool                          `json:"showExtraImageOnHover"`
 	ShowAvailability       bool                          `json:"showAvailability"`
 	PriceUnavailable       bool                          `json:"priceUnavailable"`
+
+	// массив категорий
+	Cat []bases.Cat `json:"-"`
 }
 type ExtraInfoCommercialComponents struct {
 	IsDivider       bool `json:"isDivider"`

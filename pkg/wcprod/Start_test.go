@@ -37,6 +37,15 @@ func TestEditDelivery(t *testing.T) {
 
 // Создать тестовый товар
 func varietBasesVariety2() bases.Variety2 {
+	AddCat := make([]bases.Cat, 4)
+	AddCat[0].Name = "Женщины"
+	AddCat[0].Slug = "women"
+	AddCat[1].Name = "Clothing"
+	AddCat[1].Slug = "clothing"
+	AddCat[2].Name = "Sweaters"
+	AddCat[2].Slug = "sweaters"
+	AddCat[3].Name = "1.STATE"
+	AddCat[3].Slug = "1-state"
 	return bases.Variety2{
 		[]bases.Product2{
 			bases.Product2{
@@ -46,7 +55,7 @@ func varietBasesVariety2() bases.Variety2 {
 				Link:         "/p/1-state-balloon-sleeve-crew-neck-sweater-antique-white/product/9621708/color/26216",
 				Article:      "9621708",
 				//Cat3:            bases.Cat{{"Женщины", "women"}, {"Clothing", "clothing"}, {"Sweaters", "sweaters"}, {"1.STATE", "1-state"}},
-				Cat:            bases.Cat{{"Женщины", "women", 0}, {"Clothing", "clothing", 0}, {"Sweaters", "sweaters", 0}, {"1.STATE", "1-state", 0}},
+				Cat:            AddCat,
 				GenderLabel:    "women",
 				Specifications: map[string]string{"Length": "23 in"},
 				Size:           []string{"SM", "LG", "XL"},

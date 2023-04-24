@@ -67,16 +67,24 @@ func (variety Variety2) SaveXlsx(filename string) error {
 	// Создаём мапу, которая будет содержать значения номеров колонок
 	colName := make(map[string]int)
 	for indexItem, valItem := range variety.Product {
-		setCell(book, wotkSheet, indexItem+2, 1, valItem.Cat[0].Name)  // Каталог
-		setCell(book, wotkSheet, indexItem+2, 2, valItem.Cat[1].Name)  // ПодКаталог
-		setCell(book, wotkSheet, indexItem+2, 3, valItem.Cat[2].Name)  // Секция
-		setCell(book, wotkSheet, indexItem+2, 4, valItem.Cat[3].Name)  // Подсекция
-		setCell(book, wotkSheet, indexItem+2, 5, valItem.Name)         // Название товара
-		setCell(book, wotkSheet, indexItem+2, 6, valItem.FullName)     // Полное название товара
-		setCell(book, wotkSheet, indexItem+2, 7, valItem.Link)         // Ссылка на товар
-		setCell(book, wotkSheet, indexItem+2, 8, valItem.Article)      // Артикул
-		setCell(book, wotkSheet, indexItem+2, 9, valItem.Manufacturer) // Производитель
-		//setCell(book, wotkSheet, indexItem+2, 10, valItem.Price)           // Цена
+		if len(valItem.Cat) > 0 {
+			setCell(book, wotkSheet, indexItem+2, 1, valItem.Cat[0].Name) // Каталог
+		}
+		if len(valItem.Cat) > 1 {
+			setCell(book, wotkSheet, indexItem+2, 2, valItem.Cat[1].Name) // ПодКаталог
+		}
+		if len(valItem.Cat) > 2 {
+			setCell(book, wotkSheet, indexItem+2, 3, valItem.Cat[2].Name) // Секция
+		}
+		if len(valItem.Cat) > 3 {
+			setCell(book, wotkSheet, indexItem+2, 4, valItem.Cat[3].Name) // Подсекция
+		}
+		setCell(book, wotkSheet, indexItem+2, 5, valItem.Name)             // Название товара
+		setCell(book, wotkSheet, indexItem+2, 6, valItem.FullName)         // Полное название товара
+		setCell(book, wotkSheet, indexItem+2, 7, valItem.Link)             // Ссылка на товар
+		setCell(book, wotkSheet, indexItem+2, 8, valItem.Article)          // Артикул
+		setCell(book, wotkSheet, indexItem+2, 9, valItem.Manufacturer)     // Производитель
+		setCell(book, wotkSheet, indexItem+2, 10, valItem.Size)            // Цена
 		setCell(book, wotkSheet, indexItem+2, 11, valItem.Description.Rus) // Описание товара Rus
 		setCell(book, wotkSheet, indexItem+2, 12, valItem.Description.Eng) // Описание товара Eng
 		//setCell(book, wotkSheet, indexItem+2, 13, valItem.Colors)          // Цвета
@@ -147,12 +155,6 @@ func setHead(file *excelize.File, wotkSheet string, x int, value interface{}) {
 	file.SetCellValue(wotkSheet, collumnStr+"1", value)
 }
 
-// *** for csv file ***
-func incriment(value *int) int {
-	*value++
-	return *value
-}
-
 // Сохранить данные в Xlsx
 func (variety Variety2) SaveXlsxCsvs(filename string) error {
 	// Создать книгу
@@ -186,11 +188,18 @@ func (variety Variety2) SaveXlsxCsvs(filename string) error {
 
 		setCell(book, wotkSheet, row, 1, indexItem+1) // Номер
 
-		setCell(book, wotkSheet, row, 2, valItem.Cat[0].Name+" > "+valItem.Cat[1].Name+" > "+valItem.Cat[2].Name) // Путь
-
-		setCell(book, wotkSheet, row, 3, valItem.Cat[0].Name) // Каталог
-		setCell(book, wotkSheet, row, 4, valItem.Cat[1].Name) // ПодКаталог
-		setCell(book, wotkSheet, row, 5, valItem.Cat[2].Name) // Секция
+		if len(valItem.Cat) > 3 {
+			setCell(book, wotkSheet, row, 2, valItem.Cat[0].Name+" > "+valItem.Cat[1].Name+" > "+valItem.Cat[2].Name) // Путь
+		}
+		if len(valItem.Cat) > 1 {
+			setCell(book, wotkSheet, row, 3, valItem.Cat[0].Name) // Каталог
+		}
+		if len(valItem.Cat) > 2 {
+			setCell(book, wotkSheet, row, 4, valItem.Cat[1].Name) // ПодКаталог
+		}
+		if len(valItem.Cat) > 3 {
+			setCell(book, wotkSheet, row, 5, valItem.Cat[2].Name) // Секция
+		}
 
 		setCell(book, wotkSheet, row, 6, valItem.Name)     // Название товара
 		setCell(book, wotkSheet, row, 7, valItem.FullName) // Полное название товара
@@ -206,20 +215,28 @@ func (variety Variety2) SaveXlsxCsvs(filename string) error {
 
 		// Обработка мапы картинок
 		for keyImage, valImage := range valItem.Item {
-			setCell(book, wotkSheet, row, 1, indexItem+1)                                                             // Номер
-			setCell(book, wotkSheet, row, 2, valItem.Cat[0].Name+" > "+valItem.Cat[1].Name+" > "+valItem.Cat[2].Name) // Путь
-			setCell(book, wotkSheet, row, 3, valItem.Cat[0].Name)                                                     // Каталог
-			setCell(book, wotkSheet, row, 4, valItem.Cat[1].Name)                                                     // ПодКаталог
-			setCell(book, wotkSheet, row, 5, valItem.Cat[2].Name)                                                     // Секция
-			setCell(book, wotkSheet, row, 6, valItem.Name)                                                            // Название товара
-			setCell(book, wotkSheet, row, 7, valItem.FullName)                                                        // Полное название товара
-			setCell(book, wotkSheet, row, 8, valItem.Item[keyImage].Link)                                             // Ссылка на товар
-			setCell(book, wotkSheet, row, 9, valItem.Article+"-"+valImage.ColorEng)                                   // Артикул
-			setCell(book, wotkSheet, row, 10, valItem.Manufacturer)                                                   // Производитель
-			setCell(book, wotkSheet, row, 11, valItem.Item[keyImage].Price)                                           // Цена
-			setCell(book, wotkSheet, row, 12, keyImage)                                                               // Цвет // Буду ориентироваться на мапу картинок
-			setCell(book, wotkSheet, row, 13, strings.Join(valItem.Item[keyImage].Image, ","))                        // Картинка
-			setCell(book, wotkSheet, row, 14, strings.Join(valItem.Item[keyImage].Size, ","))                         // Размеры
+			setCell(book, wotkSheet, row, 1, indexItem+1) // Номер
+			if len(valItem.Cat) > 3 {
+				setCell(book, wotkSheet, row, 2, valItem.Cat[0].Name+" > "+valItem.Cat[1].Name+" > "+valItem.Cat[2].Name) // Путь
+			}
+			if len(valItem.Cat) > 1 {
+				setCell(book, wotkSheet, row, 3, valItem.Cat[0].Name) // Каталог
+			}
+			if len(valItem.Cat) > 2 {
+				setCell(book, wotkSheet, row, 4, valItem.Cat[1].Name) // ПодКаталог
+			}
+			if len(valItem.Cat) > 3 {
+				setCell(book, wotkSheet, row, 5, valItem.Cat[2].Name) // Секция
+			}
+			setCell(book, wotkSheet, row, 6, valItem.Name)                                     // Название товара
+			setCell(book, wotkSheet, row, 7, valItem.FullName)                                 // Полное название товара
+			setCell(book, wotkSheet, row, 8, valItem.Item[keyImage].Link)                      // Ссылка на товар
+			setCell(book, wotkSheet, row, 9, valItem.Article+"-"+valImage.ColorEng)            // Артикул
+			setCell(book, wotkSheet, row, 10, valItem.Manufacturer)                            // Производитель
+			setCell(book, wotkSheet, row, 11, valItem.Item[keyImage].Price)                    // Цена
+			setCell(book, wotkSheet, row, 12, keyImage)                                        // Цвет // Буду ориентироваться на мапу картинок
+			setCell(book, wotkSheet, row, 13, strings.Join(valItem.Item[keyImage].Image, ",")) // Картинка
+			setCell(book, wotkSheet, row, 14, strings.Join(valItem.Item[keyImage].Size, ","))  // Размеры
 
 			// Обработка мапы доп полей
 			//var SpecificationsString string

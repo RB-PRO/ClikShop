@@ -158,12 +158,15 @@ func CodeOfLink(link string) (string, error) {
 // Получить категорию товара
 //
 // Он же путь к товару
-func CatalogsCat(link string) (cat bases.Cat) {
+func CatalogsCat(link string) (cat []bases.Cat) {
 
 	c := colly.NewCollector()
 	c.UserAgent = "Golang"
 
 	c.OnHTML("nav[class='c-crumbs wrapper']", func(e *colly.HTMLElement) {
+
+		cat := make([]bases.Cat, 4)
+
 		cat[0].Name = e.DOM.Find("span:nth-child(2) a").Text()
 		cat[0].Slug, _ = e.DOM.Find("span:nth-child(2) a").Attr("href")
 		cat[1].Name = e.DOM.Find("span:nth-child(3) a").Text()
@@ -176,6 +179,7 @@ func CatalogsCat(link string) (cat bases.Cat) {
 		cat[1].Slug = lastSlush(cat[1].Slug)
 		cat[2].Slug = lastSlush(cat[2].Slug)
 		cat[3].Slug = lastSlush(cat[3].Slug)
+
 	})
 	c.Visit(link)
 

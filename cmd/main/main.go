@@ -1,6 +1,6 @@
 package main
 
-import "github.com/RB-PRO/SanctionedClothing/internal/pm6wp"
+import zaraapp "github.com/RB-PRO/SanctionedClothing/internal/ZaraApp"
 
 func main() {
 	//app.Run(os.Args[1])
@@ -12,5 +12,7 @@ func main() {
 	//tests.Run_pm6()
 	//tests.Run_pm6_adventing_Sortered()
 	//tests.AddProd()
-	pm6wp.Start()
+	//pm6wp.Start()
+
+	zaraapp.Start()
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
 
-func (user *User) AddCat2(plc *Categorys, cat bases.Cat) (NewAddParentId int, errorAdd error) {
+func (user *User) AddCat2(plc *Categorys, cat []bases.Cat) (NewAddParentId int, errorAdd error) {
 	for itteration, NewCat := range cat {
 		var FindParent int
 		if itteration == 0 {

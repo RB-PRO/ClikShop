@@ -16,7 +16,8 @@ func TestAddCat(t *testing.T) {
 	// Авторизация
 	userWC, _ := New(consumer_key, secret_key)
 	// [{Name:Men Slug:men} {Name:Clothing Slug:clothing} {Name:Hoodies & Sweatshirts Slug:hoodies-sweatshirts} {Name:'47 NHL Slug:47-nhl}]
-	var categ bases.Cat
+
+	categ := make([]bases.Cat, 4)
 	categ[0].Name = "Men"
 	categ[0].Slug = "men"
 	categ[1].Name = "Clothing"

@@ -176,7 +176,7 @@ func TestAddCategoryWC(t *testing.T) {
 
 	Adding.PrintCat3()
 
-	var AddCat bases.Cat
+	AddCat := make([]bases.Cat, 4)
 	AddCat[0].Name = "Test0"
 	AddCat[0].Slug = "test0"
 	AddCat[1].Name = "Test1"

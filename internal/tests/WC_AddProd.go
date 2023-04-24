@@ -60,16 +60,25 @@ func AddProd() {
 		NodeCategoryes.Add(categ.Parent, addingCategory)
 	}
 
+	AddCat := make([]bases.Cat, 4)
+	AddCat[0].Name = "Женщины"
+	AddCat[0].Slug = "women"
+	AddCat[1].Name = "Clothing"
+	AddCat[1].Slug = "clothing"
+	AddCat[2].Name = "Sweaters"
+	AddCat[2].Slug = "sweaters"
+	AddCat[3].Name = "1.STATE"
+	AddCat[3].Slug = "1-state"
 	// Создать тестовый товар
 	variet := bases.Variety2{
 		[]bases.Product2{
-			bases.Product2{
+			{
 				Manufacturer:   "1.STATE",
 				Name:           "Balloon Sleeve Crew Neck Sweater",
 				FullName:       "Complete your cool-weather look with the soft and cozy 1.STATE™ Balloon Sleeve Crew Neck Sweater.",
 				Link:           "/p/1-state-balloon-sleeve-crew-neck-sweater-antique-white/product/9621708/color/26216",
 				Article:        "9621708",
-				Cat:            bases.Cat{{"Женщины", "women", 0}, {"Clothing", "clothing", 0}, {"Sweaters", "sweaters", 0}, {"1.STATE", "1-state", 0}},
+				Cat:            AddCat,
 				GenderLabel:    "women",
 				Specifications: map[string]string{"Length": "23 in"},
 				Size:           []string{"SM", "LG", "XL"},
@@ -87,14 +96,14 @@ func AddProd() {
 				Product measurements were taken using size SM. Please note that measurements may vary by size.
 				 Length: 23 in`},
 				Item: map[string]bases.ProdParam{
-					"wild-oak": bases.ProdParam{
+					"wild-oak": {
 						Link:     "/product/9621708/color/836781",
 						ColorEng: "Wild Oak",
 						Price:    42.0,
 						Size:     []string{"SM", "LG", "XL"},
 						Image:    []string{"https://m.media-amazon.com/images/I/91GJ2hRcTeL.jpg", "https://m.media-amazon.com/images/I/91WQzGVObeL.jpg", "https://m.media-amazon.com/images/I/913KXCLH1lL.jpg", "https://m.media-amazon.com/images/I/71a8c4Fw+uL.jpg"},
 					},
-					"antique-white": bases.ProdParam{
+					"antique-white": {
 						Link:     "/product/9621708/color/26216",
 						ColorEng: "Antique White",
 						Price:    31.58,
