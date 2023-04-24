@@ -8,15 +8,23 @@ import (
 
 func TestTrans(t *testing.T) {
 
-	inputStr := "Hello world"
-	outputStr := "Привет мир"
+	inputStr := "hello"
+	outputStr := "привет"
 
-	answerTranslate, errorTranslate := transrb.Trans(inputStr)
+	tr, err := transrb.New()
+	if err != nil {
+		t.Error(err)
+	}
+
+	answerTranslate, errorTranslate := tr.Trans(inputStr)
 	if errorTranslate != nil {
 		t.Error(errorTranslate)
 	}
 	if outputStr != answerTranslate {
-		t.Error("Неверный перевод. Получено: " + answerTranslate)
+		t.Errorf(`Неверный перевод.
+Получено:    "%v"
+Должно быть: "%v"`,
+			answerTranslate, outputStr)
 	}
 
 	/*

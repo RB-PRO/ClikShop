@@ -12,6 +12,7 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/hiscaler/woocommerce-go v1.0.3
 	github.com/mdigger/translit v0.0.0-20190913173519-84222363843c
+	github.com/sergei-svistunov/go-yandex-translate v1.0.1
 	github.com/xuri/excelize/v2 v2.7.0
 	golang.org/x/exp v0.0.0-20230307190834-24139beb5833
 )
