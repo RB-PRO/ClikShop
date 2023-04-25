@@ -8,3 +8,5 @@ secret_key
 yandexToken
 config_test.json
 proxy
+FolderID
+IAM

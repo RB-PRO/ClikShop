@@ -1,6 +1,8 @@
 package transrb_test
 
 import (
+	"io"
+	"os"
 	"testing"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
@@ -8,10 +10,13 @@ import (
 
 func TestTrans(t *testing.T) {
 
-	inputStr := "hello"
-	outputStr := "привет"
+	inputStr := []string{"hello"}
+	outputStr := "здравствуйте"
 
-	tr, err := transrb.New()
+	FolderID, _ := DataFile("FolderID")
+	IAM, _ := DataFile("IAM")
+
+	tr, err := transrb.New(FolderID, IAM)
 	if err != nil {
 		t.Error(err)
 	}
@@ -20,18 +25,32 @@ func TestTrans(t *testing.T) {
 	if errorTranslate != nil {
 		t.Error(errorTranslate)
 	}
-	if outputStr != answerTranslate {
+	if len(answerTranslate) == 0 {
+		t.Error("Массив вывода равен нулю")
+	}
+	if outputStr != answerTranslate[0] {
 		t.Errorf(`Неверный перевод.
 Получено:    "%v"
-Должно быть: "%v"`,
-			answerTranslate, outputStr)
+Должно быть: "%v"`, answerTranslate, outputStr)
 	}
 
-	/*
-		yt := translate.New("t1.9euelZqMys6SlcuLnMaRzsyNyJHPju3rnpWay5LJkY2QipGby5WSzs-QlM3l9PcAICFf-e8eeDXF3fT3QE4eX_nvHng1xQ.u6HjMY2PJsJMaqFgHBqunCpQCiW7xrfzlO9JF6sQhD9eUV3letPSpTkse2KMPfOTyRvClof2HMax_fvZeMJFBg") // get the key from https://translate.yandex.com/developers/keys
+}
 
-		texts, err := yt.Translate([]string{"Test", "Hello"}, "en-ru", "plain")
-		fmt.Println(err)
-		fmt.Println(texts)
-	*/
+// Получение значение из файла
+func DataFile(filename string) (string, error) {
+	// Открыть файл
+	fileToken, errorToken := os.Open(filename)
+	if errorToken != nil {
+		return "", errorToken
+	}
+
+	// Прочитать значение файла
+	data := make([]byte, 512)
+	n, err := fileToken.Read(data)
+	if err == io.EOF { // если конец файла
+		return "", errorToken
+	}
+	fileToken.Close() // Закрытие файла
+
+	return string(data[:n]), nil
 }
