@@ -54,7 +54,3 @@ func DataFile(filename string) (string, error) {
 
 	return string(data[:n]), nil
 }
-
-func TestTRTR(t *testing.T) {
-	transrb.TRTR([]string{"Test", "Hello"})
-}
