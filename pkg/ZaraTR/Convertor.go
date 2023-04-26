@@ -23,7 +23,7 @@ func Touch2Product2(tou Touch) bases.Product2 {
 
 	// Гендер
 	if len(tou.BreadCrumbs) != 0 {
-		Prod.GenderLabel = tou.BreadCrumbs[0].Keyword
+		_, Prod.GenderLabel, _ = bases.GenderBook(tou.BreadCrumbs[0].Keyword, "")
 	} else {
 		Prod.GenderLabel = "unisex"
 	}
