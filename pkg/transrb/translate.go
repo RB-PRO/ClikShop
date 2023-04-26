@@ -5,15 +5,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
 
 // Экземпляр переводчика с внутренними данными
 type Translate struct {
-	FolderID string // Идентификатор https://console.cloud.yandex.ru/cloud/b1gok977v247t4a0f6qk
-	IAM      string // Токен IAM https://cloud.yandex.ru/docs/iam/operations/iam-token/create
+	FolderID   string // Идентификатор https://console.cloud.yandex.ru/cloud/b1gok977v247t4a0f6qk
+	IAM        string // Токен IAM https://cloud.yandex.ru/docs/iam/operations/iam-token/create
+	OAuthToken string // https://cloud.yandex.ru/docs/iam/operations/iam-token/create
 }
 
 // Стукртура ответа сервера
@@ -37,11 +38,17 @@ type Response struct {
 var ErrorInput error = errors.New("Translate: New: Invalid input data")
 
 // Создать экземпляр переводчика
-func New(FolderID, IAM string) (*Translate, error) {
-	if FolderID == "" || IAM == "" {
+func New(FolderID, OAuthToken string) (*Translate, error) {
+	IAM_token, ErrorIAM := IAM(OAuthToken)
+	fmt.Println(IAM_token)
+	if ErrorIAM != nil {
+		return nil, ErrorIAM
+	}
+
+	if FolderID == "" || IAM_token == "" || OAuthToken == "" {
 		return nil, ErrorInput
 	}
-	return &Translate{FolderID: FolderID, IAM: IAM}, nil
+	return &Translate{FolderID: FolderID, OAuthToken: OAuthToken, IAM: IAM_token}, nil
 }
 
 // Перевести
@@ -79,40 +86,10 @@ func (cli *Translate) Trans(InputStrs []string) ([]string, error) {
 	defer resp.Body.Close()
 
 	// Вывод результатов
-	body, ErrReadAll := ioutil.ReadAll(resp.Body) // response body is []byte
+	body, ErrReadAll := io.ReadAll(resp.Body) // response body is []byte
 	if ErrReadAll != nil {
 		return nil, ErrReadAll
 	}
-
-	///////////////
-
-	// url := "https://translate.api.cloud.yandex.net/translate/v2/translate"
-	// method := "POST"
-
-	// payload := strings.NewReader(`{"folderId":"b1g6tc9m2p20c6875r8d","texts":["hello"],"targetLanguageCode":"ru"}`)
-
-	// client := &http.Client{}
-	// req, err := http.NewRequest(method, url, payload)
-
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// req.Header.Add("Content-Type", "application/json")
-	// req.Header.Add("Authorization", "Bearer t1.9euelZqTk8iRyoqPnZPOxpPMiceTz-3rnpWay5LJkY2QipGby5WSzs-QlM3l9PdMBWJd-e93CzPN3fT3DDRfXfnvdwszzQ.8vcn3tOXdnV6jmPjdlNiQKhOBIn9u3tF3CUkCGAm8HWO79ZFdCH1tA2aBdfsTwWoG7wufuqGXqfVVjk-5TfeDg")
-
-	// res, err := client.Do(req)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// defer res.Body.Close()
-
-	// body, err := ioutil.ReadAll(res.Body)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// fmt.Println(string(body))
-
-	/////////////
 
 	fmt.Println(string(body))
 

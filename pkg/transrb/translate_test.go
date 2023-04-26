@@ -14,9 +14,9 @@ func TestTrans(t *testing.T) {
 	outputStr := "здравствуйте"
 
 	FolderID, _ := DataFile("FolderID")
-	IAM, _ := DataFile("IAM")
+	OAuthToken, _ := DataFile("OAuthToken")
 
-	tr, err := transrb.New(FolderID, IAM)
+	tr, err := transrb.New(FolderID, OAuthToken)
 	if err != nil {
 		t.Error(err)
 	}
@@ -53,4 +53,8 @@ func DataFile(filename string) (string, error) {
 	fileToken.Close() // Закрытие файла
 
 	return string(data[:n]), nil
+}
+
+func TestTRTR(t *testing.T) {
+	transrb.TRTR([]string{"Test", "Hello"})
 }
