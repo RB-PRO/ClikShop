@@ -10,13 +10,10 @@ require (
 	github.com/bas24/googletranslatefree v0.0.0-20220326200502-05ed9e639439
 	github.com/cheggaaa/pb v1.0.29
 	github.com/gocolly/colly v1.2.0
-	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/hiscaler/woocommerce-go v1.0.3
 	github.com/mdigger/translit v0.0.0-20190913173519-84222363843c
 	github.com/xuri/excelize/v2 v2.7.0
-	github.com/yandex-cloud/go-genproto v0.0.0-20230424104855-9e5dea1cf9e4
 	golang.org/x/exp v0.0.0-20230307190834-24139beb5833
-	google.golang.org/grpc v1.54.0
 )
 
 require (
@@ -32,6 +29,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hiscaler/gox v0.0.0-20220607093548-75ae453f938c // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -53,7 +51,6 @@ require (
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 )
