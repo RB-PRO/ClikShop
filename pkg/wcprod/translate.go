@@ -2,6 +2,7 @@ package wcprod
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	gt "github.com/bas24/googletranslatefree"
@@ -75,7 +76,13 @@ func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 	prod.Description.Eng = strings.ReplaceAll(prod.Description.Eng, "\t", "")
 	prod.Description.Eng = strings.ReplaceAll(prod.Description.Eng, "#", "")
 
-	prod.FullName = strings.ReplaceAll(prod.FullName, "SKU:", "") // Краткое описание
+	// Первая буква заглавная
+	r := []rune(prod.Description.Eng)
+	r[0] = unicode.ToUpper(r[0])
+	prod.Description.Eng = string(r)
+
+	// Краткое описание
+	prod.FullName = strings.ReplaceAll(prod.FullName, "SKU:", "")
 
 	// Переводим имя
 	TranslateNames, ErorTranslate := woo.Tr.Trans([]string{prod.Description.Eng, prod.Name, prod.FullName})

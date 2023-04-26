@@ -22,28 +22,24 @@ func Start() {
 	}
 	fmt.Println("Курс лиры", cb.Data.Valute.Try.Value)
 
-	// Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
-	// if errorInitWcAdd != nil {
-	// 	log.Fatalln(errorInitWcAdd)
-	// }
-
-	varient := zaratr.Parsing()
-
-	varient.SaveXlsxCsvs("Zara")
-
 	// Загружаем товары на WC //
 	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {
 		log.Fatalln(errorInitWcAdd)
 	}
+
+	varient := zaratr.Parsing()
+
+	varient.SaveXlsxCsvs("Zara")
+
 	// Загружаем товары
 	delivery := 100 // Доставка
-	walrus := 1.5   // Моржа
+	walrus := 1.3   // Моржа
 	for i := 0; i < len(varient.Product)-2; i++ {
 		if !varient.Product[i].Upload {
 			// Формирование адекватной цены доставки из файла
 			ActualDelivery := Adding.EditDelivery(varient.Product[i].Cat, delivery)
-			varient.Product[i] = EditCoast(varient.Product[i], cb.Data.Valute.Try.Value, walrus, ActualDelivery)
+			varient.Product[i] = EditCoast(varient.Product[i], cb.Data.Valute.Try.Value/10, walrus, ActualDelivery)
 			//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(varient.Product[i])) //.AddAttr()
 			varient.Product[i], _ = Adding.YandexTranslate(varient.Product[i])
 			errorAddProductWC := Adding.AddProduct(varient.Product[i]) //.AddAttr()
