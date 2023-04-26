@@ -91,7 +91,7 @@ func (cli *Translate) Trans(InputStrs []string) ([]string, error) {
 		return nil, ErrReadAll
 	}
 
-	fmt.Println(string(body))
+	// fmt.Println(string(body))
 
 	// Распарсить ответ
 	var result Response

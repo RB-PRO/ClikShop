@@ -12,6 +12,7 @@ import (
 	"strconv"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
 	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
 	wc "github.com/hiscaler/woocommerce-go"
 	config "github.com/hiscaler/woocommerce-go/config"
@@ -26,6 +27,7 @@ type WcAdd struct {
 	TagMap         map[string]int         // Мапа тегов. Вообще бы её вывести отсюда нахрен
 	Sttr           woocommerce.Attributes // Структура аттрибутов, которые лежат на WP
 	Plc            woocommerce.Categorys  // Массив категорий товара
+	Tr             *transrb.Translate     // Переводчик
 
 	// ID аттрибутов в WordPress.
 	IdAttrColor int
@@ -44,13 +46,13 @@ func New() (*WcAdd, error) {
 	// Клиент от сторонней библиотеки(пользовательской)
 	b, err := os.ReadFile("config_test.json")
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Read config error: %s", err.Error()))
+		return nil, errors.New("wcprod: New: Read config error: " + err.Error())
 	}
 
 	var c config.Config
 	err = json.Unmarshal(b, &c)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Parse config file error: %s", err.Error()))
+		return nil, errors.New("wcprod: New: Parse config file error: " + err.Error())
 	}
 	wooClient := wc.NewClient(c)
 
@@ -82,6 +84,16 @@ func New() (*WcAdd, error) {
 	plc, errPLC := userWC.ProductsCategories()
 	if errPLC != nil {
 		return nil, errPLC
+	}
+
+	// Переводчик
+
+	FolderID, _ := DataFile("FolderID")
+	OAuthToken, _ := DataFile("OAuthToken")
+
+	tr, ErrTranslate := transrb.New(FolderID, OAuthToken)
+	if ErrTranslate != nil {
+		return nil, ErrTranslate
 	}
 
 	// Дерево категорий - Формирование внутренней структуры
@@ -129,6 +141,7 @@ func New() (*WcAdd, error) {
 		Delivery:       Delivery,
 		Plc:            plc,
 		Cat3:           Cat3,
+		Tr:             tr,
 	}, nil
 }
 

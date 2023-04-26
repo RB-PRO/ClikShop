@@ -69,3 +69,57 @@ func ProductTranslate(prod bases.Product2) bases.Product2 {
 
 	return prod
 }
+
+func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
+	// Описание
+	prod.Description.Eng = strings.ReplaceAll(prod.Description.Eng, "\t", "")
+	prod.Description.Eng = strings.ReplaceAll(prod.Description.Eng, "#", "")
+
+	prod.FullName = strings.ReplaceAll(prod.FullName, "SKU:", "") // Краткое описание
+
+	// Переводим имя
+	TranslateNames, ErorTranslate := woo.Tr.Trans([]string{prod.Description.Eng, prod.Name, prod.FullName})
+	if ErorTranslate != nil {
+		return prod, ErorTranslate
+	}
+	prod.Description.Eng, prod.Name, prod.FullName = TranslateNames[0], TranslateNames[1], TranslateNames[2]
+
+	// Категории
+	var cats []string
+	for _, CatName := range prod.Cat {
+		cats = append(cats, CatName.Name)
+	}
+	TranslateCats, ErorTranslateCat := woo.Tr.Trans(cats)
+	if ErorTranslateCat != nil {
+		return prod, ErorTranslateCat
+	}
+	for ind := range prod.Cat {
+		prod.Cat[ind].Name = TranslateCats[ind]
+	}
+
+	// Вариации
+	var item []string
+	for _, it := range prod.Item {
+		item = append(item, it.ColorEng)
+	}
+	TranslateItem, ErorTranslateItem := woo.Tr.Trans(item)
+	if ErorTranslateItem != nil {
+		return prod, ErorTranslateItem
+	}
+	var ind int
+	for key := range prod.Item {
+		if entry, ok := prod.Item[key]; ok {
+
+			// Корректируем данные
+			// Курс доллара * цена в долларах * наценка + цена доставки
+			entry.ColorEng = TranslateItem[ind]
+
+			// Обновляем данные
+			prod.Item[key] = entry
+		}
+		// prod.Item[key].ColorEng = TranslateItem[ind]
+		ind++
+	}
+
+	return prod, nil
+}

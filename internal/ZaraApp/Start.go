@@ -45,6 +45,7 @@ func Start() {
 			ActualDelivery := Adding.EditDelivery(varient.Product[i].Cat, delivery)
 			varient.Product[i] = EditCoast(varient.Product[i], cb.Data.Valute.Try.Value, walrus, ActualDelivery)
 			//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(varient.Product[i])) //.AddAttr()
+			varient.Product[i], _ = Adding.YandexTranslate(varient.Product[i])
 			errorAddProductWC := Adding.AddProduct(varient.Product[i]) //.AddAttr()
 			if errorAddProductWC != nil {
 				varient.Product[i].Upload = true
