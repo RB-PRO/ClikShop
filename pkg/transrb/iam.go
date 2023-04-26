@@ -3,26 +3,11 @@ package transrb
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
 	"time"
 )
-
-func TRTR(Translate []string) {
-	// y0_AgAAAAANmH2FAATuwQAAAADdzO0BpgX9OWjQTlKHbutb6RmAe2HmEII
-
-	OAuthToken := "y0_AgAAAAANmH2FAATuwQAAAADdzO0BpgX9OWjQTlKHbutb6RmAe2HmEII"
-	IAM_token, ErrorIAM := IAM(OAuthToken)
-	if ErrorIAM != nil {
-		fmt.Println(ErrorIAM)
-	}
-
-	fmt.Println(IAM_token)
-	//  "AQVN21irl_QaeKLFY7fExYIMZ8Y1pvYU19Ci4504"
-
-}
 
 // Ошибка нулевого
 var ErrorTokenNil error = errors.New("IAM: nil Token")
