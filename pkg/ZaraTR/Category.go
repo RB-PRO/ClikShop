@@ -11,6 +11,7 @@ type CategoryArray struct {
 	TecalCat []bases.Cat
 }
 
+// https://www.zara.com/tr/en/categories?ajax=true
 func CatCycle() *CategoryArray {
 
 	// Загружаем все категории

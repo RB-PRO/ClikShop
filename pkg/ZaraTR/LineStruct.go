@@ -54,6 +54,10 @@ type CustomIntToString struct {
 	value string
 }
 
+func (cis *CustomIntToString) String() string {
+	return cis.value
+}
+
 // Кастомное декодирование JSON для ключа SearchID
 func (cis *CustomIntToString) UnmarshalJSON(data []byte) error {
 	if data[0] == 34 { // Если первый символ - Кавычка
