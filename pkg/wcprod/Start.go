@@ -269,9 +269,9 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	// Теперь редактируем вариационные товары
 	VarientCreateBatch := make([]wc.CreateProductVariationRequest, 0) // Составляем массив с обновлением товаров вариационных
 	// Составляем запрос на обновление товаро из вариаций товара
-	for colorKey, colorItemValue := range product.Item { // Цикл по вариантам товаров
+	for _, colorItemValue := range product.Item { // Цикл по вариантам товаров
 		VarientCreateBatch = append(VarientCreateBatch, wc.CreateProductVariationRequest{
-			SKU:          product.Article + colorKey,
+			SKU:          product.Article + "_" + colorItemValue.ColorEng,
 			RegularPrice: colorItemValue.Price,
 			Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
 			Image: &entity.ProductImage{
@@ -286,7 +286,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	for colorKey, colorItemValue := range product.Item {
 		fmt.Println("Start var prod", colorKey, "-")
 		itemVar, errvar := woo.WooClient.Services.ProductVariation.Create(itemID, wc.CreateProductVariationRequest{
-			SKU:          product.Article + colorKey,
+			SKU:          product.Article + "_" + colorItemValue.ColorEng,
 			RegularPrice: colorItemValue.Price,
 			Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
 			Image: &entity.ProductImage{

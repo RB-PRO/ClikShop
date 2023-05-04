@@ -43,15 +43,15 @@ type Product2 struct {
 
 // Цвета
 type ColorItem struct {
-	ColorCode string      // Цвет ключ-значение
-	Item      []ProdParam // Массив с распределением по цветам
+	ColorCode string   // Цвет ключ-значение
+	ColorEng  string   // Цвет на английском
+	Link      string   // Ссылка на товар нужного цвета
+	Price     float64  // Цена
+	Size      []Size   // Размеры
+	Image     []string // Картинки
 }
 
-// Структура параметров товара
-type ProdParam struct {
-	Link     string   // Ссылка на товар нужного цвета
-	ColorEng string   // Цвет на английском
-	Price    float64  // Цена
-	Size     string   // Размеры
-	Image    []string // Картинки
+type Size struct {
+	Val    string // Размер одежды
+	IsExit bool   // Есть в наличии
 }

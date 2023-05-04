@@ -79,16 +79,9 @@ func Work(PageStart int, walrus float64, delivery int) {
 // Редактирование цены по товарам
 func EditCoast(prod bases.Product2, usd float64, walrus float64, delivery int) bases.Product2 {
 	for indexKey := range prod.Item {
-		// Если есть мапа с таким-же ключом, то копируем во вторичную переменную значение этой мапы по ключу
-		if entry, ok := prod.Item[indexKey]; ok {
-
-			// Корректируем данные
-			// Курс доллара * цена в долларах * наценка + цена доставки
-			entry.Price = usd*entry.Price*walrus + float64(delivery)
-
-			// Обновляем данные
-			prod.Item[indexKey] = entry
-		}
+		// Корректируем данные
+		// Курс доллара * цена в долларах * наценка + цена доставки
+		prod.Item[indexKey].Price = usd*prod.Item[indexKey].Price*walrus + float64(delivery)
 	}
 	return prod
 }

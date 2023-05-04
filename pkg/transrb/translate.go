@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -40,7 +39,7 @@ var ErrorInput error = errors.New("Translate: New: Invalid input data")
 // Создать экземпляр переводчика
 func New(FolderID, OAuthToken string) (*Translate, error) {
 	IAM_token, ErrorIAM := IAM(OAuthToken)
-	fmt.Println(IAM_token)
+
 	if ErrorIAM != nil {
 		return nil, ErrorIAM
 	}

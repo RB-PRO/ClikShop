@@ -216,47 +216,47 @@ func WareInProduct2(product *bases.Product2, ware WareUsmall) {
 
 	// product.Image = make(map[string][]string) // Выделить память в мапу
 
-	// Выделяем память
-	product.Item = make(map[string]bases.ProdParam)
-	for _, valueWare := range ware.Variants {
-		colorKey := valueWare.ColorNameRu + " (" + valueWare.OriginColor + ")"
+	// // Выделяем память
+	// product.Item = make(map[string]bases.ProdParam)
+	// for _, valueWare := range ware.Variants {
+	// 	colorKey := valueWare.ColorNameRu + " (" + valueWare.OriginColor + ")"
 
-		// Если НЕ существует мапа такого цвета
-		if _, ok := product.Item[colorKey]; !ok {
-			// То выделяем память в данные соответственно
-			product.Item[colorKey] = bases.ProdParam{
-				Image: make([]string, 0),
-				Size:  make([]string, 0),
-			}
-			//product.Item[colorKey].Image = make([]string, 0)
-			//product.Item[colorKey].Size = make([]string, 0)
-			//product.Item[colorKey].Specifications = make(map[string]string)
-		}
+	// 	// Если НЕ существует мапа такого цвета
+	// 	if _, ok := product.Item[colorKey]; !ok {
+	// 		// То выделяем память в данные соответственно
+	// 		product.Item[colorKey] = bases.ProdParam{
+	// 			Image: make([]string, 0),
+	// 			Size:  make([]string, 0),
+	// 		}
+	// 		//product.Item[colorKey].Image = make([]string, 0)
+	// 		//product.Item[colorKey].Size = make([]string, 0)
+	// 		//product.Item[colorKey].Specifications = make(map[string]string)
+	// 	}
 
-		// Если существует мапа такого цвета
-		if entry, ok := product.Item[colorKey]; ok {
-			// Название цвета
-			entry.ColorEng = valueWare.OriginColor
+	// 	// Если существует мапа такого цвета
+	// 	if entry, ok := product.Item[colorKey]; ok {
+	// 		// Название цвета
+	// 		entry.ColorEng = valueWare.OriginColor
 
-			// Цена
-			entry.Price = float64(valueWare.Price)
+	// 		// Цена
+	// 		entry.Price = float64(valueWare.Price)
 
-			// Картинки
-			for _, valueImage := range valueWare.Images {
-				entry.Image = append(entry.Image, valueImage.URL)
-			}
+	// 		// Картинки
+	// 		for _, valueImage := range valueWare.Images {
+	// 			entry.Image = append(entry.Image, valueImage.URL)
+	// 		}
 
-			// Размер
-			//entry.Size = append(entry.Image, valueWare.RussianSize.Name)
-			entry.Size = append(entry.Size, valueWare.OriginSize)
-			product.Size = append(product.Size, valueWare.OriginSize) // Все всех размеров
+	// 		// Размер
+	// 		//entry.Size = append(entry.Image, valueWare.RussianSize.Name)
+	// 		entry.Size = append(entry.Size, valueWare.OriginSize)
+	// 		product.Size = append(product.Size, valueWare.OriginSize) // Все всех размеров
 
-			// Ссылка на страницу с цветом
-			entry.Link = URL + product.Link + "/?color=" + valueWare.OriginColor
+	// 		// Ссылка на страницу с цветом
+	// 		entry.Link = URL + product.Link + "/?color=" + valueWare.OriginColor
 
-			// Добавляем эту промежуточную строкуту в нашу
-			product.Item[colorKey] = entry
-		}
-	}
+	// 		// Добавляем эту промежуточную строкуту в нашу
+	// 		product.Item[colorKey] = entry
+	// 	}
+	// }
 	product.Size = bases.RemoveDuplicateStr(product.Size)
 }

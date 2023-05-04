@@ -62,10 +62,10 @@ func (variety Variety2) SaveXlsx(filename string) error {
 	setHead(book, wotkSheet, 13, "Цвета")                 // Colors
 	setHead(book, wotkSheet, 14, "Картинки")              // Colors
 	setHead(book, wotkSheet, 15, "Размеры")               // Size
-	startIndexCollumn := 16
+	// startIndexCollumn := 16
 
-	// Создаём мапу, которая будет содержать значения номеров колонок
-	colName := make(map[string]int)
+	// // Создаём мапу, которая будет содержать значения номеров колонок
+	// colName := make(map[string]int)
 	for indexItem, valItem := range variety.Product {
 		if len(valItem.Cat) > 0 {
 			setCell(book, wotkSheet, indexItem+2, 1, valItem.Cat[0].Name) // Каталог
@@ -91,26 +91,24 @@ func (variety Variety2) SaveXlsx(filename string) error {
 		//setCell(book, wotkSheet, indexItem+2, 14, valItem.Size)            // Размеры
 
 		// Обработка мапы картинок
-		for key, val := range valItem.Item {
-			for _, ColorVal := range val {
+		for key, ValColorItem := range valItem.Item {
 
-				setCell(book, wotkSheet, indexItem+2, 7, ColorVal.Link) // ссылка на товар с картинкой
+			setCell(book, wotkSheet, indexItem+2, 7, ValColorItem.Link) // ссылка на товар с картинкой
 
-				setCell(book, wotkSheet, indexItem+2, 10, ColorVal.Price) // Цена
-				setCell(book, wotkSheet, indexItem+2, 13, key)            // Цвет
-				setCell(book, wotkSheet, indexItem+2, 14, ColorVal.Image) // Картинка
-				setCell(book, wotkSheet, indexItem+2, 15, ColorVal.Size)  // Size
-				//setCell(book, wotkSheet, indexItem+2, 7, URL+val.Link) // Ссылка на товар
+			setCell(book, wotkSheet, indexItem+2, 10, ValColorItem.Price) // Цена
+			setCell(book, wotkSheet, indexItem+2, 13, key)                // Цвет
+			setCell(book, wotkSheet, indexItem+2, 14, ValColorItem.Image) // Картинка
+			setCell(book, wotkSheet, indexItem+2, 15, ValColorItem.Size)  // Size
+			//setCell(book, wotkSheet, indexItem+2, 7, URL+val.Link) // Ссылка на товар
 
-				if _, ok := colName[key]; ok { // Если такое значение существует(т.е. существует колонка)
-					setCell(book, wotkSheet, indexItem, colName[key], val)
-				} else {
-					colName[key] = startIndexCollumn
-					setHead(book, wotkSheet, colName[key], key)
-					setCell(book, wotkSheet, indexItem, colName[key], val)
-					startIndexCollumn++
-				}
-			}
+			// if _, ok := colName[key]; ok { // Если такое значение существует(т.е. существует колонка)
+			// 	setCell(book, wotkSheet, indexItem, colName[key], val)
+			// } else {
+			// 	colName[key] = startIndexCollumn
+			// 	setHead(book, wotkSheet, colName[key], key)
+			// 	setCell(book, wotkSheet, indexItem, colName[key], val)
+			// 	startIndexCollumn++
+			// }
 		}
 		/*
 			// Обработка мапы доп полей
@@ -236,12 +234,12 @@ func (variety Variety2) SaveXlsxCsvs(filename string) error {
 			setCell(book, wotkSheet, row, 10, valItem.Manufacturer) // Производитель
 			setCell(book, wotkSheet, row, 12, keyImage)             // Цвет // Буду ориентироваться на мапу картинок
 
-			if len(valItem.Item[keyImage]) != 0 {
-				setCell(book, wotkSheet, row, 8, valItem.Item[keyImage][0].Link) // Ссылка на товар
+			if len(valItem.Item) != 0 {
+				setCell(book, wotkSheet, row, 8, valItem.Item[keyImage].Link) // Ссылка на товар
 				// setCell(book, wotkSheet, row, 9, valItem.Article+"_"+valImage)            // Артикул
-				setCell(book, wotkSheet, row, 11, valItem.Item[keyImage][0].Price)                    // Цена
-				setCell(book, wotkSheet, row, 13, strings.Join(valItem.Item[keyImage][0].Image, ",")) // Картинка
-				setCell(book, wotkSheet, row, 14, valItem.Item[keyImage][0].Size)                     // Размеры
+				setCell(book, wotkSheet, row, 11, valItem.Item[keyImage].Price)                    // Цена
+				setCell(book, wotkSheet, row, 13, strings.Join(valItem.Item[keyImage].Image, ",")) // Картинка
+				setCell(book, wotkSheet, row, 14, valItem.Item[keyImage].Size)                     // Размеры
 			}
 			// Обработка мапы доп полей
 			//var SpecificationsString string

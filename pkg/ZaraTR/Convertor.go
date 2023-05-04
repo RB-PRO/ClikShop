@@ -1,8 +1,6 @@
 package zaratr
 
 import (
-	"strings"
-
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
 
@@ -10,7 +8,7 @@ const URL string = "https://www.zara.com"
 
 func Touch2Product2(tou Touch) bases.Product2 {
 	var Prod bases.Product2
-	Prod.Item = make(map[string]bases.ProdParam)
+	Prod.Item = make([]bases.ColorItem, 0)
 
 	// Артикул
 	Prod.Article = tou.Product.Detail.DisplayReference
@@ -47,6 +45,21 @@ func Touch2Product2(tou Touch) bases.Product2 {
 			Prod.Size = append(Prod.Size, size.Name) // Все размеры товара
 		}
 
+		// Массив размеров, который будет использован для
+		Sizes := []bases.Size{}
+		for _, SizeItem := range color.Sizes {
+
+			// Проверяем наличие данного размера товара
+			var IsLive bool
+			if SizeItem.Availability == "in_stock" || SizeItem.Availability == "low_on_stock" {
+				IsLive = true
+			}
+			Sizes = append(Sizes, bases.Size{
+				Val:    SizeItem.Name,
+				IsExit: IsLive,
+			})
+		}
+
 		// Создаём массив размеров
 		images := make([]string, 0)
 		for _, media := range color.Xmedia {
@@ -54,12 +67,13 @@ func Touch2Product2(tou Touch) bases.Product2 {
 			images = append(images, ImageLink)
 		}
 
-		Prod.Item[strings.ToLower(color.Name)] = bases.ProdParam{
+		// Prod.Item[strings.ToLower(color.Name)] = bases.ProdParam{}
+		Prod.Item = append(Prod.Item, bases.ColorItem{
 			ColorEng: color.Name,
-			Size:     sizes,
+			Size:     []bases.Size{}, // Тут нужно добавить истинные размеры.
 			Image:    images,
 			Price:    float64(color.Price) / 100,
-		}
+		})
 	}
 
 	Prod.Size = bases.RemoveDuplicateStr(Prod.Size)

@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"golang.org/x/exp/maps"
 )
 
 // Сортировка массива товаров.
@@ -73,7 +72,8 @@ func ConcatenateProduct2(prodInPut []bases.Product2) (prodOutput bases.Product2)
 // Скрестить структуры 2 продуктов
 // bases.Product2 in bases.Product2
 func ConcatenateOneProduct2(prodInPut1, prodInPut2 bases.Product2) bases.Product2 {
-	maps.Copy(prodInPut1.Item, prodInPut2.Item) // Объединить мапы
+	// maps.Copy(prodInPut1.Item, prodInPut2.Item) // Объединить мапы
+	prodInPut1.Item = append(prodInPut1.Item, prodInPut2.Item...)
 	return prodInPut1
 }
 

@@ -95,22 +95,22 @@ func AddProd() {
 				Imported.
 				Product measurements were taken using size SM. Please note that measurements may vary by size.
 				 Length: 23 in`},
-				Item: map[string]bases.ProdParam{
-					"wild-oak": {
-						Link:     "/product/9621708/color/836781",
-						ColorEng: "Wild Oak",
-						Price:    42.0,
-						Size:     []string{"SM", "LG", "XL"},
-						Image:    []string{"https://m.media-amazon.com/images/I/91GJ2hRcTeL.jpg", "https://m.media-amazon.com/images/I/91WQzGVObeL.jpg", "https://m.media-amazon.com/images/I/913KXCLH1lL.jpg", "https://m.media-amazon.com/images/I/71a8c4Fw+uL.jpg"},
-					},
-					"antique-white": {
-						Link:     "/product/9621708/color/26216",
-						ColorEng: "Antique White",
-						Price:    31.58,
-						Size:     []string{"SM", "LG", "XL"},
-						Image:    []string{"https://m.media-amazon.com/images/I/71Mf94kDFvL.jpg", "https://m.media-amazon.com/images/I/71EOOcBc+bL.jpg", "https://m.media-amazon.com/images/I/81PeCItuTmL.jpg", "https://m.media-amazon.com/images/I/71+cz20ouIL.jpg"},
-					},
-				},
+				// Item: map[string]bases.ProdParam{
+				// 	"wild-oak": {
+				// 		Link:     "/product/9621708/color/836781",
+				// 		ColorEng: "Wild Oak",
+				// 		Price:    42.0,
+				// 		Size:     []string{"SM", "LG", "XL"},
+				// 		Image:    []string{"https://m.media-amazon.com/images/I/91GJ2hRcTeL.jpg", "https://m.media-amazon.com/images/I/91WQzGVObeL.jpg", "https://m.media-amazon.com/images/I/913KXCLH1lL.jpg", "https://m.media-amazon.com/images/I/71a8c4Fw+uL.jpg"},
+				// 	},
+				// 	"antique-white": {
+				// 		Link:     "/product/9621708/color/26216",
+				// 		ColorEng: "Antique White",
+				// 		Price:    31.58,
+				// 		Size:     []string{"SM", "LG", "XL"},
+				// 		Image:    []string{"https://m.media-amazon.com/images/I/71Mf94kDFvL.jpg", "https://m.media-amazon.com/images/I/71EOOcBc+bL.jpg", "https://m.media-amazon.com/images/I/81PeCItuTmL.jpg", "https://m.media-amazon.com/images/I/71+cz20ouIL.jpg"},
+				// 	},
+				// },
 			},
 		},
 	}
@@ -255,7 +255,7 @@ func AddProduct(userWC *woocommerce.User, plc woocommerce.Categorys, wooC *wc.Wo
 
 	// Создаём аттрибуты товара для цвета
 	for key := range product.Item {
-		tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug := AddAttr(wooC, idAttrColor, product.Item[key].ColorEng, key)
+		tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug := AddAttr(wooC, idAttrColor, product.Item[key].ColorEng, product.Item[key].ColorEng)
 		fmt.Println("Для данного товара Аттрибуты цвета будут:", tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug)
 	}
 	// Создаём аттрибуты товара для Размера
@@ -355,7 +355,7 @@ func AddProduct(userWC *woocommerce.User, plc woocommerce.Categorys, wooC *wc.Wo
 	fmt.Println("Done itemID", itemID)
 
 	// Вариационные товары
-	for colorKey, colorItemValue := range product.Item {
+	for _, colorItemValue := range product.Item {
 		/*
 			// Массив картинок. Но WC не позволяет загрузить картинки в вариационный товар
 			imageInput := make([]entity.ProductImage, 0)
@@ -368,7 +368,7 @@ func AddProduct(userWC *woocommerce.User, plc woocommerce.Categorys, wooC *wc.Wo
 			}
 		*/
 		itemVar, errvar := wooC.Services.ProductVariation.Create(itemID, wc.CreateProductVariationRequest{
-			SKU:          product.Article + colorKey,
+			SKU:          product.Article + "_" + colorItemValue.ColorEng,
 			RegularPrice: colorItemValue.Price,
 			Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
 			Image: &entity.ProductImage{

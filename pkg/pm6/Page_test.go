@@ -39,7 +39,7 @@ func PrintVarient(varient bases.Variety2) {
 	for index, value := range varient.Product {
 		strs := ""
 		for key := range value.Item {
-			strs += key + ", "
+			strs += value.Item[key].ColorCode + ", "
 		}
 		fmt.Println(index, ":", ">"+value.Name+"<", "color:", strs)
 	}

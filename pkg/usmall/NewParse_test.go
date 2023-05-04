@@ -84,7 +84,7 @@ func TestWareInProduct2(t *testing.T) {
 	ware, _ := Ware(MyCode)                                                                           // Получить запрос с API
 	WareInProduct2(&variety.Product[0], ware)                                                         // Преобразовать в домашнюю структуру
 
-	t.Log("\n   All:", variety.Product[0].Item["Красный (Oxblood)"], "\n")
-	t.Log("\n Sizes:", variety.Product[0].Item["Красный (Oxblood)"].Size, "\n")
+	// t.Log("\n   All:", variety.Product[0].Item["Красный (Oxblood)"], "\n")
+	// t.Log("\n Sizes:", variety.Product[0].Item["Красный (Oxblood)"].Size, "\n")
 	variety.SaveXlsxCsvs("test")
 }

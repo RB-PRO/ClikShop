@@ -28,7 +28,8 @@ func ParsePage(link string, page int) (prod []bases.Product2) {
 			prod = append(prod, bases.Product2{
 				Link: link,
 				Name: e.DOM.Find("dd[class='SP-z']").Text(),
-				Item: make(map[string]bases.ProdParam),
+				// Item: make(map[string]bases.ProdParam),
+				Item: []bases.ColorItem{},
 			})
 			prod[len(prod)-1].Item[color] = bases.ProdParam{}
 		}

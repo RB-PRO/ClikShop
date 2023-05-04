@@ -72,22 +72,22 @@ func varietBasesVariety2() bases.Variety2 {
 			Imported.
 			Product measurements were taken using size SM. Please note that measurements may vary by size.
 			 Length: 23 in`},
-				Item: map[string]bases.ProdParam{
-					"wild-oak": bases.ProdParam{
-						Link:     "/product/9621708/color/836781",
-						ColorEng: "Wild Oak",
-						Price:    42.0,
-						Size:     []string{"SM", "LG", "XL"},
-						Image:    []string{"https://m.media-amazon.com/images/I/91GJ2hRcTeL.jpg", "https://m.media-amazon.com/images/I/91WQzGVObeL.jpg", "https://m.media-amazon.com/images/I/913KXCLH1lL.jpg", "https://m.media-amazon.com/images/I/71a8c4Fw+uL.jpg"},
-					},
-					"antique-white": bases.ProdParam{
-						Link:     "/product/9621708/color/26216",
-						ColorEng: "Antique White",
-						Price:    31.58,
-						Size:     []string{"SM", "LG", "XL"},
-						Image:    []string{"https://m.media-amazon.com/images/I/71Mf94kDFvL.jpg", "https://m.media-amazon.com/images/I/71EOOcBc+bL.jpg", "https://m.media-amazon.com/images/I/81PeCItuTmL.jpg", "https://m.media-amazon.com/images/I/71+cz20ouIL.jpg"},
-					},
-				},
+				// Item: map[string]bases.ProdParam{
+				// 	"wild-oak": bases.ProdParam{
+				// 		Link:     "/product/9621708/color/836781",
+				// 		ColorEng: "Wild Oak",
+				// 		Price:    42.0,
+				// 		Size:     []string{"SM", "LG", "XL"},
+				// 		Image:    []string{"https://m.media-amazon.com/images/I/91GJ2hRcTeL.jpg", "https://m.media-amazon.com/images/I/91WQzGVObeL.jpg", "https://m.media-amazon.com/images/I/913KXCLH1lL.jpg", "https://m.media-amazon.com/images/I/71a8c4Fw+uL.jpg"},
+				// 	},
+				// 	"antique-white": bases.ProdParam{
+				// 		Link:     "/product/9621708/color/26216",
+				// 		ColorEng: "Antique White",
+				// 		Price:    31.58,
+				// 		Size:     []string{"SM", "LG", "XL"},
+				// 		Image:    []string{"https://m.media-amazon.com/images/I/71Mf94kDFvL.jpg", "https://m.media-amazon.com/images/I/71EOOcBc+bL.jpg", "https://m.media-amazon.com/images/I/81PeCItuTmL.jpg", "https://m.media-amazon.com/images/I/71+cz20ouIL.jpg"},
+				// 	},
+				// },
 			},
 		},
 	}
