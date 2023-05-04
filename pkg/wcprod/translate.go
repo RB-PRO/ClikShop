@@ -22,18 +22,18 @@ func ProductTranslate(prod bases.Product2) bases.Product2 {
 	prod.Cat[2].Name, _ = gt.Translate(prod.Cat[2].Name, "en", "ru")
 	prod.Cat[3].Name, _ = gt.Translate(prod.Cat[3].Name, "en", "ru")
 
-	for indexKey := range prod.Item {
-		// Если есть мапа с таким-же ключом, то копируем во вторичную переменную значение этой мапы по ключу
-		if entry, ok := prod.Item[indexKey]; ok {
+	// for indexKey := range prod.Item {
+	// 	// Если есть мапа с таким-же ключом, то копируем во вторичную переменную значение этой мапы по ключу
+	// 	if entry, ok := prod.Item[indexKey]; ok {
 
-			// Корректируем данные
-			// Курс доллара * цена в долларах * наценка + цена доставки
-			entry.ColorEng, _ = gt.Translate(entry.ColorEng, "en", "ru")
+	// 		// Корректируем данные
+	// 		// Курс доллара * цена в долларах * наценка + цена доставки
+	// 		entry.ColorEng, _ = gt.Translate(entry.ColorEng, "en", "ru")
 
-			// Обновляем данные
-			prod.Item[indexKey] = entry
-		}
-	}
+	// 		// Обновляем данные
+	// 		prod.Item[indexKey] = entry
+	// 	}
+	// }
 
 	//tr := translate.New("trnsl.1.1.20170505T201046Z.765061fd7d327f2f.c80d8b95dd956de79d7f9537011fcd3cc802e6e2")
 	//tr := translate.New("trnsl.1.1.20191023T124920Z.63524b1f3817bdc2.1719c9be2a2e95a9ce652519943ee104fb9e0a56")
@@ -107,25 +107,17 @@ func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 	// Вариации
 	var item []string
 	for _, it := range prod.Item {
-		item = append(item, it.ColorEng)
+		item = append(item, it.ColorCode)
 	}
 	TranslateItem, ErorTranslateItem := woo.Tr.Trans(item)
 	if ErorTranslateItem != nil {
 		return prod, ErorTranslateItem
 	}
-	var ind int
-	for key := range prod.Item {
-		if entry, ok := prod.Item[key]; ok {
 
-			// Корректируем данные
-			// Курс доллара * цена в долларах * наценка + цена доставки
-			entry.ColorEng = TranslateItem[ind]
-
-			// Обновляем данные
-			prod.Item[key] = entry
+	for KeyColor := range prod.Item {
+		for KeySize := range prod.Item[KeyColor].Item {
+			prod.Item[KeyColor].Item[KeySize].ColorEng = TranslateItem[KeyColor]
 		}
-		// prod.Item[key].ColorEng = TranslateItem[ind]
-		ind++
 	}
 
 	return prod, nil

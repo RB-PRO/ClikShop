@@ -35,10 +35,16 @@ type Product2 struct {
 	// Описание товара по значению "цвет"
 	// "Цвет" будет определять, как вариацию товара
 	// "Цвет на русском"
-	Item           map[string]ProdParam
+	Item           []ColorItem
 	Specifications map[string]string // Остальные характеристики
 
 	Upload bool // Загружено или нет
+}
+
+// Цвета
+type ColorItem struct {
+	ColorCode string      // Цвет ключ-значение
+	Item      []ProdParam // Массив с распределением по цветам
 }
 
 // Структура параметров товара
@@ -46,6 +52,6 @@ type ProdParam struct {
 	Link     string   // Ссылка на товар нужного цвета
 	ColorEng string   // Цвет на английском
 	Price    float64  // Цена
-	Size     []string // Размеры
+	Size     string   // Размеры
 	Image    []string // Картинки
 }

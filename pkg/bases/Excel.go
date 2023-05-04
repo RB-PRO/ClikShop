@@ -92,22 +92,24 @@ func (variety Variety2) SaveXlsx(filename string) error {
 
 		// Обработка мапы картинок
 		for key, val := range valItem.Item {
+			for _, ColorVal := range val {
 
-			setCell(book, wotkSheet, indexItem+2, 7, val.Link) // ссылка на товар с картинкой
+				setCell(book, wotkSheet, indexItem+2, 7, ColorVal.Link) // ссылка на товар с картинкой
 
-			setCell(book, wotkSheet, indexItem+2, 10, val.Price) // Цена
-			setCell(book, wotkSheet, indexItem+2, 13, key)       // Цвет
-			setCell(book, wotkSheet, indexItem+2, 14, val.Image) // Картинка
-			setCell(book, wotkSheet, indexItem+2, 15, val.Size)  // Size
-			//setCell(book, wotkSheet, indexItem+2, 7, URL+val.Link) // Ссылка на товар
+				setCell(book, wotkSheet, indexItem+2, 10, ColorVal.Price) // Цена
+				setCell(book, wotkSheet, indexItem+2, 13, key)            // Цвет
+				setCell(book, wotkSheet, indexItem+2, 14, ColorVal.Image) // Картинка
+				setCell(book, wotkSheet, indexItem+2, 15, ColorVal.Size)  // Size
+				//setCell(book, wotkSheet, indexItem+2, 7, URL+val.Link) // Ссылка на товар
 
-			if _, ok := colName[key]; ok { // Если такое значение существует(т.е. существует колонка)
-				setCell(book, wotkSheet, indexItem, colName[key], val)
-			} else {
-				colName[key] = startIndexCollumn
-				setHead(book, wotkSheet, colName[key], key)
-				setCell(book, wotkSheet, indexItem, colName[key], val)
-				startIndexCollumn++
+				if _, ok := colName[key]; ok { // Если такое значение существует(т.е. существует колонка)
+					setCell(book, wotkSheet, indexItem, colName[key], val)
+				} else {
+					colName[key] = startIndexCollumn
+					setHead(book, wotkSheet, colName[key], key)
+					setCell(book, wotkSheet, indexItem, colName[key], val)
+					startIndexCollumn++
+				}
 			}
 		}
 		/*
@@ -214,7 +216,7 @@ func (variety Variety2) SaveXlsxCsvs(filename string) error {
 		row++
 
 		// Обработка мапы картинок
-		for keyImage, valImage := range valItem.Item {
+		for keyImage := range valItem.Item {
 			setCell(book, wotkSheet, row, 1, indexItem+1) // Номер
 			if len(valItem.Cat) > 3 {
 				setCell(book, wotkSheet, row, 2, valItem.Cat[0].Name+" > "+valItem.Cat[1].Name+" > "+valItem.Cat[2].Name) // Путь
@@ -228,16 +230,19 @@ func (variety Variety2) SaveXlsxCsvs(filename string) error {
 			if len(valItem.Cat) > 3 {
 				setCell(book, wotkSheet, row, 5, valItem.Cat[2].Name) // Секция
 			}
-			setCell(book, wotkSheet, row, 6, valItem.Name)                                     // Название товара
-			setCell(book, wotkSheet, row, 7, valItem.FullName)                                 // Полное название товара
-			setCell(book, wotkSheet, row, 8, valItem.Item[keyImage].Link)                      // Ссылка на товар
-			setCell(book, wotkSheet, row, 9, valItem.Article+"-"+valImage.ColorEng)            // Артикул
-			setCell(book, wotkSheet, row, 10, valItem.Manufacturer)                            // Производитель
-			setCell(book, wotkSheet, row, 11, valItem.Item[keyImage].Price)                    // Цена
-			setCell(book, wotkSheet, row, 12, keyImage)                                        // Цвет // Буду ориентироваться на мапу картинок
-			setCell(book, wotkSheet, row, 13, strings.Join(valItem.Item[keyImage].Image, ",")) // Картинка
-			setCell(book, wotkSheet, row, 14, strings.Join(valItem.Item[keyImage].Size, ","))  // Размеры
+			setCell(book, wotkSheet, row, 6, valItem.Name)     // Название товара
+			setCell(book, wotkSheet, row, 7, valItem.FullName) // Полное название товара
 
+			setCell(book, wotkSheet, row, 10, valItem.Manufacturer) // Производитель
+			setCell(book, wotkSheet, row, 12, keyImage)             // Цвет // Буду ориентироваться на мапу картинок
+
+			if len(valItem.Item[keyImage]) != 0 {
+				setCell(book, wotkSheet, row, 8, valItem.Item[keyImage][0].Link) // Ссылка на товар
+				// setCell(book, wotkSheet, row, 9, valItem.Article+"_"+valImage)            // Артикул
+				setCell(book, wotkSheet, row, 11, valItem.Item[keyImage][0].Price)                    // Цена
+				setCell(book, wotkSheet, row, 13, strings.Join(valItem.Item[keyImage][0].Image, ",")) // Картинка
+				setCell(book, wotkSheet, row, 14, valItem.Item[keyImage][0].Size)                     // Размеры
+			}
 			// Обработка мапы доп полей
 			//var SpecificationsString string
 			//for key, val := range valItem.Specifications {
