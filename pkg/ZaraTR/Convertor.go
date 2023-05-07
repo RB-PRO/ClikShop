@@ -54,10 +54,12 @@ func Touch2Product2(tou Touch) bases.Product2 {
 			if SizeItem.Availability == "in_stock" || SizeItem.Availability == "low_on_stock" {
 				IsLive = true
 			}
-			Sizes = append(Sizes, bases.Size{
+
+			AddSize := bases.Size{
 				Val:    SizeItem.Name,
 				IsExit: IsLive,
-			})
+			}
+			Sizes = append(Sizes, AddSize)
 		}
 
 		// Создаём массив размеров
@@ -69,10 +71,11 @@ func Touch2Product2(tou Touch) bases.Product2 {
 
 		// Prod.Item[strings.ToLower(color.Name)] = bases.ProdParam{}
 		Prod.Item = append(Prod.Item, bases.ColorItem{
-			ColorEng: color.Name,
-			Size:     []bases.Size{}, // Тут нужно добавить истинные размеры.
-			Image:    images,
-			Price:    float64(color.Price) / 100,
+			ColorEng:  color.Name,
+			ColorCode: bases.Name2Slug(color.Name),
+			Size:      Sizes, // Тут нужно добавить истинные размеры.
+			Image:     images,
+			Price:     float64(color.Price) / 100,
 		})
 	}
 

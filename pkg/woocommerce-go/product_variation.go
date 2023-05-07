@@ -219,7 +219,7 @@ type BatchProductVariationsRequest struct {
 
 func (m BatchProductVariationsRequest) Validate() error {
 	if len(m.Create) == 0 && len(m.Update) == 0 && len(m.Delete) == 0 {
-		return errors.New("无效的请求数据")
+		return errors.New("Batch: Validate: нет ответа от сервера при добавлении категорий")
 	}
 	return nil
 }
@@ -230,12 +230,12 @@ type BatchProductVariationsResult struct {
 	Delete []entity.ProductVariation `json:"delete"`
 }
 
-func (s productVariationService) Batch(req BatchProductVariationsRequest) (res BatchProductVariationsResult, err error) {
+func (s productVariationService) Batch(ProductID int, req BatchProductVariationsRequest) (res BatchProductVariationsResult, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
 
-	resp, err := s.httpClient.R().SetBody(req).Post("/products/variations/batch")
+	resp, err := s.httpClient.R().SetBody(req).Post(fmt.Sprintf("/products/%d/variations/batch", ProductID))
 	if err != nil {
 		return
 	}

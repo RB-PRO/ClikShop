@@ -78,8 +78,10 @@ func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 
 	// Первая буква заглавная
 	r := []rune(prod.Description.Eng)
-	r[0] = unicode.ToUpper(r[0])
-	prod.Description.Eng = string(r)
+	if len(r) != 0 {
+		r[0] = unicode.ToUpper(r[0])
+		prod.Description.Eng = string(r)
+	}
 
 	// Краткое описание
 	prod.FullName = strings.ReplaceAll(prod.FullName, "SKU:", "")
@@ -89,7 +91,9 @@ func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 	if ErorTranslate != nil {
 		return prod, ErorTranslate
 	}
-	prod.Description.Eng, prod.Name, prod.FullName = TranslateNames[0], TranslateNames[1], TranslateNames[2]
+	if len(TranslateNames) == 3 {
+		prod.Description.Eng, prod.Name, prod.FullName = TranslateNames[0], TranslateNames[1], TranslateNames[2]
+	}
 
 	// Категории
 	var cats []string

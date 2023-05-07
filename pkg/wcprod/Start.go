@@ -229,6 +229,13 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		RegularPrice:     200.0,
 		Slug:             bases.FormingColorEng(product.Name),
 
+		MetaData: []entity.Meta{ // Ссылка на товар
+			{
+				Key:   "linkRB",
+				Value: product.Link,
+			},
+		},
+
 		Images: imageInput,
 
 		Categories: []entity.ProductCategory{{ID: idCat}},
@@ -265,38 +272,30 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	itemID = item.ID
 	fmt.Println("Product.Create: Done itemID =", itemID)
 
-	// // Теперь редактируем вариационные товары
-	// VarientCreateBatch := make([]wc.CreateProductVariationRequest, 0) // Составляем массив с обновлением товаров вариационных
-	// // Составляем запрос на обновление товаро из вариаций товара
-	// for _, colorItemValue := range product.Item { // Цикл по вариантам товаров
-	// 	VarientCreateBatch = append(VarientCreateBatch, wc.CreateProductVariationRequest{
-	// 		SKU:          product.Article + "_" + colorItemValue.ColorEng,
-	// 		RegularPrice: colorItemValue.Price,
-	// 		Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
-	// 		Image: &entity.ProductImage{
-	// 			Src:  colorItemValue.Image[0],
-	// 			Name: colorItemValue.ColorEng + ".jpg",
-	// 			Alt:  colorItemValue.ColorEng,
-	// 		},
-	// 	})
-	// }
-
-	// Вариационные товары
+	// Редактирвоание вариационных товаров.
+	//
+	// Создаём массив из обновлений вариационных товаров, в частности создании новых вариаций товаров.
+	//
+	// Загружаем их одним запросом [Batch]
+	//
+	// [Batch]: https://woocommerce.github.io/woocommerce-rest-api-docs/#batch-update-product-variations
+	var CreateVariations []wc.BatchProductVariationsCreateItem
 	for colorKey, colorItemValue := range product.Item {
+		fmt.Println("colorItemValue.Size", colorItemValue.Size)
 		for sizeKey, SizeValue := range colorItemValue.Size {
 			fmt.Printf("ProductVariation.Create[%v:%v]: Добавляю вар. товар с цветом '%v' и размером '%v'\n", colorKey+1, sizeKey+1, colorItemValue.ColorEng, SizeValue.Val)
-			// fmt.Println(colorKey, "Start var prod", colorItemValue.ColorCode, " <-> ", "len(colorItemValue.Image)", len(colorItemValue.Image))
-			fmt.Println("SizeValue.Val", SizeValue.Val)
-			itemVar, errvar := woo.WooClient.Services.ProductVariation.Create(itemID, wc.CreateProductVariationRequest{
+
+			// Создаём элемент создания вариационного товара
+			CreateVariation := wc.CreateProductVariationRequest{
 				SKU:          product.Article + "_" + colorItemValue.ColorCode + "_" + SizeValue.Val,
 				RegularPrice: colorItemValue.Price,
-				Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
+				Description:  "Цвет: " + colorItemValue.ColorCode + "\n" + product.Description.Rus,
 				Image: &entity.ProductImage{
 					Src:  colorItemValue.Image[0],
 					Name: colorItemValue.ColorEng + ".jpg",
 					Alt:  colorItemValue.ColorEng,
 				},
-				Attributes: []entity.ProductVariationAttribute{
+				Attributes: []entity.ProductVariationAttribute{ // Аттрибусы товара
 					{
 						ID:     woo.IdAttrColor,
 						Name:   "Цвет",
@@ -308,12 +307,18 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 						Option: SizeValue.Val,
 					},
 				},
-			})
-			if errvar != nil {
-				fmt.Println("Error Add variation", errvar)
+				Status: statusCodeForVarientProd(SizeValue.IsExit), // Переменная, которая содержит статус наличия товара.
 			}
-			fmt.Println("Add variation product:", itemVar.ID)
+
+			CreateVariations = append(CreateVariations, CreateVariation)
 		}
+	}
+	// fmt.Printf("CreateVariations: %+#v\n\n", CreateVariations)
+
+	// Выполняем запрос на создание вариационных товаров
+	_, ErrBatch := woo.WooClient.Services.ProductVariation.Batch(itemID, wc.BatchProductVariationsRequest{Create: CreateVariations})
+	if ErrBatch != nil {
+		fmt.Println("Error Add variation:", ErrBatch)
 	}
 
 	/*
@@ -323,6 +328,15 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		}
 	*/
 	return nil
+}
+
+// Обработка значение, передаваемого в качестве контроля к-ва позиция по каждой вариации товара
+func statusCodeForVarientProd(IsExit bool) string {
+	if IsExit {
+		return "publish"
+	} else {
+		return "private"
+	}
 }
 
 // Сличение данных и возврат актуальной цены товара для данной категории товара

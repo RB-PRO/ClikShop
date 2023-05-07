@@ -27,22 +27,15 @@ func TestSingleAddProduct(t *testing.T) {
 		t.Error(errorInitWcAdd)
 	}
 
-	//////////////////////////////////////////////////////
-	////////// Парсим один товар
-	// Категории
+	////////// Парсим один товар// Категории
 	CatArr := zaratr.CatCycle() // Получить все категории
 	fmt.Println("Всего", len(CatArr.Items), "категорий")
-	// for _, cat := range CatArr.Items {
-	// 	if cat.ID.value == "2184366" {
-	// 		fmt.Println(cat.ID, cat.Name, cat.Cat)
-	// 	}
-	// }
-	var cat zaratr.Item
 
-	for ind, val := range CatArr.Items {
+	var cat zaratr.Item
+	for _, val := range CatArr.Items {
 		if val.ID.String() == "2184366" {
 			cat = val
-			fmt.Printf("%v - cat: %+v\n\n", ind, cat)
+			// fmt.Printf("%v - cat: %+v\n\n", ind, cat)
 		}
 	}
 	if cat.ID.String() == "" {
@@ -53,7 +46,7 @@ func TestSingleAddProduct(t *testing.T) {
 	// cat := CatArr.Items[1]
 	fmt.Println("ID категории", cat.ID.String())
 	fmt.Println("Категория товара:", cat.Cat) // WOMAN > SHIRTS > Satin
-	fmt.Printf("Весь товар: %v\n\n", cat.Cat) // WOMAN > SHIRTS > Satin
+	// fmt.Printf("Весь товар: %v\n\n", cat.Cat) // WOMAN > SHIRTS > Satin
 	line, ErrorLine := zaratr.LoadLine(fmt.Sprintf("%v", cat.ID.String()))
 	if ErrorLine != nil {
 		fmt.Println(ErrorLine)
@@ -84,7 +77,8 @@ func TestSingleAddProduct(t *testing.T) {
 	Prod2 := zaratr.Touch2Product2(touch)
 	Prod2.Cat = prod.Cat // Обновляем категнории
 
-	fmt.Printf("%+v", Prod2)
+	//fmt.Printf("%+#v", Prod2)
+	fmt.Printf("В этом товаре всего %d цветов.\n", len(Prod2.Item))
 
 	Variety.Product = append(Variety.Product, Prod2)
 

@@ -13,7 +13,6 @@ require (
 	github.com/hiscaler/woocommerce-go v1.0.3
 	github.com/mdigger/translit v0.0.0-20190913173519-84222363843c
 	github.com/xuri/excelize/v2 v2.7.0
-	golang.org/x/exp v0.0.0-20230307190834-24139beb5833
 )
 
 require (
@@ -47,6 +46,7 @@ require (
 	github.com/xuri/efp v0.0.0-20220603152613-6918739fd470 // indirect
 	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect
 	golang.org/x/crypto v0.5.0 // indirect
+	golang.org/x/exp v0.0.0-20230307190834-24139beb5833 // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect

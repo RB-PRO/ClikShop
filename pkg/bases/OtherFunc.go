@@ -36,7 +36,7 @@ func FormingColorEng(input string) (output string) {
 func GenderBook(name, slug string) (string, string, bool) {
 	nameLower := strings.ToLower(name) // Сделать нижний шрифт
 	switch nameLower {
-	case "women":
+	case "woman":
 		return "Женщины", "women", true
 	case "man":
 		return "Мужчины", "man", true
@@ -66,4 +66,14 @@ func DataFile(filename string) (string, error) {
 	fileToken.Close() // Закрытие файла
 
 	return string(data[:n]), nil
+}
+
+// Перевести цвет в ссылку для цвета
+//
+// Названите в ярлык
+func Name2Slug(str string) string {
+	str = strings.ToLower(str)
+	str = strings.ReplaceAll(str, " ", "_")
+	// В идеале добавить регулярные выражения для отсеивания лишнего
+	return str
 }

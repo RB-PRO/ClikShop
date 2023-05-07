@@ -111,6 +111,7 @@ func TestAddProduct_2(t *testing.T) {
 // https://www.zara.com/tr/en/knit-crop-top-p01750002.html
 func Variety2_2() bases.Variety2 {
 	prods := bases.Variety2{Product: make([]bases.Product2, 1)}
+	prods.Product[0].GenderLabel = "woman"
 	prods.Product[0].Name = "KNIT CROP TOP"
 	prods.Product[0].FullName = "KNIT CROP TOP"
 	prods.Product[0].Link = "https://www.zara.com/tr/en/knit-crop-top-p01750002.html"
