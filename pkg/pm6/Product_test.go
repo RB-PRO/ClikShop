@@ -13,7 +13,8 @@ func TestParseProduct(t *testing.T) {
 
 	// Обычный тест артикла товара
 	var prod bases.Product2
-	prod.Item = make(map[string]bases.ProdParam)
+	// prod.Item = make(map[string]bases.ProdParam)
+	prod.Item = make([]bases.ColorItem, 0)
 	prod.Specifications = make(map[string]string)
 	link := "/p/1-state-balloon-sleeve-crew-neck-sweater-wild-oak/product/9621708/color/836781"
 	link = "/p/1-state-tie-romper-delightful-ditsy/product/9571065/color/931516"

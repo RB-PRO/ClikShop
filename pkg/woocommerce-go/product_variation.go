@@ -165,14 +165,14 @@ func (s productVariationService) CreateArr(productId int, req []CreateProductVar
 
 type UpdateProductVariationRequest = CreateProductVariationRequest
 
-func (s productVariationService) Update(productId int, req UpdateProductVariationRequest) (item entity.ProductVariation, err error) {
+func (s productVariationService) Update(productId int, variatoinID int, req UpdateProductVariationRequest) (item entity.ProductVariation, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
 
 	resp, err := s.httpClient.R().
 		SetBody(req).
-		Put(fmt.Sprintf("/products/%d/variations", productId))
+		Put(fmt.Sprintf("/products/%d/variations/%d", productId, variatoinID))
 	if err != nil {
 		return
 	}

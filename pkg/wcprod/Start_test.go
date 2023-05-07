@@ -92,3 +92,85 @@ func varietBasesVariety2() bases.Variety2 {
 		},
 	}
 }
+
+func TestAddProduct_2(t *testing.T) {
+	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
+	if errorInitWcAdd != nil {
+		log.Fatalln(errorInitWcAdd)
+	}
+
+	variet := Variety2_2() // Получаем товар
+
+	errAdd := Adding.AddProduct(variet.Product[0])
+	if errAdd != nil {
+		t.Error(errAdd)
+	}
+}
+
+// Тестовый товар с сайта ZARA
+// https://www.zara.com/tr/en/knit-crop-top-p01750002.html
+func Variety2_2() bases.Variety2 {
+	prods := bases.Variety2{Product: make([]bases.Product2, 1)}
+	prods.Product[0].Name = "KNIT CROP TOP"
+	prods.Product[0].FullName = "KNIT CROP TOP"
+	prods.Product[0].Link = "https://www.zara.com/tr/en/knit-crop-top-p01750002.html"
+	prods.Product[0].Article = "1750/002"
+	prods.Product[0].Description.Eng = `We work with monitoring programmes to ensure compliance with our social, environmental and health and safety standards for our garments.
+To assess compliance, we have developed a programme of audits and continuous improvement plans.
+OUTER SHELL
+54% viscose
+46% polyamide`
+	prods.Product[0].Manufacturer = "zara"
+	prods.Product[0].Size = []string{"XS", "S", "M", "L"}
+
+	prods.Product[0].Cat = append(prods.Product[0].Cat, bases.Cat{Name: "Женщины", Slug: "woman"})
+	prods.Product[0].Cat = append(prods.Product[0].Cat, bases.Cat{Name: "KNITWEAR", Slug: "knitwear"})
+
+	prods.Product[0].Item = make([]bases.ColorItem, 2)
+	prods.Product[0].Item[0].ColorCode = "pink"
+	prods.Product[0].Item[0].ColorEng = "Pink"
+	prods.Product[0].Item[0].Price = 1211.8
+	prods.Product[0].Item[0].Image = []string{"https://static.zara.net/photos///2023/V/0/1/p/1750/002/620/2/w/563/1750002620_1_1_1.jpg?ts=1683123062129"}
+	prods.Product[0].Item[0].Size = []bases.Size{
+		{
+			Val:    "XS",
+			IsExit: true,
+		},
+		{
+			Val:    "S",
+			IsExit: true,
+		},
+		{
+			Val:    "M",
+			IsExit: true,
+		},
+		{
+			Val:    "L",
+			IsExit: true,
+		},
+	}
+
+	prods.Product[0].Item[1].ColorCode = "light_blue"
+	prods.Product[0].Item[1].ColorEng = "Light blue"
+	prods.Product[0].Item[1].Price = 1211.8
+	prods.Product[0].Item[1].Image = []string{"https://static.zara.net/photos///2023/V/0/1/p/1750/002/406/2/w/563/1750002406_1_1_1.jpg?ts=1677230425889"}
+	prods.Product[0].Item[1].Size = []bases.Size{
+		{
+			Val:    "XS",
+			IsExit: true,
+		},
+		{
+			Val:    "S",
+			IsExit: false,
+		},
+		{
+			Val:    "M",
+			IsExit: false,
+		},
+		{
+			Val:    "L",
+			IsExit: true,
+		},
+	}
+	return prods
+}

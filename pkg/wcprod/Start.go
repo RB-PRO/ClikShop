@@ -259,47 +259,61 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	var itemID int
 	item, errCreate = woo.WooClient.Services.Product.Create(paramVariableProduct)
 	if errCreate != nil {
-		fmt.Println("--->", errCreate)
+		fmt.Println("Product.Create:", errCreate)
 		return errCreate
 	}
 	itemID = item.ID
+	fmt.Println("Product.Create: Done itemID =", itemID)
 
-	fmt.Println("Done itemID", itemID)
+	// // Теперь редактируем вариационные товары
+	// VarientCreateBatch := make([]wc.CreateProductVariationRequest, 0) // Составляем массив с обновлением товаров вариационных
+	// // Составляем запрос на обновление товаро из вариаций товара
+	// for _, colorItemValue := range product.Item { // Цикл по вариантам товаров
+	// 	VarientCreateBatch = append(VarientCreateBatch, wc.CreateProductVariationRequest{
+	// 		SKU:          product.Article + "_" + colorItemValue.ColorEng,
+	// 		RegularPrice: colorItemValue.Price,
+	// 		Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
+	// 		Image: &entity.ProductImage{
+	// 			Src:  colorItemValue.Image[0],
+	// 			Name: colorItemValue.ColorEng + ".jpg",
+	// 			Alt:  colorItemValue.ColorEng,
+	// 		},
+	// 	})
+	// }
 
-	// Теперь редактируем вариационные товары
-	VarientCreateBatch := make([]wc.CreateProductVariationRequest, 0) // Составляем массив с обновлением товаров вариационных
-	// Составляем запрос на обновление товаро из вариаций товара
-	for _, colorItemValue := range product.Item { // Цикл по вариантам товаров
-		VarientCreateBatch = append(VarientCreateBatch, wc.CreateProductVariationRequest{
-			SKU:          product.Article + "_" + colorItemValue.ColorEng,
-			RegularPrice: colorItemValue.Price,
-			Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
-			Image: &entity.ProductImage{
-				Src:  colorItemValue.Image[0],
-				Name: colorItemValue.ColorEng + ".jpg",
-				Alt:  colorItemValue.ColorEng,
-			},
-		},
-		)
-	}
 	// Вариационные товары
 	for colorKey, colorItemValue := range product.Item {
-		fmt.Println("Start var prod", colorKey, "-")
-		itemVar, errvar := woo.WooClient.Services.ProductVariation.Create(itemID, wc.CreateProductVariationRequest{
-			SKU:          product.Article + "_" + colorItemValue.ColorEng,
-			RegularPrice: colorItemValue.Price,
-			Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
-			Image: &entity.ProductImage{
-				Src:  colorItemValue.Image[0],
-				Name: colorItemValue.ColorEng + ".jpg",
-				Alt:  colorItemValue.ColorEng,
-			},
-			//Images: imageInput,
-		})
-		if errvar != nil {
-			fmt.Println(errvar)
+		for sizeKey, SizeValue := range colorItemValue.Size {
+			fmt.Printf("ProductVariation.Create[%v:%v]: Добавляю вар. товар с цветом '%v' и размером '%v'\n", colorKey+1, sizeKey+1, colorItemValue.ColorEng, SizeValue.Val)
+			// fmt.Println(colorKey, "Start var prod", colorItemValue.ColorCode, " <-> ", "len(colorItemValue.Image)", len(colorItemValue.Image))
+			fmt.Println("SizeValue.Val", SizeValue.Val)
+			itemVar, errvar := woo.WooClient.Services.ProductVariation.Create(itemID, wc.CreateProductVariationRequest{
+				SKU:          product.Article + "_" + colorItemValue.ColorCode + "_" + SizeValue.Val,
+				RegularPrice: colorItemValue.Price,
+				Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
+				Image: &entity.ProductImage{
+					Src:  colorItemValue.Image[0],
+					Name: colorItemValue.ColorEng + ".jpg",
+					Alt:  colorItemValue.ColorEng,
+				},
+				Attributes: []entity.ProductVariationAttribute{
+					{
+						ID:     woo.IdAttrColor,
+						Name:   "Цвет",
+						Option: colorItemValue.ColorEng,
+					},
+					{
+						ID:     woo.IdAttrSize,
+						Name:   "Размер",
+						Option: SizeValue.Val,
+					},
+				},
+			})
+			if errvar != nil {
+				fmt.Println("Error Add variation", errvar)
+			}
+			fmt.Println("Add variation product:", itemVar.ID)
 		}
-		fmt.Println("Add variation product", itemVar.ID)
 	}
 
 	/*

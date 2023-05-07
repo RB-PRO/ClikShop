@@ -22,7 +22,7 @@ type pm struct {
 func NewPM() (*pm, error) {
 	proxy, ErrorFile := bases.DataFile("proxy")
 	if ErrorFile != nil {
-		return nil, errors.New("Не удалось открыть файл \"proxy\"")
+		return nil, errors.New("не удалось открыть файл \"proxy\"")
 	}
 	return &pm{proxy}, nil
 }
@@ -47,7 +47,12 @@ func (pmm pm) ParseProduct(prod *bases.Product2, ProductColorLink string) {
 		ColorFull = strings.TrimSpace(ColorFull)
 		if ColorFull != "" {
 			tecalColor = bases.FormingColorEng(ColorFull)
-			prod.Item[tecalColor] = bases.ProdParam{ColorEng: ColorFull}
+			// prod.Item[tecalColor] = bases.ProdParam{ColorEng: ColorFull}
+			for index := range prod.Item {
+				if prod.Item[index].ColorCode == tecalColor {
+					prod.Item[index].ColorEng = ColorFull
+				}
+			}
 			prod.Specifications = make(map[string]string)
 		}
 	})
@@ -88,23 +93,40 @@ func (pmm pm) ParseProduct(prod *bases.Product2, ProductColorLink string) {
 	// Размеры товара
 	c.OnHTML("form[id=buyBoxForm]>div>fieldset>div[class]>div[class]>input", func(e *colly.HTMLElement) {
 		if attr, ok := e.DOM.Attr("data-label"); ok { // Если такой атрибут существует
-			if entry, ok := prod.Item[tecalColor]; ok {
-				entry.Size = append(entry.Size, attr)
-				prod.Size = append(prod.Size, attr)
-				prod.Item[tecalColor] = entry
+			for index := range prod.Item {
+				if prod.Item[index].ColorCode == tecalColor {
+					prod.Size = append(prod.Size, attr)
+					prod.Item[index].Size = append(prod.Item[index].Size, bases.Size{Val: attr, IsExit: true})
+				}
 			}
+
+			// if entry, ok := prod.Item[tecalColor]; ok {
+			// 	entry.Size = append(entry.Size, attr)
+			// 	prod.Size = append(prod.Size, attr)
+			// 	prod.Item[tecalColor] = entry
+			// }
 		}
 	})
 
 	// Картинки - Не работает.
 	c.OnHTML("div[id=productThumbnails] div ul li button picture img", func(e *colly.HTMLElement) {
 		if sourseValue, isFind := e.DOM.Attr("src"); isFind { // Если есть аттрибут src
-			if entry, oks := prod.Item[tecalColor]; oks { // То добавляем его
-				// Берём из общей ссылки на маленькую картинку, базовую ссылку на основную картинку
-				if sourseValue, exitImgCodeerror := PictureCode(sourseValue); exitImgCodeerror == nil {
-					// Добавляем картинку в массив
-					entry.Image = append(entry.Image, "https://m.media-amazon.com/images/I/"+sourseValue+".jpg")
-					prod.Item[tecalColor] = entry
+			// if entry, oks := prod.Item[tecalColor]; oks { // То добавляем его
+			// 	// Берём из общей ссылки на маленькую картинку, базовую ссылку на основную картинку
+			// 	if sourseValue, exitImgCodeerror := PictureCode(sourseValue); exitImgCodeerror == nil {
+			// 		// Добавляем картинку в массив
+			// 		entry.Image = append(entry.Image, "https://m.media-amazon.com/images/I/"+sourseValue+".jpg")
+			// 		prod.Item[tecalColor] = entry
+			// 	}
+			// }
+
+			for index := range prod.Item {
+				if prod.Item[index].ColorCode == tecalColor {
+					// Берём из общей ссылки на маленькую картинку, базовую ссылку на основную картинку
+					if sourseValue, exitImgCodeerror := PictureCode(sourseValue); exitImgCodeerror == nil {
+						// Добавляем картинку в массив
+						prod.Item[index].Image = append(prod.Item[index].Image, "https://m.media-amazon.com/images/I/"+sourseValue+".jpg")
+					}
 				}
 			}
 		}
@@ -142,9 +164,15 @@ func (pmm pm) ParseProduct(prod *bases.Product2, ProductColorLink string) {
 		if link, linkFind := e.DOM.Attr("content"); linkFind {
 			prod.Link = link // Записать ссылку в продукт
 			// Если есть такой
-			if entry, oks := prod.Item[tecalColor]; oks { // То добавляем его
-				entry.Link = link
-				prod.Item[tecalColor] = entry
+			// if entry, oks := prod.Item[tecalColor]; oks { // То добавляем его
+			// 	entry.Link = link
+			// 	prod.Item[tecalColor] = entry
+			// }
+
+			for index := range prod.Item {
+				if prod.Item[index].ColorCode == tecalColor {
+					prod.Item[index].Link = link
+				}
 			}
 		}
 	})
@@ -183,9 +211,15 @@ func (pmm pm) ParseProduct(prod *bases.Product2, ProductColorLink string) {
 			coast = strings.ReplaceAll(coast, "$", "")
 			floaCoast, errCoast := strconv.ParseFloat(coast, 64) // Преобразование типов
 			if errCoast == nil {
-				if entry, oks := prod.Item[tecalColor]; oks { // То добавляем его
-					entry.Price = floaCoast
-					prod.Item[tecalColor] = entry
+				// if entry, oks := prod.Item[tecalColor]; oks { // То добавляем его
+				// 	entry.Price = floaCoast
+				// 	prod.Item[tecalColor] = entry
+				// }
+
+				for index := range prod.Item {
+					if prod.Item[index].ColorCode == tecalColor {
+						prod.Item[index].Price = floaCoast
+					}
 				}
 			}
 		}
@@ -193,11 +227,18 @@ func (pmm pm) ParseProduct(prod *bases.Product2, ProductColorLink string) {
 
 	// Размеры для товаров по типу https://www.6pm.com/p/2xu-non-stirrup-calf-guard-white-white/product/7892154/color/1001
 	c.OnHTML("select[id='pdp-size-select']>option[value]", func(e *colly.HTMLElement) {
-		if entry, ok := prod.Item[tecalColor]; ok {
-			if e.DOM.Text() != "Select a Size" {
-				entry.Size = append(entry.Size, e.DOM.Text())
+		// if entry, ok := prod.Item[tecalColor]; ok {
+		// 	if e.DOM.Text() != "Select a Size" {
+		// 		entry.Size = append(entry.Size, e.DOM.Text())
+		// 		prod.Size = append(prod.Size, e.DOM.Text())
+		// 		prod.Item[tecalColor] = entry
+		// 	}
+		// }
+
+		for index := range prod.Item {
+			if prod.Item[index].ColorCode == tecalColor {
+				prod.Item[index].Size = append(prod.Item[index].Size, bases.Size{Val: e.DOM.Text(), IsExit: true})
 				prod.Size = append(prod.Size, e.DOM.Text())
-				prod.Item[tecalColor] = entry
 			}
 		}
 	})
@@ -247,13 +288,24 @@ func PrintProduct2(prod bases.Product2) (output string) {
 
 	return output
 }
-func PrintItems(items map[string]bases.ProdParam) (output string) {
+func PrintItems(items []bases.ColorItem) (output string) {
 	for key, val := range items {
-		output += key + " - " + val.ColorEng + "\n" +
+		var StrsSizes string
+		for ind, valSize := range val.Size {
+			StrsSizes += strconv.Itoa(ind) + ": " + valSize.Val + "," + strconv.FormatBool(valSize.IsExit) + "; "
+		}
+		output += strconv.Itoa(key) + " - " + val.ColorEng + "\n" +
 			"\tЦена: " + fmt.Sprintf("%.2f", val.Price) + ". Ссылка: " + val.Link + "\n" +
-			"\tРазмеры(" + strconv.Itoa(len(val.Size)) + "): " + strings.Join(val.Size, ",") + "\n" +
+			"\tРазмеры(" + strconv.Itoa(len(val.Size)) + "): " + StrsSizes + "\n" +
 			"\tКартинка: " + strings.Join(val.Image, ",") + "\n"
 	}
+	// for key, val := range items {
+	// 	output += key + " - " + val.ColorEng + "\n" +
+	// 		"\tЦена: " + fmt.Sprintf("%.2f", val.Price) + ". Ссылка: " + val.Link + "\n" +
+	// 		"\tРазмеры(" + strconv.Itoa(len(val.Size)) + "): " + strings.Join(val.Size, ",") + "\n" +
+	// 		"\tКартинка: " + strings.Join(val.Image, ",") + "\n"
+	// }
+
 	return output
 }
 

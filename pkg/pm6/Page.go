@@ -31,7 +31,8 @@ func ParsePage(link string, page int) (prod []bases.Product2) {
 				// Item: make(map[string]bases.ProdParam),
 				Item: []bases.ColorItem{},
 			})
-			prod[len(prod)-1].Item[color] = bases.ProdParam{}
+			// prod[len(prod)-1].Item[color] = bases.ProdParam{}
+			prod[len(prod)-1].Item = append(prod[len(prod)-1].Item, bases.ColorItem{ColorCode: color})
 		}
 
 	})
@@ -70,21 +71,41 @@ func (pmm pm) ParsePageWithVarienty(varient bases.Variety2, link string, page in
 			//fmt.Println(">"+TecalName+"<", ">"+name+"<")
 			// Если нужно дозаписать подтовар
 			if TecalName == name {
-				FindIdInt, FindIdError := FindFirstNameProducts(varient.Product, name)
+				_, FindIdError := FindFirstNameProducts(varient.Product, name)
 				if FindIdError != nil { // Если не найден такой товар по имени
-					varient.Product[LenProds-1].Item[color] = bases.ProdParam{Link: link, ColorEng: color}
+					// varient.Product[LenProds-1].Item[color] = bases.ProdParam{Link: link, ColorEng: color}
+					for index := range varient.Product[LenProds-1].Item {
+						if color == varient.Product[LenProds-1].Item[index].ColorCode {
+							varient.Product[LenProds-1].Item[index].Link = link
+							varient.Product[LenProds-1].Item[index].ColorEng = color
+						}
+					}
 				} else { // Если найден такой ID товара
-					varient.Product[FindIdInt].Item[color] = bases.ProdParam{Link: link, ColorEng: color}
+					// varient.Product[FindIdInt].Item[color] = bases.ProdParam{Link: link, ColorEng: color}
+					for index := range varient.Product[LenProds-1].Item {
+						if color == varient.Product[LenProds-1].Item[index].ColorCode {
+							varient.Product[LenProds-1].Item[index].Link = link
+							varient.Product[LenProds-1].Item[index].ColorEng = color
+						}
+					}
+
 				}
 			} else { // Если нужно создать новый товар
 				// Добавляем такой товар
 				varient.Product = append(varient.Product, bases.Product2{
 					Name: name,
 					Link: link,
-					Item: make(map[string]bases.ProdParam),
+					// Item: make(map[string]bases.ProdParam),
+					Item: make([]bases.ColorItem, 0),
 				})
 				// Добавляем подтовар
-				varient.Product[LenProds].Item[color] = bases.ProdParam{Link: link, ColorEng: color}
+				// varient.Product[LenProds].Item[color] = bases.ProdParam{Link: link, ColorEng: color}
+				for index := range varient.Product[LenProds-1].Item {
+					if color == varient.Product[LenProds-1].Item[index].ColorCode {
+						varient.Product[LenProds-1].Item[index].Link = link
+						varient.Product[LenProds-1].Item[index].ColorEng = color
+					}
+				}
 			}
 			TecalName = name
 		}
@@ -115,6 +136,7 @@ func (pmm pm) AllPages(link string) (pages int) {
 		var ErrorPages error
 		pages, ErrorPages = strconv.Atoi(pagesStr)
 		if ErrorPages != nil {
+			fmt.Println(ErrorPages)
 		}
 	})
 	c.Visit(URL + link)
