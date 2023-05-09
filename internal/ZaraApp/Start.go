@@ -33,7 +33,7 @@ func Start() {
 	varient.SaveXlsxCsvs("Zara")
 
 	// Загружаем товары
-	delivery := 100 // Доставка
+	delivery := 500 // Доставка
 	walrus := 1.3   // Моржа
 	for i := 0; i < len(varient.Product)-2; i++ {
 		if !varient.Product[i].Upload {
@@ -65,7 +65,19 @@ func EditCoast(prod bases.Product2, usd float64, walrus float64, delivery int) b
 	for indexKey := range prod.Item {
 		// Корректируем данные
 		// Курс доллара * цена в долларах * наценка + цена доставки
-		prod.Item[indexKey].Price = usd*prod.Item[indexKey].Price*walrus + float64(delivery)
+		price := usd*prod.Item[indexKey].Price*walrus + float64(delivery)
+		price = EditDecadense(price)
+		prod.Item[indexKey].Price = price
 	}
 	return prod
+}
+
+// Редактирование цены в большую сторону
+//
+// # Округляем цену в большую сторону по десяткам
+//
+// Если цена была 5225.77, то станет 5230
+func EditDecadense(coast float64) float64 {
+
+	return 0.0
 }

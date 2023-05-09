@@ -321,12 +321,11 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		fmt.Println("Error Add variation:", ErrBatch)
 	}
 
-	/*
-		PostSmartImageErr := woo.UserWC.PostSmartImage(itemID)
-		if PostSmartImageErr != nil {
-			fmt.Println(PostSmartImageErr)
-		}
-	*/
+	PostSmartImageErr := woo.UserWC.PostSmartImage(itemID)
+	if PostSmartImageErr != nil {
+		fmt.Println(PostSmartImageErr)
+	}
+
 	return nil
 }
 

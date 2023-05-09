@@ -39,7 +39,8 @@ func (user *User) PostSmartImage(product_id int) error {
 	var SmartImagePostResp SmartImagePostResponse
 	errUnmarshal := json.Unmarshal(bodyBytes, &SmartImagePostResp)
 	if errUnmarshal != nil { // Если ошибка распарсивания в структуру данных
-		return errors.New("PostSmartImage: Не удалось распарсить ответ сервера: " + string(bodyBytes))
+		return errors.New(`PostSmartImage: Не удалось распарсить ответ сервера:
+"` + string(bodyBytes) + `"`)
 	}
 
 	return nil
