@@ -43,7 +43,7 @@ func IAM(OAuthToken string) (string, error) {
 		return "", ErrRead
 	}
 
-	//fmt.Println(string(body))
+	// fmt.Println(string(body))
 
 	// Распарсить ответ
 	var result iam_struct
