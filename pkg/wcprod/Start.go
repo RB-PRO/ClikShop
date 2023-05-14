@@ -149,7 +149,7 @@ func New() (*WcAdd, error) {
 func (woo *WcAdd) AddProduct(product bases.Product2) error {
 
 	if product.Article == "" {
-		return errors.New("нет в товаре артикула")
+		return errors.New("AddProduct: нет в товаре артикула")
 	}
 
 	/*
@@ -166,7 +166,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	if AddNewId3 != nil {
 		return AddNewId3
 	}
-	fmt.Println("ID категории", idCat)
+	// fmt.Println("ID категории", idCat)
 
 	/*
 		ManufrId, ManufName, ManufSlug := AddAttr(woo.WooClient, woo.IdAttrColor, "Производитель", product.Manufacturer)
@@ -289,12 +289,8 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 			CreateVariation := wc.CreateProductVariationRequest{
 				SKU:          product.Article + "_" + colorItemValue.ColorCode + "_" + SizeValue.Val,
 				RegularPrice: colorItemValue.Price,
+				SalePrice:    colorItemValue.Price,
 				Description:  "Цвет: " + colorItemValue.ColorCode + "\n" + product.Description.Rus,
-				Image: &entity.ProductImage{
-					Src:  colorItemValue.Image[0],
-					Name: colorItemValue.ColorEng + ".jpg",
-					Alt:  colorItemValue.ColorEng,
-				},
 				Attributes: []entity.ProductVariationAttribute{ // Аттрибусы товара
 					{
 						ID:     woo.IdAttrColor,
@@ -309,7 +305,14 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 				},
 				Status: statusCodeForVarientProd(SizeValue.IsExit), // Переменная, которая содержит статус наличия товара.
 			}
-
+			if len(colorItemValue.Image) != 0 {
+				CreateVariation.Image = &entity.ProductImage{
+					Src:  colorItemValue.Image[0],
+					Name: colorItemValue.ColorEng + ".jpg",
+					Alt:  colorItemValue.ColorEng,
+				}
+			}
+			fmt.Println("CreateVariation.RegularPrice", CreateVariation.RegularPrice)
 			CreateVariations = append(CreateVariations, CreateVariation)
 		}
 	}
@@ -321,10 +324,10 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		fmt.Println("Error Add variation:", ErrBatch)
 	}
 
-	PostSmartImageErr := woo.UserWC.PostSmartImage(itemID)
-	if PostSmartImageErr != nil {
-		fmt.Println(PostSmartImageErr)
-	}
+	// PostSmartImageErr := woo.UserWC.PostSmartImage(itemID)
+	// if PostSmartImageErr != nil {
+	// 	fmt.Println(PostSmartImageErr)
+	// }
 
 	return nil
 }

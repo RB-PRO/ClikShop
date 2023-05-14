@@ -69,13 +69,14 @@ func Touch2Product2(tou Touch) bases.Product2 {
 			images = append(images, ImageLink)
 		}
 
+		// fmt.Println("Coast :=", float64(color.Price)/100)
 		// Prod.Item[strings.ToLower(color.Name)] = bases.ProdParam{}
 		Prod.Item = append(Prod.Item, bases.ColorItem{
 			ColorEng:  color.Name,
 			ColorCode: bases.Name2Slug(color.Name),
 			Size:      Sizes, // Тут нужно добавить истинные размеры.
 			Image:     images,
-			Price:     float64(color.Price) / 100,
+			Price:     (float64(color.Price) / 100),
 		})
 	}
 

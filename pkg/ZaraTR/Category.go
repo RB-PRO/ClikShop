@@ -108,6 +108,12 @@ func filter(str string) bool {
 		return true
 	case "COMPANY":
 		return true
+	case "HOME KIDS":
+		return true
+	case "HOME":
+		return true
+	case "SHOES":
+		return true
 	default:
 		return false
 	}

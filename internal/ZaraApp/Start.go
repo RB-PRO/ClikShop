@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
@@ -36,6 +37,7 @@ func Start() {
 	delivery := 500 // Доставка
 	walrus := 1.3   // Моржа
 	for i := 0; i < len(varient.Product)-2; i++ {
+		fmt.Printf("Start: Загружаю товар (%d/%d)", i, len(varient.Product)-2)
 		if !varient.Product[i].Upload {
 			// Формирование адекватной цены доставки из файла
 			ActualDelivery := Adding.EditDelivery(varient.Product[i].Cat, delivery)
@@ -78,6 +80,5 @@ func EditCoast(prod bases.Product2, usd float64, walrus float64, delivery int) b
 //
 // Если цена была 5225.77, то станет 5230
 func EditDecadense(coast float64) float64 {
-
-	return 0.0
+	return math.Round(coast/10.0) * 10.0
 }

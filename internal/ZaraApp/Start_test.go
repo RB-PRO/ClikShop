@@ -76,6 +76,7 @@ func TestSingleAddProduct(t *testing.T) {
 	touch, _ := zaratr.LoadTouch(prod.Seo.Keyword + "-p" + prod.Seo.SeoProductID)
 	Prod2 := zaratr.Touch2Product2(touch)
 	Prod2.Cat = prod.Cat // Обновляем категнории
+	fmt.Println("Артикул товара:", Prod2.Article)
 
 	//fmt.Printf("%+#v", Prod2)
 	fmt.Printf("В этом товаре всего %d цветов.\n", len(Prod2.Item))
@@ -86,7 +87,7 @@ func TestSingleAddProduct(t *testing.T) {
 
 	///////////////////////////////////////////////////////////
 	// Загружаем товары
-	delivery := 100 // Доставка
+	delivery := 500 // Доставка
 	walrus := 1.3   // Моржа
 	for i := 0; i < len(Variety.Product); i++ {
 		if !Variety.Product[i].Upload {

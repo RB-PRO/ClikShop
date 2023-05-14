@@ -151,7 +151,7 @@ OUTER SHELL
 		},
 	}
 
-	prods.Product[0].Item[1].ColorCode = "light_blue"
+	prods.Product[0].Item[1].ColorCode = "light-blue"
 	prods.Product[0].Item[1].ColorEng = "Light blue"
 	prods.Product[0].Item[1].Price = 1211.8
 	prods.Product[0].Item[1].Image = []string{"https://static.zara.net/photos///2023/V/0/1/p/1750/002/406/2/w/563/1750002406_1_1_1.jpg?ts=1677230425889", "https://static.zara.net/photos///2023/V/0/1/p/1750/002/406/2/w/546/1750002406_2_1_1.jpg?ts=1677230425404"}

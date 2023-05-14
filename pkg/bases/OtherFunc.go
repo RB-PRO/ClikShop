@@ -23,7 +23,8 @@ func RemoveDuplicateStr(strSlice []string) []string {
 func FormingColorEng(input string) (output string) {
 	input = strings.ReplaceAll(input, " ", "-")
 	input = strings.ReplaceAll(input, "'", "")
-	input = strings.ReplaceAll(input, "/", "_")
+	input = strings.ReplaceAll(input, "/", "-")
+	input = strings.ReplaceAll(input, "--", "-")
 	output = strings.ToLower(input)
 	return output
 }
@@ -73,7 +74,9 @@ func DataFile(filename string) (string, error) {
 // Названите в ярлык
 func Name2Slug(str string) string {
 	str = strings.ToLower(str)
-	str = strings.ReplaceAll(str, " ", "_")
+	str = strings.ReplaceAll(str, " ", "-")
+	str = strings.ReplaceAll(str, "/", "-")
+	str = strings.ReplaceAll(str, "--", "-")
 	// В идеале добавить регулярные выражения для отсеивания лишнего
 	return str
 }
