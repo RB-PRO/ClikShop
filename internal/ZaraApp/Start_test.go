@@ -103,3 +103,30 @@ func TestSingleAddProduct(t *testing.T) {
 		}
 	}
 }
+
+func TestSingleAddProductLink(t *testing.T) {
+
+	// Нало работы с центральным банком
+	cb, ErrorCB := cbbank.New() // Получить курс валюты
+	if ErrorCB != nil {
+		t.Error(ErrorCB)
+	}
+	fmt.Println("Курс лиры", cb.Data.Valute.Try.Value)
+	// Загружаем товары на WC //
+	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
+	if errorInitWcAdd != nil {
+		t.Error(errorInitWcAdd)
+	}
+
+	touch, _ := zaratr.LoadTouch("linen-blend-longline-bomber-jacket-p03574371")
+	Prod2 := zaratr.Touch2Product2(touch)
+	delivery := 500 // Доставка
+	walrus := 1.3   // Моржа
+	Prod2 = zaraapp.EditCoast(Prod2, cb.Data.Valute.Try.Value/10, walrus, delivery)
+	//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(variety.Product[i])) //.AddAttr()
+	Prod2, _ = Adding.YandexTranslate(Prod2)
+	errorAddProductWC := Adding.AddProduct(Prod2) //.AddAttr()
+	if errorAddProductWC != nil {
+		Prod2.Upload = true
+	}
+}

@@ -39,6 +39,8 @@ func GenderBook(name, slug string) (string, string, bool) {
 	switch nameLower {
 	case "woman":
 		return "Женщины", "women", true
+	case "women":
+		return "Женщины", "women", true
 	case "man":
 		return "Мужчины", "man", true
 	case "men":

@@ -188,9 +188,9 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	// Собираем гендер для загрузки в теги товара
 	idGender, _, isGenderSlug := bases.GenderBook(product.GenderLabel, "")
 	if !isGenderSlug {
-		fmt.Println("Не найден гендер.", idGender)
+		fmt.Print("Не найден гендер.", idGender)
 	}
-	fmt.Print("Гендр: " + idGender + ". ")
+	fmt.Println(" Гендр: " + idGender + ". ")
 
 	// Создаём массив цветов с полными назвавниями
 	var colors []string
@@ -290,7 +290,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 				SKU:          product.Article + "_" + colorItemValue.ColorCode + "_" + SizeValue.Val,
 				RegularPrice: colorItemValue.Price,
 				SalePrice:    colorItemValue.Price,
-				Description:  "Цвет: " + colorItemValue.ColorCode + "\n" + product.Description.Rus,
+				Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
 				Attributes: []entity.ProductVariationAttribute{ // Аттрибусы товара
 					{
 						ID:     woo.IdAttrColor,
@@ -312,7 +312,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 					Alt:  colorItemValue.ColorEng,
 				}
 			}
-			fmt.Println("CreateVariation.RegularPrice", CreateVariation.RegularPrice)
+			// fmt.Println("CreateVariation.RegularPrice", CreateVariation.RegularPrice)
 			CreateVariations = append(CreateVariations, CreateVariation)
 		}
 	}
