@@ -220,6 +220,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 
 	// Структура с исходным товаром
 	paramVariableProduct := wc.CreateProductRequest{
+
 		Name:             product.Name,
 		Type:             "variable",
 		SKU:              product.Article,
