@@ -131,6 +131,7 @@ func NewClient(config config.Config) *WooCommerce {
 	}
 
 	httpClient := resty.New().
+		SetTimeout(time.Second * 100). // ТАЙМАУТ!!!
 		SetDebug(config.Debug).
 		SetBaseURL(strings.TrimRight(config.URL, "/") + "/wp-json/wc/" + config.Version).
 		SetHeaders(map[string]string{

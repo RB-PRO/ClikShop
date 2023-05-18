@@ -125,6 +125,7 @@ func TestSingleAddProductLink(t *testing.T) {
 	Prod2 = zaraapp.EditCoast(Prod2, cb.Data.Valute.Try.Value/10, walrus, delivery)
 	//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(variety.Product[i])) //.AddAttr()
 	Prod2, _ = Adding.YandexTranslate(Prod2)
+	Prod2.Article += "_test"
 	errorAddProductWC := Adding.AddProduct(Prod2) //.AddAttr()
 	if errorAddProductWC != nil {
 		Prod2.Upload = true

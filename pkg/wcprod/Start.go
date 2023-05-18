@@ -202,17 +202,17 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	var chet int
 	for _, colorItemValue := range product.Item {
 		for indexImage, valueImage := range colorItemValue.Image {
-			if chet == 0 {
-				imageInput = append(imageInput, entity.ProductImage{
-					Src:  valueImage,
-					Name: valueImage + strconv.Itoa(indexImage) + ".jpg",
-					Alt:  valueImage + strconv.Itoa(indexImage),
-				})
-			}
+			// if chet == 0 {
+			// 	imageInput = append(imageInput, entity.ProductImage{
+			// 		Src:  valueImage,
+			// 		Name: valueImage + strconv.Itoa(indexImage),
+			// 		Alt:  valueImage + strconv.Itoa(indexImage),
+			// 	})
+			// }
 			imageInput = append(imageInput, entity.ProductImage{
 				Src:  valueImage,
-				Name: valueImage + strconv.Itoa(indexImage) + ".jpg",
-				Alt:  valueImage + strconv.Itoa(indexImage),
+				Name: colorItemValue.ColorEng + strconv.Itoa(indexImage),
+				Alt:  valueImage,
 			})
 			chet++
 		}
@@ -267,11 +267,11 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	var itemID int
 	item, errCreate = woo.WooClient.Services.Product.Create(paramVariableProduct)
 	if errCreate != nil {
-		fmt.Println("Product.Create:", errCreate)
+		fmt.Println("Product.Create: При создании товара произошла ошибка:", errCreate)
 		return errCreate
 	}
 	itemID = item.ID
-	fmt.Println("Product.Create: Done itemID =", itemID)
+	fmt.Println("Product.Create: Создал товар с ID:", itemID)
 
 	// Редактирвоание вариационных товаров.
 	//
@@ -282,7 +282,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	// [Batch]: https://woocommerce.github.io/woocommerce-rest-api-docs/#batch-update-product-variations
 	var CreateVariations []wc.BatchProductVariationsCreateItem
 	for colorKey, colorItemValue := range product.Item {
-		fmt.Println("colorItemValue.Size", colorItemValue.Size)
+		// fmt.Println("colorItemValue.Size", colorItemValue.Size)
 		for sizeKey, SizeValue := range colorItemValue.Size {
 			fmt.Printf("ProductVariation.Create[%v:%v]: Добавляю вар. товар с цветом '%v' и размером '%v'\n", colorKey+1, sizeKey+1, colorItemValue.ColorEng, SizeValue.Val)
 
@@ -306,10 +306,22 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 				},
 				Status: statusCodeForVarientProd(SizeValue.IsExit), // Переменная, которая содержит статус наличия товара.
 			}
+
+			// Поиск ID картинки
+			// Мы ищем ID картинки, чтобы добавить именно ID в фотографию вариации, а не ссылку на ту же картинку. Это сокращает потребление дискового пространства.
+			var ID_Image int
+			for _, FindImage := range item.Images {
+				if FindImage.Alt == colorItemValue.Image[0] {
+					ID_Image = FindImage.ID
+				}
+			}
+			fmt.Println("ID_Image", ID_Image)
+
 			if len(colorItemValue.Image) != 0 {
 				CreateVariation.Image = &entity.ProductImage{
-					Src:  colorItemValue.Image[0],
-					Name: colorItemValue.ColorEng + ".jpg",
+					// Src:  colorItemValue.Image[0],
+					ID:   ID_Image,
+					Name: colorItemValue.ColorEng,
 					Alt:  colorItemValue.ColorEng,
 				}
 			}

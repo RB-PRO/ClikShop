@@ -115,7 +115,7 @@ func Variety2_2() bases.Variety2 {
 	prods.Product[0].Name = "KNIT CROP TOP"
 	prods.Product[0].FullName = "KNIT CROP TOP"
 	prods.Product[0].Link = "https://www.zara.com/tr/en/knit-crop-top-p01750002.html"
-	prods.Product[0].Article = "1750/002aaa"
+	prods.Product[0].Article = "1750/002a"
 	prods.Product[0].Description.Eng = `We work with monitoring programmes to ensure compliance with our social, environmental and health and safety standards for our garments.
 To assess compliance, we have developed a programme of audits and continuous improvement plans.
 OUTER SHELL
