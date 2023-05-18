@@ -1,6 +1,7 @@
 package bases
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -81,4 +82,19 @@ func Name2Slug(str string) string {
 	str = strings.ReplaceAll(str, "--", "-")
 	// В идеале добавить регулярные выражения для отсеивания лишнего
 	return str
+}
+
+// Вернуть строку в виде продукта в читаемом виде
+func ProdStr(Prod Product2) (str string) {
+	str += fmt.Sprintf("Название товара: %v", Prod.Name)
+	str += fmt.Sprintf("Полное Название товара: %v", Prod.FullName)
+
+	str += fmt.Sprintf("Ссылка на товар: %v", Prod.Link)
+	str += fmt.Sprintf(": %v", Prod.Article)
+	str += fmt.Sprintf(": %v", Prod.Manufacturer)
+	str += fmt.Sprintf(": %v", Prod.GenderLabel)
+	str += fmt.Sprintf(": %v", Prod.Size)
+	str += fmt.Sprintf(": %v", Prod.Description.Eng)
+
+	return ""
 }

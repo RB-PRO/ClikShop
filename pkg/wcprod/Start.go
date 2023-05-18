@@ -202,13 +202,6 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	var chet int
 	for _, colorItemValue := range product.Item {
 		for indexImage, valueImage := range colorItemValue.Image {
-			// if chet == 0 {
-			// 	imageInput = append(imageInput, entity.ProductImage{
-			// 		Src:  valueImage,
-			// 		Name: valueImage + strconv.Itoa(indexImage),
-			// 		Alt:  valueImage + strconv.Itoa(indexImage),
-			// 	})
-			// }
 			imageInput = append(imageInput, entity.ProductImage{
 				Src:  valueImage,
 				Name: colorItemValue.ColorEng + strconv.Itoa(indexImage),

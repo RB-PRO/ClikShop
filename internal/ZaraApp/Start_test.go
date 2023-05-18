@@ -12,6 +12,7 @@ import (
 )
 
 // Тестовая загрузка единичного товара
+// go test -v -run ^TestSingleAddProduct$ github.com/RB-PRO/SanctionedClothing/internal/ZaraApp
 func TestSingleAddProduct(t *testing.T) {
 
 	// Нало работы с центральным банком
@@ -76,6 +77,7 @@ func TestSingleAddProduct(t *testing.T) {
 	touch, _ := zaratr.LoadTouch(prod.Seo.Keyword + "-p" + prod.Seo.SeoProductID)
 	Prod2 := zaratr.Touch2Product2(touch)
 	Prod2.Cat = prod.Cat // Обновляем категнории
+	Prod2.Article += "_test"
 	fmt.Println("Артикул товара:", Prod2.Article)
 
 	//fmt.Printf("%+#v", Prod2)
