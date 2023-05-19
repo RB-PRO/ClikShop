@@ -82,6 +82,7 @@ func TestSingleAddProduct(t *testing.T) {
 
 	//fmt.Printf("%+#v", Prod2)
 	fmt.Printf("В этом товаре всего %d цветов.\n", len(Prod2.Item))
+	fmt.Println("Спарсили товар с параметрами:\n", bases.ProdStr(Prod2))
 
 	Variety.Product = append(Variety.Product, Prod2)
 
@@ -106,6 +107,7 @@ func TestSingleAddProduct(t *testing.T) {
 	}
 }
 
+// go test -v -run ^TestSingleAddProductLink$ github.com/RB-PRO/SanctionedClothing/internal/ZaraApp
 func TestSingleAddProductLink(t *testing.T) {
 
 	// Нало работы с центральным банком
@@ -128,6 +130,9 @@ func TestSingleAddProductLink(t *testing.T) {
 	//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(variety.Product[i])) //.AddAttr()
 	Prod2, _ = Adding.YandexTranslate(Prod2)
 	Prod2.Article += "_test"
+
+	fmt.Println("Спарсили товар с параметрами:\n", bases.ProdStr(Prod2))
+
 	errorAddProductWC := Adding.AddProduct(Prod2) //.AddAttr()
 	if errorAddProductWC != nil {
 		Prod2.Upload = true

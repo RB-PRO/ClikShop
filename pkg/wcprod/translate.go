@@ -92,7 +92,7 @@ func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 		return prod, ErorTranslate
 	}
 	if len(TranslateNames) == 3 {
-		prod.Description.Eng, prod.Name, prod.FullName = TranslateNames[0], TranslateNames[1], TranslateNames[2]
+		prod.Description.Rus, prod.Name, prod.FullName = TranslateNames[0], TranslateNames[1], TranslateNames[2]
 	}
 
 	// Категории

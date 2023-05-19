@@ -37,7 +37,7 @@ func Start() {
 	delivery := 500 // Доставка
 	walrus := 1.3   // Моржа
 	// 3500
-	for i := 2500; i < len(varient.Product)-2; i++ {
+	for i := 0; i < len(varient.Product)-2; i++ {
 		fmt.Printf("Start: Загружаю товар (%d/%d)", i, len(varient.Product)-2)
 		if !varient.Product[i].Upload {
 			// Формирование адекватной цены доставки из файла

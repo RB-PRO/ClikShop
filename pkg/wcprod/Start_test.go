@@ -93,6 +93,7 @@ func varietBasesVariety2() bases.Variety2 {
 	}
 }
 
+// go test -v -run ^TestAddProduct_2$ github.com/RB-PRO/SanctionedClothing/pkg/wcprod
 func TestAddProduct_2(t *testing.T) {
 	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {
@@ -100,6 +101,8 @@ func TestAddProduct_2(t *testing.T) {
 	}
 
 	variet := Variety2_2() // Получаем товар
+
+	fmt.Println("Спарсили товар с параметрами:\n", bases.ProdStr(variet.Product[0]))
 
 	errAdd := Adding.AddProduct(variet.Product[0])
 	if errAdd != nil {

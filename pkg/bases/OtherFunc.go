@@ -86,15 +86,22 @@ func Name2Slug(str string) string {
 
 // Вернуть строку в виде продукта в читаемом виде
 func ProdStr(Prod Product2) (str string) {
-	str += fmt.Sprintf("Название товара: %v", Prod.Name)
-	str += fmt.Sprintf("Полное Название товара: %v", Prod.FullName)
+	str += fmt.Sprintf("Название товара: '%v'\n", Prod.Name)
+	str += fmt.Sprintf("Полное Название товара: '%v'\n", Prod.FullName)
 
-	str += fmt.Sprintf("Ссылка на товар: %v", Prod.Link)
-	str += fmt.Sprintf(": %v", Prod.Article)
-	str += fmt.Sprintf(": %v", Prod.Manufacturer)
-	str += fmt.Sprintf(": %v", Prod.GenderLabel)
-	str += fmt.Sprintf(": %v", Prod.Size)
-	str += fmt.Sprintf(": %v", Prod.Description.Eng)
+	str += fmt.Sprintf("Ссылка на товар: '%v'\n", Prod.Link)
+	str += fmt.Sprintf("Артикул: '%v'\n", Prod.Article)
+	str += fmt.Sprintf("Производитель: '%v'\n", Prod.Manufacturer)
+	str += fmt.Sprintf("Гендер: '%v'\n", Prod.GenderLabel)
+	str += fmt.Sprintf("Все Размеры: '%v'\n", Prod.Size)
+	str += fmt.Sprintf("Описание: '%v'\n", Prod.Description.Eng)
+	for IndexSize, Sizen := range Prod.Item {
+		str += fmt.Sprintf("- %d Вариация с цветом: '%s'\n", IndexSize, Sizen.ColorEng)
+		str += fmt.Sprintf("--- Код цвета: %s\n", Sizen.ColorCode)
+		str += fmt.Sprintf("--- Цена: %v\n", Sizen.Price)
+		str += fmt.Sprintf("--- Размеры: %v\n", Sizen.Size)
+		str += fmt.Sprintf("--- Картинки: %s\n", Sizen.Image)
+	}
 
-	return ""
+	return str
 }
