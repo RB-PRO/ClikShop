@@ -39,9 +39,9 @@ func Touch2Product2(tou Touch) bases.Product2 {
 	for _, color := range tou.Product.Detail.Colors {
 
 		// Создаём массив размеров
-		sizes := make([]string, 0)
+		// sizes := make([]string, 0)
 		for _, size := range color.Sizes {
-			sizes = append(sizes, size.Name)
+			// sizes = append(sizes, size.Name)
 			Prod.Size = append(Prod.Size, size.Name) // Все размеры товара
 		}
 

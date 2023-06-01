@@ -2,14 +2,15 @@ package woocommerce
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestProductService_All(t *testing.T) {
 	params := ProductsQueryParams{}
-	items, _, _, _, err := wooClient.Services.Product.All(params)
+	items, _, _, _, err := wooClient.Services.Product.All(params, 1, 10)
 	if err != nil {
 		t.Errorf("wooClient.Services.Product.All: %s", err.Error())
 	} else {

@@ -39,6 +39,8 @@ type WcAdd struct {
 	WooClient *wc.WooCommerce // Клиент пользовательской библиотеки, с помощью которой добавляю товар
 
 	Cat3 map[int]*Category3Base // Мапа категории
+
+	AllProdSKU map[string]bool // Список всех товаров по Артиклу
 }
 
 // Инициализации базовой структуры загрузки товара
@@ -129,6 +131,25 @@ func New() (*WcAdd, error) {
 	Cat3[0] = &Category3Base{}
 	Cat3[0].Cat3 = make(map[int]*Category3Base)
 
+	// Получить все артикулы товаров
+	// var AllProdSKU []string
+	AllProdSKU := make(map[string]bool)
+	// var IsLastPages bool
+	// var TecalPage int
+	// for !IsLastPages {
+	// 	var ErrorAllProd error
+	// 	var items []entity.Product
+	// 	items, _, _, IsLastPages, ErrorAllProd = wooClient.Services.Product.All(wc.ProductsQueryParams{}, TecalPage, 100)
+	// 	if ErrorAllProd != nil {
+	// 		return nil, ErrorAllProd
+	// 	}
+	// 	for _, prod := range items {
+	// 		// AllProdSKU = append(AllProdSKU, prod.SKU)
+	// 		AllProdSKU[prod.SKU] = true
+	// 	}
+	// 	TecalPage++
+	// }
+
 	return &WcAdd{
 		WooClient:      wooClient,
 		UserWC:         userWC,
@@ -142,6 +163,7 @@ func New() (*WcAdd, error) {
 		Plc:            plc,
 		Cat3:           Cat3,
 		Tr:             tr,
+		AllProdSKU:     AllProdSKU,
 	}, nil
 }
 
@@ -202,9 +224,11 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	var chet int
 	for _, colorItemValue := range product.Item {
 		for indexImage, valueImage := range colorItemValue.Image {
+			// valueImage = strings.ReplaceAll(valueImage, "///", "/")
+			// fmt.Println(">"+valueImage+"<", colorItemValue.ColorEng+"_"+strconv.Itoa(indexImage))
 			imageInput = append(imageInput, entity.ProductImage{
 				Src:  valueImage,
-				Name: colorItemValue.ColorEng + strconv.Itoa(indexImage),
+				Name: colorItemValue.ColorEng + "_" + strconv.Itoa(indexImage),
 				Alt:  valueImage,
 			})
 			chet++
@@ -213,7 +237,6 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 
 	// Структура с исходным товаром
 	paramVariableProduct := wc.CreateProductRequest{
-
 		Name:             product.Name,
 		Type:             "variable",
 		SKU:              product.Article,
@@ -222,18 +245,14 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		ShortDescription: product.FullName,
 		RegularPrice:     200.0,
 		Slug:             bases.FormingColorEng(product.Name),
-
 		MetaData: []entity.Meta{ // Ссылка на товар
 			{
 				Key:   "linkRB",
 				Value: product.Link,
 			},
 		},
-
-		Images: imageInput,
-
+		Images:     imageInput,
 		Categories: []entity.ProductCategory{{ID: idCat}},
-
 		Attributes: []entity.ProductAttribute{
 			{
 				ID:      woo.IdManuf,
@@ -277,7 +296,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 	for colorKey, colorItemValue := range product.Item {
 		// fmt.Println("colorItemValue.Size", colorItemValue.Size)
 		for sizeKey, SizeValue := range colorItemValue.Size {
-			fmt.Printf("ProductVariation.Create[%v:%v]: Добавляю вар. товар с цветом '%v' и размером '%v'\n", colorKey+1, sizeKey+1, colorItemValue.ColorEng, SizeValue.Val)
+			fmt.Printf("ProductVariation.Create[%v:%v]: Добавляю вар. товар с цветом '%v' и размером '%v'. ", colorKey+1, sizeKey+1, colorItemValue.ColorEng, SizeValue.Val)
 
 			// Создаём элемент создания вариационного товара
 			CreateVariation := wc.CreateProductVariationRequest{
@@ -308,7 +327,7 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 					ID_Image = FindImage.ID
 				}
 			}
-			fmt.Println("ID_Image", ID_Image)
+			fmt.Println("ID_Image =", ID_Image)
 
 			if len(colorItemValue.Image) != 0 {
 				CreateVariation.Image = &entity.ProductImage{

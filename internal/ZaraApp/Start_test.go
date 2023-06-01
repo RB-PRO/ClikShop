@@ -107,6 +107,7 @@ func TestSingleAddProduct(t *testing.T) {
 	}
 }
 
+// go clean -testcache
 // go test -v -run ^TestSingleAddProductLink$ github.com/RB-PRO/SanctionedClothing/internal/ZaraApp
 func TestSingleAddProductLink(t *testing.T) {
 
@@ -121,9 +122,17 @@ func TestSingleAddProductLink(t *testing.T) {
 	if errorInitWcAdd != nil {
 		t.Error(errorInitWcAdd)
 	}
-
-	touch, _ := zaratr.LoadTouch("linen-blend-longline-bomber-jacket-p03574371")
+	// "asymmetric-double-breasted-waistcoat---limited-edition-p07655728"
+	// "metallic-block-heel-sandals-p13344110"
+	touch, _ := zaratr.LoadTouch("metallic-block-heel-sandals-p13344110")
 	Prod2 := zaratr.Touch2Product2(touch)
+
+	// Prod2.Item[0].Image = Prod2.Item[0].Image[2:]
+	for i, p := range Prod2.Item {
+		for ii, pp := range p.Image {
+			fmt.Printf("%d:%d. '%s'\n", i, ii, pp)
+		}
+	}
 	delivery := 500 // Доставка
 	walrus := 1.3   // Моржа
 	Prod2 = zaraapp.EditCoast(Prod2, cb.Data.Valute.Try.Value/10, walrus, delivery)
@@ -137,4 +146,5 @@ func TestSingleAddProductLink(t *testing.T) {
 	if errorAddProductWC != nil {
 		Prod2.Upload = true
 	}
+
 }

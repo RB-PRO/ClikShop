@@ -55,11 +55,12 @@ func (m ProductsQueryParams) Validate() error {
 }
 
 // All List all products
-func (s productService) All(params ProductsQueryParams) (items []entity.Product, total, totalPages int, isLastPage bool, err error) {
+func (s productService) All(params ProductsQueryParams, Page, PerPage int) (items []entity.Product, total, totalPages int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
-
+	params.SetPage(Page)
+	params.SetPerPage(PerPage)
 	params.TidyVars()
 	params.After = ToISOTimeString(params.After, false, true)
 	params.Before = ToISOTimeString(params.Before, true, false)

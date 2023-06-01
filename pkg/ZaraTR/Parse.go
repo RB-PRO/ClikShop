@@ -17,6 +17,7 @@ func Parsing() bases.Variety2 {
 	ProductsLine := make([]CommercialComponents, 0)
 	bar := pb.StartNew(len(CatArr.Items))
 	for _, cat := range CatArr.Items {
+
 		line, ErrorLine := LoadLine(fmt.Sprintf("%v", cat.ID.value))
 		if ErrorLine != nil {
 			fmt.Println(ErrorLine)

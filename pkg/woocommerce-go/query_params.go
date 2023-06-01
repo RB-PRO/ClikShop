@@ -1,9 +1,10 @@
 package woocommerce
 
 import (
-	"github.com/google/go-querystring/query"
 	"net/url"
 	"strings"
+
+	"github.com/google/go-querystring/query"
 )
 
 const (
@@ -25,6 +26,14 @@ type queryParams struct {
 	Context string `url:"context,omitempty"`
 }
 
+func (q *queryParams) SetPage(Page int) *queryParams {
+	q.Page = Page
+	return q
+}
+func (q *queryParams) SetPerPage(PerPage int) *queryParams {
+	q.PerPage = PerPage
+	return q
+}
 func (q *queryParams) TidyVars() *queryParams {
 	if q.Page <= 0 {
 		q.Page = 1

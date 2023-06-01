@@ -7,7 +7,7 @@ import (
 )
 
 func TestLoadLine(t *testing.T) {
-	lin, ErrorCat := zaratr.LoadLine("2184443")
+	lin, ErrorCat := zaratr.LoadLine("2215112")
 	if ErrorCat != nil {
 		t.Error(ErrorCat)
 	}

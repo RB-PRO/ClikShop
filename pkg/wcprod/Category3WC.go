@@ -19,7 +19,10 @@ func (woo *WcAdd) AddCategoryWC(cat []bases.Cat) (NewId int, ErrorAddCat error) 
 			var OldParent int = NewId
 			//fmt.Println("Создаю категорию", OldParent)
 			NewId, ErrorAddCat = woo.UserWC.AddCat_WC(woocommerce.MeCat{ParentID: NewId, Name: Category.Name, Slug: Category.Slug})
-			// Обработка ошибки тут должна быть
+			if ErrorAddCat != nil { // Обработка ошибки тут должна быть
+				return 0, ErrorAddCat
+			}
+
 			woo.AddCategory3(NewId, &Category3Base{Parent: OldParent, Name: Category.Name, Slug: Category.Slug})
 
 		} else {

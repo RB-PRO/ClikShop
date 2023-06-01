@@ -10,6 +10,7 @@ import (
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
+	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
 	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
 )
 
@@ -40,14 +41,22 @@ func Start() {
 	for i := 0; i < len(varient.Product)-2; i++ {
 		fmt.Printf("Start: Загружаю товар (%d/%d)", i, len(varient.Product)-2)
 		if !varient.Product[i].Upload {
-			// Формирование адекватной цены доставки из файла
-			ActualDelivery := Adding.EditDelivery(varient.Product[i].Cat, delivery)
-			varient.Product[i] = EditCoast(varient.Product[i], cb.Data.Valute.Try.Value/10, walrus, ActualDelivery)
-			//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(varient.Product[i])) //.AddAttr()
-			varient.Product[i], _ = Adding.YandexTranslate(varient.Product[i])
-			errorAddProductWC := Adding.AddProduct(varient.Product[i]) //.AddAttr()
-			if errorAddProductWC != nil {
-				varient.Product[i].Upload = true
+			if _, ok := Adding.AllProdSKU[varient.Product[i].Article]; !ok {
+				// Формирование адекватной цены доставки из файла
+				ActualDelivery := Adding.EditDelivery(varient.Product[i].Cat, delivery)
+				varient.Product[i] = EditCoast(varient.Product[i], cb.Data.Valute.Try.Value/10, walrus, ActualDelivery)
+				//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(varient.Product[i])) //.AddAttr()
+				var ErrorTranstate error
+				varient.Product[i], ErrorTranstate = Adding.YandexTranslate(varient.Product[i])
+				if ErrorTranstate != nil {
+					Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
+					varient.Product[i], _ = Adding.YandexTranslate(varient.Product[i])
+				}
+				errorAddProductWC := Adding.AddProduct(varient.Product[i]) //.AddAttr()
+				if errorAddProductWC != nil {
+					varient.Product[i].Upload = true
+				}
+				Adding.AllProdSKU[varient.Product[i].Article] = true
 			}
 		}
 	}

@@ -26,6 +26,7 @@ func CatCycle() *CategoryArray {
 	// Цикл по всем подкатегориям
 	for _, catCaters := range Cat.Categories {
 		if catCaters.Name == "WOMAN" || catCaters.Name == "MAN" || catCaters.Name == "KIDS" {
+
 			// c.TecalCat = append(c.TecalCat, bases.Cat{
 			// 	Name: catCaters.Name,
 			// 	Slug: strings.ToLower(catCaters.Name),
@@ -111,8 +112,6 @@ func filter(str string) bool {
 	case "HOME KIDS":
 		return true
 	case "HOME":
-		return true
-	case "SHOES":
 		return true
 	default:
 		return false
