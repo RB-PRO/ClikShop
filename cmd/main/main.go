@@ -1,6 +1,8 @@
 package main
 
-import zaraapp "github.com/RB-PRO/SanctionedClothing/internal/ZaraApp"
+import (
+	clicker "github.com/RB-PRO/SanctionedClothing/internal/Clicker"
+)
 
 func main() {
 	//app.Run(os.Args[1])
@@ -14,5 +16,7 @@ func main() {
 	//tests.AddProd()
 	//pm6wp.Start()
 
-	zaraapp.Start()
+	// zaraapp.Start()
+
+	clicker.Click()
 }

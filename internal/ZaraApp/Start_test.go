@@ -124,7 +124,8 @@ func TestSingleAddProductLink(t *testing.T) {
 	}
 	// "asymmetric-double-breasted-waistcoat---limited-edition-p07655728"
 	// "metallic-block-heel-sandals-p13344110"
-	touch, _ := zaratr.LoadTouch("metallic-block-heel-sandals-p13344110")
+	// "lace-up-denim-wedge-heel-shoes-p12280210"
+	touch, _ := zaratr.LoadTouch("lace-up-denim-wedge-heel-shoes-p12280210")
 	Prod2 := zaratr.Touch2Product2(touch)
 
 	// Prod2.Item[0].Image = Prod2.Item[0].Image[2:]

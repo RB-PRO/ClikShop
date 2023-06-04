@@ -30,16 +30,17 @@ build-linux-to-windows:
 build-car:
 	set GOARCH=amd64
 	set GOOS=linux
+	set CGO_ENABLED=0
 	export GOARCH=amd64
 	export GOOS=linux
 	export CGO_ENABLED=0
 	go env GOOS GOARCH
 	go build -o main cmd/main/main.go
-	scp main Delivery.xlsx config_test.json consumer_key secret_key proxy OAuthToken FolderID root@194.87.107.129:go/SanctionedClothing/
+	scp main Delivery.xlsx config_test.json consumer_key secret_key proxy OAuthToken FolderID token root@194.87.107.129:go/SanctionedClothing/
 
 build-carW:
 	set GOARCH=amd64
 	set GOOS=windows 
 	go env GOOS GOARCH
 	go build -o main.exe cmd/main/main.go
-	scp main Delivery.xlsx config_test.json consumer_key secret_key proxy OAuthToken FolderID root@194.87.107.129:go/SanctionedClothing/
+	scp main Delivery.xlsx config_test.json consumer_key secret_key proxy OAuthToken FolderID token root@194.87.107.129:go/SanctionedClothing/

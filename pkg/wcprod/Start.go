@@ -43,7 +43,7 @@ type WcAdd struct {
 	AllProdSKU map[string]bool // Список всех товаров по Артиклу
 }
 
-// Инициализации базовой структуры загрузки товара
+// Полная инициализация базовой структуры загрузки товара
 func New() (*WcAdd, error) {
 	// Клиент от сторонней библиотеки(пользовательской)
 	b, err := os.ReadFile("config_test.json")
@@ -89,7 +89,6 @@ func New() (*WcAdd, error) {
 	}
 
 	// Переводчик
-
 	FolderID, _ := DataFile("FolderID")
 	OAuthToken, _ := DataFile("OAuthToken")
 
@@ -132,23 +131,22 @@ func New() (*WcAdd, error) {
 	Cat3[0].Cat3 = make(map[int]*Category3Base)
 
 	// Получить все артикулы товаров
-	// var AllProdSKU []string
 	AllProdSKU := make(map[string]bool)
-	// var IsLastPages bool
-	// var TecalPage int
-	// for !IsLastPages {
-	// 	var ErrorAllProd error
-	// 	var items []entity.Product
-	// 	items, _, _, IsLastPages, ErrorAllProd = wooClient.Services.Product.All(wc.ProductsQueryParams{}, TecalPage, 100)
-	// 	if ErrorAllProd != nil {
-	// 		return nil, ErrorAllProd
-	// 	}
-	// 	for _, prod := range items {
-	// 		// AllProdSKU = append(AllProdSKU, prod.SKU)
-	// 		AllProdSKU[prod.SKU] = true
-	// 	}
-	// 	TecalPage++
-	// }
+	var IsLastPages bool
+	var TecalPage int
+	for !IsLastPages {
+		var ErrorAllProd error
+		var items []entity.Product
+		items, _, _, IsLastPages, ErrorAllProd = wooClient.Services.Product.All(wc.ProductsQueryParams{}, TecalPage, 100)
+		if ErrorAllProd != nil {
+			return nil, ErrorAllProd
+		}
+		for _, prod := range items {
+			// AllProdSKU = append(AllProdSKU, prod.SKU)
+			AllProdSKU[prod.SKU] = true
+		}
+		TecalPage++
+	}
 
 	return &WcAdd{
 		WooClient:      wooClient,
@@ -164,6 +162,36 @@ func New() (*WcAdd, error) {
 		Cat3:           Cat3,
 		Tr:             tr,
 		AllProdSKU:     AllProdSKU,
+	}, nil
+}
+
+// Вторичная инициализация без переводчика и списка всех товаров, цены доставки, тегов и прочего.
+func New2() (*WcAdd, error) {
+	// Клиент от сторонней библиотеки(пользовательской)
+	b, err := os.ReadFile("config_test.json")
+	if err != nil {
+		return nil, errors.New("wcprod: New: Read config error: " + err.Error())
+	}
+
+	var c config.Config
+	err = json.Unmarshal(b, &c)
+	if err != nil {
+		return nil, errors.New("wcprod: New: Parse config file error: " + err.Error())
+	}
+	wooClient := wc.NewClient(c)
+
+	// Мой клиент
+	consumer_key, _ := DataFile("consumer_key") //  Пользовательский ключ
+	secret_key, _ := DataFile("secret_key")     // Секретный код пользователя
+
+	userWC, _ := woocommerce.New(consumer_key, secret_key) // Авторизация
+	if okErr := userWC.IsOrder(); okErr != nil {           // Проверка на авторизацию
+		return nil, okErr
+	}
+
+	return &WcAdd{
+		WooClient: wooClient,
+		UserWC:    userWC,
 	}, nil
 }
 
