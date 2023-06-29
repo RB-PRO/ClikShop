@@ -2,6 +2,8 @@ package hm
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/gocolly/colly"
@@ -10,8 +12,9 @@ import (
 const URL string = "https://www2.hm.com"
 
 type CategorysCat struct {
-	Link string
-	bases.Cat
+	Link      string
+	Cat       []bases.Cat
+	GendetTag string
 }
 
 // Получить список всех категорий и ссылки на эти категории
@@ -19,7 +22,7 @@ func Categorys() (Category []CategorysCat, ErrParse error) {
 	const ProductCategory string = "Ürüne göre satın al" // Константа, которая содержит название на Турецком языке, которое означает все продукты
 
 	c := colly.NewCollector()
-	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.4.603 Yowser/2.5 Safari/537.36"
+	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 YaBrowser/23.5.2.625 Yowser/2.5 Safari/537.36"
 
 	// Проверка на ошибку
 	c.OnError(func(r *colly.Response, e error) {
@@ -27,37 +30,92 @@ func Categorys() (Category []CategorysCat, ErrParse error) {
 	})
 
 	// Категории товаров
-	c.OnHTML("ul[class=MLEL] li div ul li ul li a", func(e *colly.HTMLElement) {
+	c.OnHTML("ul[class] li div ul li ul li a", func(e *colly.HTMLElement) {
 		Link, LinkIsExit := e.DOM.Attr("href") // Ссылка на категорию
-		if LinkIsExit {
-			HeaderLine := e.DOM.Parent().Parent().Parent().Parent().Parent().Parent().Find("a").Text()
-			HeaderLine = e.DOM.Parent().Parent().Parent().Parent().Parent().Parent().Empty().Children().Filter("a").Text()
-			HeaderLine, _ = e.DOM.Parent().Parent().Parent().Parent().Parent().Parent().First().Html()
-
-			if e.DOM.Parent().Parent().Parent().Find("span").Text() == ProductCategory {
-				fmt.Println(e.DOM.Text(), ">"+HeaderLine+"<", Filter(HeaderLine), URL+Link)
-				fmt.Println(">" + e.DOM.Parent().Parent().Parent().Parent().Parent().Children().Text())
-				fmt.Println(">" + e.DOM.Parent().Parent().Parent().Parent().Parent().Find("a:nth-child(1)").Text())
-				fmt.Println(">" + e.DOM.Parent().Parent().Parent().Parent().Parent().Find("a:nth-of-type(1)").Text())
-				fmt.Println(">" + e.DOM.Parent().Parent().Parent().Parent().Parent().Find("a:only-of-type").Text())
-				fmt.Println(">" + e.DOM.Parent().Parent().Parent().Parent().Parent().Find("a:first-child").Text())
-				fmt.Println(">" + e.DOM.Parent().Parent().Parent().Parent().Parent().Find("a:empty").Text())
-				fmt.Println(">" + e.DOM.Parent().Parent().Parent().Parent().Parent().Contents().Find("a:first-child").Text())
-				fmt.Println()
+		if LinkIsExit {                        // Если существует некоторый тег с ссылкой на подкатегорию
+			if SelectorSpan := e.DOM.Parent().Parent().Parent().Find("span"); SelectorSpan.Text() == ProductCategory {
+				if cat, ErrorParseCat := PullOutCat(URL + Link); ErrorParseCat == nil {
+					if Filter(cat[0].Slug) {
+						NewCategorys := append([]bases.Cat{{Name: "H&M", Slug: "hm", ID: 0}}, cat...)
+						Category = append(Category, CategorysCat{Link: Link, Cat: NewCategorys, GendetTag: TransCategoryTR(NewCategorys[1].Slug)})
+					}
+				}
 			}
 		}
 	})
 
+	c.OnError(func(r *colly.Response, err error) {
+		ErrParse = fmt.Errorf("categorys: Request URL: %v failed with response: %v Error: %v", r.Request.URL, r, err)
+	})
+
 	c.Visit("https://www2.hm.com/tr_tr/index.html")
 
-	return Category, nil
+	return Category, ErrParse
 }
 
+// Фильтр того, что будем учитывать, а что нет.
 func Filter(str string) bool {
 	switch str {
-	case "H&M HOME":
-		return false
-	default:
+	case "kadin":
 		return true
+	case "erkek":
+		return true
+	case "bebek":
+		return true
+	case "cocuk":
+		return true
+	default:
+		return false
 	}
+}
+
+// Перевести с Турецкого на Английский по категориям
+func TransCategoryTR(str string) string {
+	switch str {
+	case "kadin":
+		return "woman"
+	case "erkek":
+		return "man"
+	case "bebek":
+		return "boy"
+	case "cocuk":
+		return "girl"
+	default:
+		return "unisex"
+	}
+}
+
+// Перевести ссылку в массив категорий
+//
+//	Пример:
+//
+//	`https://www2.hm.com/tr_tr/home/urune-gore-satin-al/dekorasyon.html`
+//
+// в
+//
+//	`[]bases.Cat{{Name: "Home", Slug: "home"}, {Name: "Urune Gore Satin Al", Slug: "urune-gore-satin-al"}, {Name: "Dekorasyon", Slug: "dekorasyon"}}`
+func PullOutCat(link string) ([]bases.Cat, error) {
+
+	// Парсим ссылку
+	u, ErrParse := url.Parse(link)
+	if ErrParse != nil {
+		return nil, ErrParse
+	}
+
+	// Берём "ручку"
+	Path := u.Path
+	paths := strings.Split(Path, "/")
+	if len(paths) != 5 {
+		return nil, fmt.Errorf("PullOutCat: len of '%s' is %d. Correct - 5", paths, len(paths))
+	}
+
+	// Делаем слайс категорий
+	cat := make([]bases.Cat, 3)
+	for i := 0; i < len(cat); i++ {
+		CategoryName := strings.ReplaceAll(paths[i+2], ".html", "")
+		cat[i].Slug = CategoryName
+		cat[i].Name = bases.Slug2Name(cat[i].Slug)
+	}
+
+	return cat, nil
 }

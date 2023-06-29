@@ -26,3 +26,13 @@ func TestCatCycle(t *testing.T) {
 	}
 	fmt.Println(len(cycCat.Items))
 }
+func TestCatCycle2(t *testing.T) {
+	cycCat, err := zaratr.CatCycle2()
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(len(cycCat.Items))
+	for i, v := range cycCat.Items {
+		fmt.Println(i, v.Gender, v.RedirectCategoryID, v.Cat)
+	}
+}

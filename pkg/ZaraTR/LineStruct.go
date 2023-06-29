@@ -3,6 +3,7 @@ package zaratr
 import (
 	"encoding/json"
 	"errors"
+	"strconv"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
@@ -37,6 +38,8 @@ type Elements struct {
 	Header               string                 `json:"header,omitempty"`
 	Description          string                 `json:"description,omitempty"`
 	PreserveInZoom2      bool                   `json:"preserveInZoom2,omitempty"`
+
+	Cat []bases.Cat `json:"-"`
 }
 
 type Seo struct {
@@ -56,6 +59,13 @@ type CustomIntToString struct {
 
 func (cis *CustomIntToString) String() string {
 	return cis.value
+}
+func (cis *CustomIntToString) Int() (int, error) {
+	val, err := strconv.Atoi(cis.value)
+	if err != nil {
+		return 0, err
+	}
+	return val, nil
 }
 
 // Кастомное декодирование JSON для ключа SearchID
@@ -114,7 +124,8 @@ type CommercialComponents struct {
 	PriceUnavailable       bool                          `json:"priceUnavailable"`
 
 	// массив категорий
-	Cat []bases.Cat `json:"-"`
+	Cat    []bases.Cat `json:"-"`
+	Gender string      `json:"-"`
 }
 type ExtraInfoCommercialComponents struct {
 	IsDivider       bool `json:"isDivider"`

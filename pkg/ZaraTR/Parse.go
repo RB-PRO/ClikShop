@@ -2,6 +2,7 @@ package zaratr
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/cheggaaa/pb"
@@ -10,43 +11,46 @@ import (
 func Parsing() bases.Variety2 {
 
 	// Категории
-	CatArr := CatCycle() // Получить все категории
-	fmt.Println("Всего", len(CatArr.Items), "категорий")
+	CatArr, _ := CatCycle2() // Получить все категории
+	log.Println("Всего", len(CatArr.Items), "категорий")
 
 	// Все товары
 	ProductsLine := make([]CommercialComponents, 0)
 	bar := pb.StartNew(len(CatArr.Items))
 	for _, cat := range CatArr.Items {
-
-		line, ErrorLine := LoadLine(fmt.Sprintf("%v", cat.ID.value))
+		line, ErrorLine := LoadLine(fmt.Sprintf("%v", cat.RedirectCategoryID))
 		if ErrorLine != nil {
 			fmt.Println(ErrorLine)
 		}
 		bar.Increment()
 
-		if len(line.ProductGroups) != 0 {
-			if len(line.ProductGroups) != 0 {
-				if len(line.ProductGroups[0].Elements) != 0 {
-					for ind := range line.ProductGroups[0].Elements[0].CommercialComponents { // Циклом обновляем категории
-						if line.ProductGroups[0].Elements[0].CommercialComponents[ind].Type == "Product" { // Если это сам товар
-							line.ProductGroups[0].Elements[0].CommercialComponents[ind].Cat = cat.Cat
-						}
+		var cout int
+		for _, ProductGroups := range line.ProductGroups {
+			for _, Elements := range ProductGroups.Elements {
+				for _, CommercialComponents := range Elements.CommercialComponents {
+					if cout >= 10 { // Максимум 10 товаров в категории
+						break
 					}
-					ProductsLine = append(ProductsLine, line.ProductGroups[0].Elements[0].CommercialComponents...)
+					CommercialComponents.Cat = cat.Cat
+					CommercialComponents.Gender = cat.Gender
+					ProductsLine = append(ProductsLine, CommercialComponents)
+					cout++
 				}
 			}
 		}
 	}
 	bar.Finish()
-	fmt.Println("Всего", len(ProductsLine), "товара(ов)")
+	log.Println("Всего", len(ProductsLine), "товара(ов)")
 
 	// парсим товары
 	var Variety bases.Variety2
 	bar2 := pb.StartNew(len(ProductsLine))
-	for _, prod := range ProductsLine {
-		touch, _ := LoadTouch(prod.Seo.Keyword + "-p" + prod.Seo.SeoProductID)
-		Prod2 := Touch2Product2(touch)
-		Prod2.Cat = prod.Cat // Обновляем категнории
+	for i, prod := range ProductsLine {
+		log.Printf("(%d/%d) Парсинг товара: %v", i+1, len(ProductsLine), fmt.Sprintf(TouchURL, prod.Seo.Keyword+"-p"+prod.Seo.SeoProductID))
+		touch, _ := LoadTouch(prod.Seo.Keyword + "-p" + prod.Seo.SeoProductID) // Выполняем запрос
+		Prod2 := Touch2Product2(touch)                                         // АПереводим в структуру Product2
+		Prod2.Cat = prod.Cat                                                   // Обновляем категории
+		Prod2.GenderLabel = prod.Gender                                        // Обнволяем гендер
 
 		Variety.Product = append(Variety.Product, Prod2)
 		bar2.Increment()

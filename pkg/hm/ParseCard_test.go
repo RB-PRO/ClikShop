@@ -8,11 +8,22 @@ import (
 	"github.com/RB-PRO/SanctionedClothing/pkg/hm"
 )
 
-func TestCard(t *testing.T) {
-	Prod, ErrorParseProduct := hm.Product("https://www2.hm.com/tr_tr/productpage.1156720001.html")
-	if ErrorParseProduct != nil {
-		t.Error(ErrorParseProduct)
+func TestVariableProduct3(t *testing.T) {
+	Line, ErrorLine := hm.Lines("/tr_tr/kadin/urune-gore-satin-al/elbise/_jcr_content/main/productlisting.display.json", 1)
+	if ErrorLine != nil {
+		t.Error(ErrorLine)
 	}
 
-	fmt.Println(bases.ProdStr(Prod))
+	Prods := hm.Line2Product2(Line, []bases.Cat{}, "woman")
+	core, _ := hm.NewParsingCard()
+	LinkROI := 0
+	fmt.Println("Link:", Prods[LinkROI].Link)
+	for CoutColor := range Prods[LinkROI].Item {
+		ErrorParseProduct := core.VariableProduct3(&Prods[LinkROI], CoutColor)
+		if ErrorParseProduct != nil {
+			t.Error(ErrorParseProduct)
+		}
+	}
+
+	fmt.Println(bases.ProdStr(Prods[LinkROI]))
 }

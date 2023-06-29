@@ -10,9 +10,14 @@ import (
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
 	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/cheggaaa/pb"
 )
+
+func Parse() {
+	varient := zaratr.Parsing()
+	varient.SaveXlsxCsvs("Zara")
+}
 
 // Начать парсить и одновременно загружать товары
 func Start() {
@@ -22,7 +27,7 @@ func Start() {
 	if ErrorCB != nil {
 		panic(ErrorCB)
 	}
-	fmt.Println("Курс лиры", cb.Data.Valute.Try.Value)
+	log.Println("cbbank: Курс лиры", cb.Data.Valute.Try.Value/10)
 
 	// Загружаем товары на WC //
 	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
@@ -30,28 +35,30 @@ func Start() {
 		log.Fatalln(errorInitWcAdd)
 	}
 
+	// Пропарсить все товары на заре
 	varient := zaratr.Parsing()
 
+	// Сохранить данные в файл xlsx
 	varient.SaveXlsxCsvs("Zara")
+	log.Println("Парсинг: Сохраняю", len(varient.Product), "товаров")
 
 	// Загружаем товары
 	delivery := 500 // Доставка
 	walrus := 1.3   // Моржа
-	// 3500
+	bar := pb.StartNew(len(varient.Product) - 2)
 	for i := 0; i < len(varient.Product)-2; i++ {
-		fmt.Printf("Start: Загружаю товар (%d/%d)", i, len(varient.Product)-2)
+		log.Printf("Start: Загружаю товар (%d/%d): %s\n", i+1, len(varient.Product)-2, varient.Product[i].Link)
 		if !varient.Product[i].Upload {
 			if _, ok := Adding.AllProdSKU[varient.Product[i].Article]; !ok {
 				// Формирование адекватной цены доставки из файла
 				ActualDelivery := Adding.EditDelivery(varient.Product[i].Cat, delivery)
 				varient.Product[i] = EditCoast(varient.Product[i], cb.Data.Valute.Try.Value/10, walrus, ActualDelivery)
-				//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(varient.Product[i])) //.AddAttr()
-				var ErrorTranstate error
-				varient.Product[i], ErrorTranstate = Adding.YandexTranslate(varient.Product[i])
-				if ErrorTranstate != nil {
-					Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
-					varient.Product[i], _ = Adding.YandexTranslate(varient.Product[i])
-				}
+				// var ErrorTranstate error
+				// varient.Product[i], ErrorTranstate = Adding.YandexTranslate(varient.Product[i])
+				// if ErrorTranstate != nil {
+				// 	Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
+				// 	varient.Product[i], _ = Adding.YandexTranslate(varient.Product[i])
+				// }
 				errorAddProductWC := Adding.AddProduct(varient.Product[i]) //.AddAttr()
 				if errorAddProductWC != nil {
 					varient.Product[i].Upload = true
@@ -59,7 +66,9 @@ func Start() {
 				Adding.AllProdSKU[varient.Product[i].Article] = true
 			}
 		}
+		bar.Increment()
 	}
+	bar.Finish()
 	// "Мягкий" выход из программы
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {

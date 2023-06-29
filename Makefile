@@ -22,10 +22,10 @@ build-config:
 	go env GOOS GOARCH
 
 build-windows-to-linux:
-	set GOARCH=amd64 set GOOS=linux go build .\cmd\main\main.go  
+	set GOARCH=amd64 set GOOS=linux go build cmd/main/main.go  
 
 build-linux-to-windows:
-	export GOARCH=amd64 export GOOS=windows go build .\cmd\main\main.go
+	export GOARCH=amd64 export GOOS=windows go build cmd/main/main.go 
 
 build-car:
 	set GOARCH=amd64

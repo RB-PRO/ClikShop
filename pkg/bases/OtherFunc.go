@@ -1,10 +1,15 @@
 package bases
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+	"unicode"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // Удалить дубликаты в слайсе
@@ -46,8 +51,10 @@ func GenderBook(name, slug string) (string, string, bool) {
 		return "Мужчины", "man", true
 	case "men":
 		return "Мужчины", "man", true
-	case "kid":
-		return "Дети", "kid", true
+	case "boy":
+		return "Мальчики", "boy", true
+	case "girl":
+		return "Девочки", "girl", true
 	default:
 		return "Унисекс", "unisex", false
 	}
@@ -84,6 +91,17 @@ func Name2Slug(str string) string {
 	return str
 }
 
+// Перевести ссылку в название
+// Например:
+// `urune-gore-satin-al`
+// в
+// `Urune Gore Satin Al`
+func Slug2Name(str string) string {
+	str = strings.ReplaceAll(str, "-", " ")
+	str = cases.Title(language.Und, cases.NoLower).String(str)
+	return str
+}
+
 // Вернуть строку в виде продукта в читаемом виде
 func ProdStr(Prod Product2) (str string) {
 	str += fmt.Sprintf("Название товара: '%v'\n", Prod.Name)
@@ -95,13 +113,54 @@ func ProdStr(Prod Product2) (str string) {
 	str += fmt.Sprintf("Гендер: '%v'\n", Prod.GenderLabel)
 	str += fmt.Sprintf("Все Размеры: '%v'\n", Prod.Size)
 	str += fmt.Sprintf("Описание: '%v'\n", Prod.Description.Eng)
+	str += fmt.Sprintf("Описание: '%v'\n", Prod.Description.Rus)
 	for IndexSize, Sizen := range Prod.Item {
-		str += fmt.Sprintf("- %d Вариация с цветом: '%s'\n", IndexSize, Sizen.ColorEng)
+		str += fmt.Sprintf("- %d Вариация с цветом: '%s'\n", IndexSize+1, Sizen.ColorEng)
 		str += fmt.Sprintf("--- Код цвета: %s\n", Sizen.ColorCode)
 		str += fmt.Sprintf("--- Цена: %v\n", Sizen.Price)
+		str += fmt.Sprintf("--- Ссылка: %v\n", Sizen.Link)
 		str += fmt.Sprintf("--- Размеры: %v\n", Sizen.Size)
 		str += fmt.Sprintf("--- Картинки: %s\n", Sizen.Image)
 	}
-
 	return str
+}
+
+// Добавить общий список всех размеров в товаре на основании тех размеров, которые содержатся в вариациях данного товара
+func EditProdSize(Prod Product2) []string {
+	var SizesAll []string
+	for i := range Prod.Item {
+		for j := range Prod.Item[i].Size {
+			SizesAll = append(SizesAll, Prod.Item[i].Size[j].Val)
+		}
+	}
+	SizesAll = RemoveDuplicateStr(SizesAll)
+	return SizesAll
+}
+
+// Оставить в строке только символы и пробелы заменить на нижнее подчёркивание
+func KeepLettersAndSpaces(str string) (result string) {
+	str = strings.ToLower(str)
+	for _, char := range str {
+		if unicode.IsLetter(char) {
+			result += string(char)
+		}
+		if unicode.IsSpace(char) {
+			result += "_"
+		}
+	}
+	return result
+}
+
+// "Мягкий" выход из программы
+func ExitSoft() {
+	fmt.Println("Press 'q' to quit")
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		exit := scanner.Text()
+		if exit == "q" {
+			break
+		} else {
+			fmt.Println("Press 'q' to quit")
+		}
+	}
 }

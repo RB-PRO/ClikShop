@@ -8,15 +8,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"os"
-	"strconv"
+	"time"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/SanctionedClothing/pkg/imgbb"
 	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
 	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
 	wc "github.com/hiscaler/woocommerce-go"
 	config "github.com/hiscaler/woocommerce-go/config"
 	"github.com/hiscaler/woocommerce-go/entity"
+	"github.com/imagekit-developer/imagekit-go"
 )
 
 // Созовая структура, которая объединяет в себе все необходимые данные для работы с библиотекой и для загрузки товаров
@@ -28,6 +30,8 @@ type WcAdd struct {
 	Sttr           woocommerce.Attributes // Структура аттрибутов, которые лежат на WP
 	Plc            woocommerce.Categorys  // Массив категорий товара
 	Tr             *transrb.Translate     // Переводчик
+	Imgbb          *imgbb.ImgbbUser       // Сервис картинок
+	IK             *imagekit.ImageKit     // Сервис картинок 2 - https://imagekit.io/dashboard/developer/api-keys
 
 	// ID аттрибутов в WordPress.
 	IdAttrColor int
@@ -45,39 +49,64 @@ type WcAdd struct {
 
 // Полная инициализация базовой структуры загрузки товара
 func New() (*WcAdd, error) {
-	// Клиент от сторонней библиотеки(пользовательской)
-	b, err := os.ReadFile("config_test.json")
-	if err != nil {
-		return nil, errors.New("wcprod: New: Read config error: " + err.Error())
+	// Логгирование
+	FileLog := "logs/" + time.Now().Format("15h04m 02Jan2006") + ".log"
+	logFile, ErrLogFile := os.OpenFile(FileLog, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644) // open log file
+	if ErrLogFile != nil {
+		return nil, fmt.Errorf("wcprod: New:  %w", ErrLogFile)
 	}
+	defer logFile.Close()
+	log.SetOutput(logFile)                       // set log out put
+	log.SetFlags(log.Lshortfile | log.LstdFlags) // optional: log date-time, filename, and line number
+
+	// Загрузка конфига
+	ConfigRBFileName := "config_rb.json"
+	ConfigRB, ErrOpenConfigRB := LoadConfig(ConfigRBFileName)
+	if ErrOpenConfigRB != nil {
+		return nil, fmt.Errorf("wcprod: New: Read config file '%s' error: %v", ConfigRBFileName, ErrOpenConfigRB)
+	}
+	log.Println("New: Загрузил конфиг " + ConfigRBFileName)
+
+	// Клиент от сторонней библиотеки(пользовательской)
+	ConfigFileName := "config_wp.json"
+	b, ErrReadFile := os.ReadFile(ConfigFileName)
+	if ErrReadFile != nil {
+		return nil, errors.New("wcprod: New: Read config error: " + ErrReadFile.Error())
+	}
+	log.Println("New: Загрузил конфиг " + ConfigFileName)
 
 	var c config.Config
-	err = json.Unmarshal(b, &c)
-	if err != nil {
-		return nil, errors.New("wcprod: New: Parse config file error: " + err.Error())
+	ErrUnmarshal := json.Unmarshal(b, &c)
+	if ErrUnmarshal != nil {
+		return nil, errors.New("wcprod: New: Parse config file error: " + ErrUnmarshal.Error())
 	}
 	wooClient := wc.NewClient(c)
+	log.Println("New: wc.NewClient: Распарсил конфиг " + ConfigFileName)
 
 	// Мой клиент
-	consumer_key, _ := DataFile("consumer_key") //  Пользовательский ключ
-	secret_key, _ := DataFile("secret_key")     // Секретный код пользователя
-
-	userWC, _ := woocommerce.New(consumer_key, secret_key) // Авторизация
-	if okErr := userWC.IsOrder(); okErr != nil {           // Проверка на авторизацию
+	userWC, _ := woocommerce.New(ConfigRB.ConsumerKey, ConfigRB.SecretKey) // Авторизация
+	if okErr := userWC.IsOrder(); okErr != nil {                           // Проверка на авторизацию
 		return nil, okErr
 	}
+	log.Println("New: woocommerce.New: Создал клиент userWC")
 
 	// Мапа цены доставки
 	Delivery, ErrorDelivery := XlsxDelivery()
 	if ErrorDelivery != nil {
 		return nil, ErrorDelivery
 	}
+	log.Println("New: XlsxDelivery: Загрузил xlsx доставки")
+
+	// Юзер для работы с сервисом катинок
+	imgbbUser := imgbb.NewImgbbUser(ConfigRB.Imgbb)
+	log.Println("New: NewImgbbUser: Создаю пользователя imgbb")
 
 	// Теги
 	tags, tagsError := userWC.AllTags_WC()
 	if tagsError != nil {
 		return nil, tagsError
 	}
+	log.Println("New: AllTags_WC: Получаю теги tags")
 
 	// Создать Мапу тэгов
 	tagMap := woocommerce.MapTags(tags)
@@ -87,15 +116,25 @@ func New() (*WcAdd, error) {
 	if errPLC != nil {
 		return nil, errPLC
 	}
+	log.Println("New: ProductsCategories: Получаю дерево категорий")
 
 	// Переводчик
-	FolderID, _ := DataFile("FolderID")
-	OAuthToken, _ := DataFile("OAuthToken")
-
-	tr, ErrTranslate := transrb.New(FolderID, OAuthToken)
+	tr, ErrTranslate := transrb.New(ConfigRB.FolderID, ConfigRB.OAuthToken)
 	if ErrTranslate != nil {
 		return nil, ErrTranslate
 	}
+	log.Println("New: transrb.New: Создаю пользователя Яндекс переводчка")
+
+	// Using environment variables IMAGEKIT_PRIVATE_KEY, IMAGEKIT_PUBLIC_KEY and IMAGEKIT_ENDPOINT_URL
+	// ik, err := imagekit.New()
+
+	// Using keys in argument
+	IK := imagekit.NewFromParams(imagekit.NewParams{
+		PrivateKey:  ConfigRB.IKPrivateKey,
+		PublicKey:   ConfigRB.IKPublicKey,
+		UrlEndpoint: ConfigRB.IKUrlEndpoint,
+	})
+	log.Println("New: imagekit.NewFromParams: Создаю пользователя imagekit")
 
 	// Дерево категорий - Формирование внутренней структуры
 	NodeCategoryes := woocommerce.NewCategoryes()
@@ -107,6 +146,7 @@ func New() (*WcAdd, error) {
 		}
 		NodeCategoryes.Add(categ.Parent, addingCategory)
 	}
+	log.Println("New: woocommerce.NewCategoryes: Создаю дерево категорий")
 
 	// Аттрибуты
 	attr, errAttr := userWC.ProductsAttributes()
@@ -125,6 +165,7 @@ func New() (*WcAdd, error) {
 	if isFind_AttrManuf != nil {
 		return nil, isFind_AttrManuf
 	}
+	log.Println("New: userWC.ProductsAttributes: Получить аттрибусы цвета, размера, производителя")
 
 	Cat3 := make(map[int]*Category3Base)
 	Cat3[0] = &Category3Base{}
@@ -147,6 +188,7 @@ func New() (*WcAdd, error) {
 		}
 		TecalPage++
 	}
+	log.Println("New: wooClient.Services.Product.All: Получить все SKU товаров")
 
 	return &WcAdd{
 		WooClient:      wooClient,
@@ -162,30 +204,36 @@ func New() (*WcAdd, error) {
 		Cat3:           Cat3,
 		Tr:             tr,
 		AllProdSKU:     AllProdSKU,
+		Imgbb:          imgbbUser,
+		IK:             IK,
 	}, nil
 }
 
 // Вторичная инициализация без переводчика и списка всех товаров, цены доставки, тегов и прочего.
 func New2() (*WcAdd, error) {
+
+	ConfigRBFileName := "config_rb.json"
+	ConfigRB, ErrOpenConfigRB := LoadConfig(ConfigRBFileName)
+	if ErrOpenConfigRB != nil {
+		return nil, fmt.Errorf("wcprod: New: Read config file '%s' error: %v", ConfigRBFileName, ErrOpenConfigRB.Error())
+	}
+
 	// Клиент от сторонней библиотеки(пользовательской)
-	b, err := os.ReadFile("config_test.json")
-	if err != nil {
-		return nil, errors.New("wcprod: New: Read config error: " + err.Error())
+	b, ErrReadFile := os.ReadFile("config_rb.json")
+	if ErrReadFile != nil {
+		return nil, errors.New("wcprod: New: Read config error: " + ErrReadFile.Error())
 	}
 
 	var c config.Config
-	err = json.Unmarshal(b, &c)
-	if err != nil {
-		return nil, errors.New("wcprod: New: Parse config file error: " + err.Error())
+	ErrUnmarshal := json.Unmarshal(b, &c)
+	if ErrUnmarshal != nil {
+		return nil, errors.New("wcprod: New: Parse config file error: " + ErrUnmarshal.Error())
 	}
 	wooClient := wc.NewClient(c)
 
 	// Мой клиент
-	consumer_key, _ := DataFile("consumer_key") //  Пользовательский ключ
-	secret_key, _ := DataFile("secret_key")     // Секретный код пользователя
-
-	userWC, _ := woocommerce.New(consumer_key, secret_key) // Авторизация
-	if okErr := userWC.IsOrder(); okErr != nil {           // Проверка на авторизацию
+	userWC, _ := woocommerce.New(ConfigRB.ConsumerKey, ConfigRB.SecretKey) // Авторизация
+	if okErr := userWC.IsOrder(); okErr != nil {                           // Проверка на авторизацию
 		return nil, okErr
 	}
 
@@ -193,213 +241,4 @@ func New2() (*WcAdd, error) {
 		WooClient: wooClient,
 		UserWC:    userWC,
 	}, nil
-}
-
-// Функция добавления товара
-func (woo *WcAdd) AddProduct(product bases.Product2) error {
-
-	if product.Article == "" {
-		return errors.New("AddProduct: нет в товаре артикула")
-	}
-
-	/*
-		// Создать категории для товаров и получить её ID
-		idCat, AddNewId2 := woo.UserWC.AddCat2(&woo.Plc, product.Cat)
-		if AddNewId2 != nil {
-			return AddNewId2
-		}
-		fmt.Println("ID категории", idCat)
-	*/
-
-	// Создать категории для товаров и получить её ID по версии 3
-	idCat, AddNewId3 := woo.AddCategoryWC(product.Cat)
-	if AddNewId3 != nil {
-		return AddNewId3
-	}
-	// fmt.Println("ID категории", idCat)
-
-	/*
-		ManufrId, ManufName, ManufSlug := AddAttr(woo.WooClient, woo.IdAttrColor, "Производитель", product.Manufacturer)
-		fmt.Println("Для данного товара Аттрибуты Производителя:", ManufrId, ManufName, ManufSlug)
-
-		// Создаём аттрибуты товара для цвета
-		for key := range product.Item {
-			tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug := AddAttr(woo.WooClient, woo.IdAttrColor, product.Item[key].ColorEng, key)
-			fmt.Println("Для данного товара Аттрибуты цвета будут:", tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug)
-		}
-		// Создаём аттрибуты товара для Размера
-		for _, valSize := range product.Size {
-			tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug := AddAttr(woo.WooClient, woo.IdAttrSize, valSize, bases.FormingColorEng(valSize))
-			fmt.Println("Для данного товара Аттрибуты размера будут:", tecalAttrColorId, tecalAttrColorName, tecalAttrColorSlug)
-		}
-	*/
-	/**/
-
-	// Собираем гендер для загрузки в теги товара
-	idGender, _, isGenderSlug := bases.GenderBook(product.GenderLabel, "")
-	if !isGenderSlug {
-		fmt.Print("Не найден гендер.", idGender)
-	}
-	fmt.Println(" Гендр: " + idGender + ". ")
-
-	// Создаём массив цветов с полными назвавниями
-	var colors []string
-	for _, colorSet := range product.Item {
-		colors = append(colors, colorSet.ColorEng)
-	}
-	// Сделаю массив со всеми изображениями
-	imageInput := make([]entity.ProductImage, 0)
-	var chet int
-	for _, colorItemValue := range product.Item {
-		for indexImage, valueImage := range colorItemValue.Image {
-			// valueImage = strings.ReplaceAll(valueImage, "///", "/")
-			// fmt.Println(">"+valueImage+"<", colorItemValue.ColorEng+"_"+strconv.Itoa(indexImage))
-			imageInput = append(imageInput, entity.ProductImage{
-				Src:  valueImage,
-				Name: colorItemValue.ColorEng + "_" + strconv.Itoa(indexImage),
-				Alt:  valueImage,
-			})
-			chet++
-		}
-	}
-
-	// Структура с исходным товаром
-	paramVariableProduct := wc.CreateProductRequest{
-		Name:             product.Name,
-		Type:             "variable",
-		SKU:              product.Article,
-		Description:      product.Description.Rus,
-		Tags:             []entity.ProductTag{{Name: idGender, Slug: product.GenderLabel}},
-		ShortDescription: product.FullName,
-		RegularPrice:     200.0,
-		Slug:             bases.FormingColorEng(product.Name),
-		MetaData: []entity.Meta{ // Ссылка на товар
-			{
-				Key:   "linkRB",
-				Value: product.Link,
-			},
-		},
-		Images:     imageInput,
-		Categories: []entity.ProductCategory{{ID: idCat}},
-		Attributes: []entity.ProductAttribute{
-			{
-				ID:      woo.IdManuf,
-				Options: []string{product.Manufacturer},
-				Visible: true,
-			},
-			{
-				ID:        woo.IdAttrColor,
-				Variation: true,
-				Visible:   true,
-				Options:   colors,
-			},
-			{
-				ID:        woo.IdAttrSize,
-				Variation: true,
-				Visible:   true,
-				Options:   product.Size,
-			},
-		},
-	}
-
-	var item entity.Product
-	var errCreate error
-	var itemID int
-	item, errCreate = woo.WooClient.Services.Product.Create(paramVariableProduct)
-	if errCreate != nil {
-		fmt.Println("Product.Create: При создании товара произошла ошибка:", errCreate)
-		return errCreate
-	}
-	itemID = item.ID
-	fmt.Println("Product.Create: Создал товар с ID:", itemID)
-
-	// Редактирвоание вариационных товаров.
-	//
-	// Создаём массив из обновлений вариационных товаров, в частности создании новых вариаций товаров.
-	//
-	// Загружаем их одним запросом [Batch]
-	//
-	// [Batch]: https://woocommerce.github.io/woocommerce-rest-api-docs/#batch-update-product-variations
-	var CreateVariations []wc.BatchProductVariationsCreateItem
-	for colorKey, colorItemValue := range product.Item {
-		// fmt.Println("colorItemValue.Size", colorItemValue.Size)
-		for sizeKey, SizeValue := range colorItemValue.Size {
-			fmt.Printf("ProductVariation.Create[%v:%v]: Добавляю вар. товар с цветом '%v' и размером '%v'. ", colorKey+1, sizeKey+1, colorItemValue.ColorEng, SizeValue.Val)
-
-			// Создаём элемент создания вариационного товара
-			CreateVariation := wc.CreateProductVariationRequest{
-				SKU:          product.Article + "_" + colorItemValue.ColorCode + "_" + SizeValue.Val,
-				RegularPrice: colorItemValue.Price,
-				SalePrice:    colorItemValue.Price,
-				Description:  "Цвет: " + colorItemValue.ColorEng + "\n" + product.Description.Rus,
-				Attributes: []entity.ProductVariationAttribute{ // Аттрибусы товара
-					{
-						ID:     woo.IdAttrColor,
-						Name:   "Цвет",
-						Option: colorItemValue.ColorEng,
-					},
-					{
-						ID:     woo.IdAttrSize,
-						Name:   "Размер",
-						Option: SizeValue.Val,
-					},
-				},
-				Status: statusCodeForVarientProd(SizeValue.IsExit), // Переменная, которая содержит статус наличия товара.
-			}
-
-			// Поиск ID картинки
-			// Мы ищем ID картинки, чтобы добавить именно ID в фотографию вариации, а не ссылку на ту же картинку. Это сокращает потребление дискового пространства.
-			var ID_Image int
-			for _, FindImage := range item.Images {
-				if FindImage.Alt == colorItemValue.Image[0] {
-					ID_Image = FindImage.ID
-				}
-			}
-			fmt.Println("ID_Image =", ID_Image)
-
-			if len(colorItemValue.Image) != 0 {
-				CreateVariation.Image = &entity.ProductImage{
-					// Src:  colorItemValue.Image[0],
-					ID:   ID_Image,
-					Name: colorItemValue.ColorEng,
-					Alt:  colorItemValue.ColorEng,
-				}
-			}
-			// fmt.Println("CreateVariation.RegularPrice", CreateVariation.RegularPrice)
-			CreateVariations = append(CreateVariations, CreateVariation)
-		}
-	}
-	// fmt.Printf("CreateVariations: %+#v\n\n", CreateVariations)
-
-	// Выполняем запрос на создание вариационных товаров
-	_, ErrBatch := woo.WooClient.Services.ProductVariation.Batch(itemID, wc.BatchProductVariationsRequest{Create: CreateVariations})
-	if ErrBatch != nil {
-		fmt.Println("Error Add variation:", ErrBatch)
-	}
-
-	// PostSmartImageErr := woo.UserWC.PostSmartImage(itemID)
-	// if PostSmartImageErr != nil {
-	// 	fmt.Println(PostSmartImageErr)
-	// }
-
-	return nil
-}
-
-// Обработка значение, передаваемого в качестве контроля к-ва позиция по каждой вариации товара
-func statusCodeForVarientProd(IsExit bool) string {
-	if IsExit {
-		return "publish"
-	} else {
-		return "private"
-	}
-}
-
-// Сличение данных и возврат актуальной цены товара для данной категории товара
-func (woo *WcAdd) EditDelivery(categorys []bases.Cat, delivery int) int {
-	if len(categorys) > 2 {
-		if val, ok := woo.Delivery[categorys[2].Name]; ok {
-			return val
-		}
-	}
-	return delivery
 }

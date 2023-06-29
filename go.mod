@@ -8,12 +8,17 @@ replace github.com/hiscaler/woocommerce-go => ./pkg/woocommerce-go
 
 require (
 	github.com/bas24/googletranslatefree v0.0.0-20220326200502-05ed9e639439
+	github.com/chai2010/webp v1.1.1
 	github.com/cheggaaa/pb v1.0.29
 	github.com/gocolly/colly v1.2.0
 	github.com/hiscaler/woocommerce-go v1.0.3
+	github.com/imagekit-developer/imagekit-go v0.0.0-20221027035115-2e643255882a
 	github.com/mdigger/translit v0.0.0-20190913173519-84222363843c
+	github.com/mozillazg/go-unidecode v0.2.0
 	github.com/nikoksr/notify v0.38.1
+	github.com/playwright-community/playwright-go v0.2000.1
 	github.com/xuri/excelize/v2 v2.7.0
+	golang.org/x/text v0.8.0
 )
 
 require (
@@ -24,13 +29,17 @@ require (
 	github.com/antchfx/xpath v1.2.3 // indirect
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
+	github.com/creasty/defaults v1.6.0 // indirect
+	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
+	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/hiscaler/gox v0.0.0-20220607093548-75ae453f938c // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
@@ -53,8 +62,9 @@ require (
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
-	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
+	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
+	gopkg.in/validator.v2 v2.0.1 // indirect
 )

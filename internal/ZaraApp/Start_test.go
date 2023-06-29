@@ -2,6 +2,7 @@ package zaraapp_test
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	zaraapp "github.com/RB-PRO/SanctionedClothing/internal/ZaraApp"
@@ -116,7 +117,8 @@ func TestSingleAddProductLink(t *testing.T) {
 	if ErrorCB != nil {
 		t.Error(ErrorCB)
 	}
-	fmt.Println("Курс лиры", cb.Data.Valute.Try.Value)
+	log.Println("Курс лиры", cb.Data.Valute.Try.Value/10)
+
 	// Загружаем товары на WC //
 	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {
@@ -125,7 +127,7 @@ func TestSingleAddProductLink(t *testing.T) {
 	// "asymmetric-double-breasted-waistcoat---limited-edition-p07655728"
 	// "metallic-block-heel-sandals-p13344110"
 	// "lace-up-denim-wedge-heel-shoes-p12280210"
-	touch, _ := zaratr.LoadTouch("lace-up-denim-wedge-heel-shoes-p12280210")
+	touch, _ := zaratr.LoadTouch("100-linen-blazer-with-printed-cuffs-p07726707")
 	Prod2 := zaratr.Touch2Product2(touch)
 
 	// Prod2.Item[0].Image = Prod2.Item[0].Image[2:]
@@ -138,14 +140,14 @@ func TestSingleAddProductLink(t *testing.T) {
 	walrus := 1.3   // Моржа
 	Prod2 = zaraapp.EditCoast(Prod2, cb.Data.Valute.Try.Value/10, walrus, delivery)
 	//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(variety.Product[i])) //.AddAttr()
-	Prod2, _ = Adding.YandexTranslate(Prod2)
+	// Prod2, _ = Adding.YandexTranslate(Prod2)
 	Prod2.Article += "_test"
 
 	fmt.Println("Спарсили товар с параметрами:\n", bases.ProdStr(Prod2))
 
 	errorAddProductWC := Adding.AddProduct(Prod2) //.AddAttr()
 	if errorAddProductWC != nil {
-		Prod2.Upload = true
+		t.Error(errorAddProductWC)
 	}
-
+	Prod2.Upload = true
 }

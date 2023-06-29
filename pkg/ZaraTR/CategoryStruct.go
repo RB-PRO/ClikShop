@@ -36,8 +36,8 @@ type Item struct {
 	MenuLevel          int               `json:"menuLevel"`
 	RedirectCategoryID int               `json:"redirectCategoryId,omitempty"`
 
-	// массив категорий
-	Cat []bases.Cat `json:"-"`
+	Cat    []bases.Cat `json:"-"` // Слайс категорий
+	Gender string      `json:"-"` // Гендер
 }
 
 type SeoCategory struct {

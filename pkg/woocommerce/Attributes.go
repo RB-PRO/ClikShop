@@ -3,7 +3,6 @@ package woocommerce
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 )
 
 type Attributes struct {
@@ -43,7 +42,6 @@ func (user *User) ProductsAttributes() (Attributes, error) {
 		if errData != nil {
 			return Attributes{}, errData
 		}
-		fmt.Println("TotalPages", TotalPages)
 
 		// Распарсим входную инормацию
 		var Attribute []ProductListAttributes

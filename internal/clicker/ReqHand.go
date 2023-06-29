@@ -25,7 +25,7 @@ func Hands(Adding *wcprod.WcAdd) (hands []Hand, ErrorHand error) {
 			var Link string
 			for _, val := range prod.MetaData {
 				if val.Key == "linkRB" {
-					Link = val.Value
+					Link = (val.Val).(string)
 				}
 			}
 			hands = append(hands, Hand{URL: prod.Permalink, Link: Link})

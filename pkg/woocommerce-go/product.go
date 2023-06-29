@@ -68,8 +68,10 @@ func (s productService) All(params ProductsQueryParams, Page, PerPage int) (item
 	if err != nil {
 		return
 	}
-
+	// ioutil.WriteFile("testfile.txt", resp.Body(), 0644)
+	// asd := strings.ReplaceAll(string(resp.Body()), `{"guide":"","display":"","button_position":""}`, `""`)
 	if resp.IsSuccess() {
+		// err = jsoniter.Unmarshal([]byte(asd), &items)
 		err = jsoniter.Unmarshal(resp.Body(), &items)
 		total, totalPages, isLastPage = parseResponseTotal(params.Page, resp)
 	}

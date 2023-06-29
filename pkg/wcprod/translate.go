@@ -127,3 +127,38 @@ func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 
 	return prod, nil
 }
+
+// Перевод определённых частей товара, а именно:
+//   - Название
+//   - Описание
+//   - Цвета
+func (woo *WcAdd) YandexTranslatePart(prod bases.Product2) (bases.Product2, error) {
+	// Описание
+	prod.Description.Eng = strings.ReplaceAll(prod.Description.Eng, "\t", "")
+	prod.Description.Eng = strings.ReplaceAll(prod.Description.Eng, "#", "")
+
+	// Переводим имя
+	TranslateNames, ErorTranslate := woo.Tr.Trans([]string{prod.Description.Eng, prod.Name})
+	if ErorTranslate != nil {
+		return prod, ErorTranslate
+	}
+	if len(TranslateNames) == 2 {
+		prod.Description.Rus, prod.Name = TranslateNames[0], TranslateNames[1]
+	}
+
+	// Вариации
+	var item []string
+	for _, it := range prod.Item {
+		item = append(item, it.ColorEng)
+	}
+	TranslateItem, ErorTranslateItem := woo.Tr.Trans(item)
+	if ErorTranslateItem != nil {
+		return prod, ErorTranslateItem
+	}
+
+	for KeyColor := range prod.Item {
+		prod.Item[KeyColor].ColorEng = TranslateItem[KeyColor]
+	}
+
+	return prod, nil
+}
