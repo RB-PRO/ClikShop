@@ -13,9 +13,13 @@ import (
 
 // Функция добавления товара
 func (woo *WcAdd) AddProduct(product bases.Product2) error {
+	log.SetOutput(woo.LogFile)                   // set log out put
+	log.SetFlags(log.Lshortfile | log.LstdFlags) // optional: log date-time, filename, and line number
+
 	if product.Article == "" {
 		return errors.New("AddProduct: В товаре нет Артикула")
 	}
+	product.Size = bases.EditProdSize(product)
 	if len(product.Size) == 0 {
 		return errors.New("AddProduct: В товаре нет рамеров")
 	}
@@ -84,6 +88,20 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		}
 	}
 
+	// СОздаём метаданные с ссылками на все товары
+	metas := []entity.Meta{
+		{
+			Key: "linkRB",
+			Val: product.Link,
+		},
+	}
+	for _, val := range product.Item {
+		metas = append(metas, entity.Meta{
+			Key: "linkRB" + "_" + val.ColorCode,
+			Val: val.Link,
+		})
+	}
+
 	// Структура с исходным товаром
 	paramVariableProduct := wc.CreateProductRequest{
 		Name:             product.Name,
@@ -94,13 +112,14 @@ func (woo *WcAdd) AddProduct(product bases.Product2) error {
 		ShortDescription: product.FullName,
 		RegularPrice:     200.0,
 		Slug:             bases.FormingColorEng(product.Name),
-		MetaData: []entity.Meta{ // Ссылка на товар
-			{
-				Key: "linkRB",
-				// Value: product.Link,
-				Val: product.Link,
-			},
-		},
+		// MetaData: []entity.Meta{ // Ссылка на товар
+		// 	{
+		// 		Key: "linkRB",
+		// 		// Value: product.Link,
+		// 		Val: product.Link,
+		// 	},
+		// },
+		MetaData:   metas,
 		Images:     imageInput,
 		Categories: []entity.ProductCategory{{ID: idCat}},
 		Attributes: []entity.ProductAttribute{

@@ -57,10 +57,13 @@ func (core *ParsingCard) VariableProduct3(Prod *bases.Product2, IndexItem int) (
 	}
 	for _, ImageSelector := range images {
 		ImageLinkMain, _ := ImageSelector.GetAttribute("src")
-		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "[file:/product/main]", "[file:/product/fullscreen]")
-		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "%2Fmain%5D", "%2Ffullscreen%5D")
-		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "call=url[file:/product/fullscreen]", "call=url%5Bfile%3A%2Fproduct%2Ffullscreen%5D")
-		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "call=url[file:/product/fullscreen", "call=url%5Bfile%3A%2Fproduct%2Ffullscreen%5D")
+		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "[file:/product/fullscreen]", "[file:/product/main]")
+		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "[file:/product/fullscreen", "[file:/product/main]")
+		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "%2Fmain%5D", "%2Fmain%5D")
+		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "call=url[file:/product/main]", "call=url%5Bfile%3A%2Fproduct%2Fmain%5D")
+		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "call=url[file:/product/main", "call=url%5Bfile%3A%2Fproduct%2Fmain%5D")
+		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "&call=url[file:/product/main]", "&call=url%5Bfile%3A%2Fproduct%2Fmain%5D")
+		ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "&call=url[file:/product/main", "&call=url%5Bfile%3A%2Fproduct%2Fmain%5D")
 		// ImageLinkMain = strings.ReplaceAll(ImageLinkMain, "set=format%5Bwebp%5D", "set=format%5Bjpeg%5D")
 
 		ImageLinkMain = "https:" + ImageLinkMain

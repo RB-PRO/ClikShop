@@ -10,3 +10,4 @@ OAuthToken
 token
 *.html
 tmp/*
+*.log

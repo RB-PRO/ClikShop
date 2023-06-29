@@ -32,6 +32,7 @@ type WcAdd struct {
 	Tr             *transrb.Translate     // Переводчик
 	Imgbb          *imgbb.ImgbbUser       // Сервис картинок
 	IK             *imagekit.ImageKit     // Сервис картинок 2 - https://imagekit.io/dashboard/developer/api-keys
+	LogFile        *os.File               // Логгирование
 
 	// ID аттрибутов в WordPress.
 	IdAttrColor int
@@ -51,12 +52,12 @@ type WcAdd struct {
 func New() (*WcAdd, error) {
 	// Логгирование
 	FileLog := "logs/" + time.Now().Format("15h04m 02Jan2006") + ".log"
-	logFile, ErrLogFile := os.OpenFile(FileLog, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644) // open log file
+	LogFile, ErrLogFile := os.OpenFile(FileLog, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644) // open log file
 	if ErrLogFile != nil {
 		return nil, fmt.Errorf("wcprod: New:  %w", ErrLogFile)
 	}
-	defer logFile.Close()
-	log.SetOutput(logFile)                       // set log out put
+	defer LogFile.Close()
+	log.SetOutput(LogFile)                       // set log out put
 	log.SetFlags(log.Lshortfile | log.LstdFlags) // optional: log date-time, filename, and line number
 
 	// Загрузка конфига
@@ -188,7 +189,7 @@ func New() (*WcAdd, error) {
 		}
 		TecalPage++
 	}
-	log.Println("New: wooClient.Services.Product.All: Получить все SKU товаров")
+	log.Println("New: wooClient.Services.Product.All: Получены все SKU товаров")
 
 	return &WcAdd{
 		WooClient:      wooClient,
@@ -206,6 +207,7 @@ func New() (*WcAdd, error) {
 		AllProdSKU:     AllProdSKU,
 		Imgbb:          imgbbUser,
 		IK:             IK,
+		LogFile:        LogFile,
 	}, nil
 }
 

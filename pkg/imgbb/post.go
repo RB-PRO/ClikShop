@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -86,7 +87,7 @@ func (img ImgbbUser) Upload(pictureBase64, name string, expiration int) (ImgbbRe
 		return ImgbbResponse{}, bodyRead
 	}
 
-	//fmt.Println(string(body))
+	fmt.Println(string(body))
 
 	// Распарсить данные
 	responseErrorUnmarshal := json.Unmarshal(body, &imgbbRes)

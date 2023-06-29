@@ -4,7 +4,7 @@ import (
 	"image/jpeg"
 	"os"
 
-	"github.com/chai2010/webp"
+	webps "github.com/nickalie/go-webpbin"
 )
 
 func Webp2Jpg(InputFileName, OutputFileName string) error {
@@ -16,7 +16,7 @@ func Webp2Jpg(InputFileName, OutputFileName string) error {
 	defer webpFile.Close()
 
 	// Декодируем изображение в формате WebP
-	webpImage, err := webp.Decode(webpFile)
+	webpImage, err := webps.Decode(webpFile)
 	if err != nil {
 		return err
 	}

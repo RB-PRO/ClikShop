@@ -28,9 +28,9 @@ func Parsing() bases.Variety2 {
 		for _, ProductGroups := range line.ProductGroups {
 			for _, Elements := range ProductGroups.Elements {
 				for _, CommercialComponents := range Elements.CommercialComponents {
-					if cout >= 10 { // Максимум 10 товаров в категории
-						break
-					}
+					// if cout >= 10 { // Максимум 10 товаров в категории
+					// 	break
+					// }
 					CommercialComponents.Cat = cat.Cat
 					CommercialComponents.Gender = cat.Gender
 					ProductsLine = append(ProductsLine, CommercialComponents)

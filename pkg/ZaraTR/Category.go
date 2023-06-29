@@ -34,7 +34,7 @@ func CatCycle2() (*CategoryArray, error) {
 
 			// Цикл по всем подкатегориям из категории полов
 			for _, CatsCategory2 := range CatsCategory1.Subcategories {
-				if CatsCategory2.Name == "NEW COLLECTION" { // CatsCategory2.Name == "SALE" ||
+				if CatsCategory2.Name == "SALE" || CatsCategory2.Name == "NEW COLLECTION" { //
 					newslise := make([]bases.Cat, 2, 5)
 					copy(newslise, CatBasesHome1)
 					CatBasesHome2 := append(newslise, bases.Cat{Name: CatsCategory2.Name, Slug: CatsCategory2.Seo.Keyword})
@@ -61,67 +61,67 @@ func CatCycle2() (*CategoryArray, error) {
 							continue
 						}
 
-						if strings.Contains(CatsCategory3.Name, "JEANS") ||
-							strings.Contains(CatsCategory3.Name, "T-SHIRTS") ||
-							strings.Contains(CatsCategory3.Name, "SHIRTS") ||
-							strings.Contains(CatsCategory3.Name, "SHOES") ||
-							strings.Contains(CatsCategory3.Name, "GIRL") ||
-							strings.Contains(CatsCategory3.Name, "BOY") ||
-							strings.Contains(CatsCategory3.Name, "BOY") ||
-							strings.Contains(CatsCategory3.Name, "BOY") { // футболки
+						// if strings.Contains(CatsCategory3.Name, "JEANS") ||
+						// 	strings.Contains(CatsCategory3.Name, "T-SHIRTS") ||
+						// 	strings.Contains(CatsCategory3.Name, "SHIRTS") ||
+						// 	strings.Contains(CatsCategory3.Name, "SHOES") ||
+						// 	strings.Contains(CatsCategory3.Name, "GIRL") ||
+						// 	strings.Contains(CatsCategory3.Name, "BOY") ||
+						// 	strings.Contains(CatsCategory3.Name, "BOY") ||
+						// 	strings.Contains(CatsCategory3.Name, "BOY") { // футболки
 
-							newslise := make([]bases.Cat, 3, 5)
-							copy(newslise, CatBasesHome2)
-							CatBasesHome3 := append(newslise, bases.Cat{Name: CatsCategory3.Name, Slug: CatsCategory3.Seo.Keyword})
-							// fmt.Println(CatBasesHome3)
+						newslise := make([]bases.Cat, 3, 5)
+						copy(newslise, CatBasesHome2)
+						CatBasesHome3 := append(newslise, bases.Cat{Name: CatsCategory3.Name, Slug: CatsCategory3.Seo.Keyword})
+						// fmt.Println(CatBasesHome3)
 
-							// Дальше нужно определиться, что это
-							// если это дети, то там нужно ещё цикл по подкатегориям,
-							// где уже лежат исходные категории товаров
-							var Gender string // Гендр товара
-							Gender = bases.Name2Slug(CatsCategory1.Name)
+						// Дальше нужно определиться, что это
+						// если это дети, то там нужно ещё цикл по подкатегориям,
+						// где уже лежат исходные категории товаров
+						var Gender string // Гендр товара
+						Gender = bases.Name2Slug(CatsCategory1.Name)
 
-							if Gender == "man" || Gender == "woman" {
-								RedirectCategoryID := CatsCategory3.RedirectCategoryID
-								if RedirectCategoryID == 0 {
-									RedirectCategoryID, _ = CatsCategory3.ID.Int()
-								}
-								c.Items = append(c.Items, Item{RedirectCategoryID: RedirectCategoryID, Cat: CatBasesHome3, Gender: Gender})
+						if Gender == "man" || Gender == "woman" {
+							RedirectCategoryID := CatsCategory3.RedirectCategoryID
+							if RedirectCategoryID == 0 {
+								RedirectCategoryID, _ = CatsCategory3.ID.Int()
 							}
-							if Gender == "kids" {
-								Gender = "unisex"
-								for _, CatsCategory4 := range CatsCategory3.Subcategories {
-									if CatsCategory4.Name == "GIFT CARD" ||
-										CatsCategory4.Name == "DIVIDER_MENU_KIDS1" ||
-										CatsCategory4.Name == "DIVIDER_MENU_KIDS2" ||
-										CatsCategory4.Name == "PERFUMES | COSMETICS" {
-										continue
-									}
-									if strings.Contains(CatsCategory4.Name, "JEANS") ||
-										strings.Contains(CatsCategory4.Name, "T-SHIRTS") ||
-										strings.Contains(CatsCategory4.Name, "SHIRTS") ||
-										strings.Contains(CatsCategory4.Name, "SHOES") ||
-										strings.Contains(CatsCategory4.Name, "JEANS") {
-
-										newslise := make([]bases.Cat, 4, 5)
-										copy(newslise, CatBasesHome3)
-										CatBasesHome4 := append(newslise, bases.Cat{Name: CatsCategory4.Name, Slug: CatsCategory4.Seo.Keyword})
-										if strings.Contains(CatsCategory3.Name, "BOY") {
-											Gender = "boy"
-										}
-										if strings.Contains(CatsCategory3.Name, "GIRL") {
-											Gender = "girl"
-										}
-
-										RedirectCategoryID := CatsCategory4.RedirectCategoryID
-										if RedirectCategoryID == 0 {
-											RedirectCategoryID, _ = CatsCategory4.ID.Int()
-										}
-										c.Items = append(c.Items, Item{RedirectCategoryID: RedirectCategoryID, Cat: CatBasesHome4, Gender: Gender})
-									}
+							c.Items = append(c.Items, Item{RedirectCategoryID: RedirectCategoryID, Cat: CatBasesHome3, Gender: Gender})
+						}
+						if Gender == "kids" {
+							Gender = "unisex"
+							for _, CatsCategory4 := range CatsCategory3.Subcategories {
+								if CatsCategory4.Name == "GIFT CARD" ||
+									CatsCategory4.Name == "DIVIDER_MENU_KIDS1" ||
+									CatsCategory4.Name == "DIVIDER_MENU_KIDS2" ||
+									CatsCategory4.Name == "PERFUMES | COSMETICS" {
+									continue
 								}
+								// if strings.Contains(CatsCategory4.Name, "JEANS") ||
+								// 	strings.Contains(CatsCategory4.Name, "T-SHIRTS") ||
+								// 	strings.Contains(CatsCategory4.Name, "SHIRTS") ||
+								// 	strings.Contains(CatsCategory4.Name, "SHOES") ||
+								// 	strings.Contains(CatsCategory4.Name, "JEANS") {
+
+								newslise := make([]bases.Cat, 4, 5)
+								copy(newslise, CatBasesHome3)
+								CatBasesHome4 := append(newslise, bases.Cat{Name: CatsCategory4.Name, Slug: CatsCategory4.Seo.Keyword})
+								if strings.Contains(CatsCategory3.Name, "BOY") {
+									Gender = "boy"
+								}
+								if strings.Contains(CatsCategory3.Name, "GIRL") {
+									Gender = "girl"
+								}
+
+								RedirectCategoryID := CatsCategory4.RedirectCategoryID
+								if RedirectCategoryID == 0 {
+									RedirectCategoryID, _ = CatsCategory4.ID.Int()
+								}
+								c.Items = append(c.Items, Item{RedirectCategoryID: RedirectCategoryID, Cat: CatBasesHome4, Gender: Gender})
+								// }
 							}
 						}
+						// }
 					}
 				}
 			}

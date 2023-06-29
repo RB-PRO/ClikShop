@@ -127,13 +127,16 @@ func ProdStr(Prod Product2) (str string) {
 
 // Добавить общий список всех размеров в товаре на основании тех размеров, которые содержатся в вариациях данного товара
 func EditProdSize(Prod Product2) []string {
+	// SizesAll := make([]string, 0, 20)
 	var SizesAll []string
+
 	for i := range Prod.Item {
 		for j := range Prod.Item[i].Size {
 			SizesAll = append(SizesAll, Prod.Item[i].Size[j].Val)
 		}
 	}
 	SizesAll = RemoveDuplicateStr(SizesAll)
+
 	return SizesAll
 }
 

@@ -1,0 +1,13 @@
+2023/06/30 00:54:12 Start.go:68: New: Загрузил конфиг config_rb.json
+2023/06/30 00:54:12 Start.go:76: New: Загрузил конфиг config_wp.json
+2023/06/30 00:54:12 Start.go:84: New: wc.NewClient: Распарсил конфиг config_wp.json
+2023/06/30 00:54:14 Start.go:91: New: woocommerce.New: Создал клиент userWC
+2023/06/30 00:54:14 Start.go:98: New: XlsxDelivery: Загрузил xlsx доставки
+2023/06/30 00:54:14 Start.go:102: New: NewImgbbUser: Создаю пользователя imgbb
+2023/06/30 00:54:14 Start.go:109: New: AllTags_WC: Получаю теги tags
+2023/06/30 00:54:23 Start.go:119: New: ProductsCategories: Получаю дерево категорий
+2023/06/30 00:54:23 Start.go:126: New: transrb.New: Создаю пользователя Яндекс переводчка
+2023/06/30 00:54:23 Start.go:137: New: imagekit.NewFromParams: Создаю пользователя imagekit
+2023/06/30 00:54:23 Start.go:149: New: woocommerce.NewCategoryes: Создаю дерево категорий
+2023/06/30 00:54:23 Start.go:168: New: userWC.ProductsAttributes: Получить аттрибусы цвета, размера, производителя
+2023/06/30 00:54:24 Start.go:191: New: wooClient.Services.Product.All: Получены все SKU товаров
