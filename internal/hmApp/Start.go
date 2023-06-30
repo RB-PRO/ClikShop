@@ -54,14 +54,15 @@ func Start() {
 	// Парсинг всех товаров
 	BarCategory := pb.StartNew(len(Categorys))
 	BarCategory.Prefix("Парсинг категорий")
-	for i, categ := range Categorys {
-		if i == 1 {
-			break
-		}
+	for _, categ := range Categorys {
+
 		// Получить ссылку на все товары json
 		LineUrl, ErrLineUrl := core.LineUrl(categ.Link)
 		if ErrLineUrl != nil {
 			continue
+		}
+		if LineUrl == "" {
+			panic("LineUrl: Nil output")
 		}
 
 		// Получить к-во товаров в категории

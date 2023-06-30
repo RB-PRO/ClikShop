@@ -15,12 +15,14 @@ type ParsingCard struct {
 }
 
 func NewParsingCard() (*ParsingCard, error) {
-	pw, err := playwright.Run()
+	playwright.Install(&playwright.RunOptions{})
+
+	pw, err := playwright.Run(&playwright.RunOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	browser, err := pw.Firefox.Launch()
+	browser, err := pw.Firefox.Launch(playwright.BrowserTypeLaunchOptions{Timeout: playwright.Float(180000)})
 	if err != nil {
 		return nil, err
 	}

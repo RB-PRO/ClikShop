@@ -50,6 +50,7 @@ type WcAdd struct {
 
 // Полная инициализация базовой структуры загрузки товара
 func New() (*WcAdd, error) {
+
 	// Логгирование
 	FileLog := "logs/" + time.Now().Format("15h04m 02Jan2006") + ".log"
 	LogFile, ErrLogFile := os.OpenFile(FileLog, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644) // open log file
