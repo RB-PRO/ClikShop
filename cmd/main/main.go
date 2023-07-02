@@ -18,7 +18,9 @@ func main() {
 
 	//zaraapp.Start()
 	//zaraapp.Parse()
-	hmapp.Start()
+
+	// hmapp.Start()
+	hmapp.Parsing()
 
 	// clicker.Click()
 	// app.Start2()

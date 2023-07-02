@@ -222,7 +222,7 @@ func New2() (*WcAdd, error) {
 	}
 
 	// Клиент от сторонней библиотеки(пользовательской)
-	b, ErrReadFile := os.ReadFile("config_rb.json")
+	b, ErrReadFile := os.ReadFile("config_wp.json")
 	if ErrReadFile != nil {
 		return nil, errors.New("wcprod: New: Read config error: " + ErrReadFile.Error())
 	}

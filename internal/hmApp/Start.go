@@ -15,12 +15,18 @@ import (
 	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 	"github.com/imagekit-developer/imagekit-go/api/uploader"
+	"github.com/playwright-community/playwright-go"
 )
 
 // Начать парсить и одновременно загружать товары
 func Start() {
+	err := playwright.Install()
+	if err != nil {
+		// panic(err)
+		fmt.Println(err)
+	}
 
-	// Загружаем товары на WC
+	// Создаём объект ядра парсинга, который включает в себя все необходимые функции
 	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {
 		panic(errorInitWcAdd)
@@ -29,7 +35,7 @@ func Start() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags) // optional: log date-time, filename, and line number
 	log.Println("wcprod.New: Загрузили ядро")
 
-	// Нало работы с центральным банком
+	// Получение курса валюты
 	cb, ErrorCB := cbbank.New() // Получить курс валюты
 	if ErrorCB != nil {
 		panic(ErrorCB)
@@ -49,6 +55,7 @@ func Start() {
 	if ErrNewParsingCard != nil {
 		panic(ErrNewParsingCard)
 	}
+	defer core.Stop()
 	log.Println("wcprod.New: Получено ядро парсинга эмулятора")
 
 	// Парсинг всех товаров

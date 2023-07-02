@@ -15,14 +15,13 @@ type ParsingCard struct {
 }
 
 func NewParsingCard() (*ParsingCard, error) {
-	playwright.Install(&playwright.RunOptions{})
 
-	pw, err := playwright.Run(&playwright.RunOptions{})
+	pw, err := playwright.Run()
 	if err != nil {
 		return nil, err
 	}
 
-	browser, err := pw.Firefox.Launch(playwright.BrowserTypeLaunchOptions{Timeout: playwright.Float(180000)})
+	browser, err := pw.Chromium.Launch()
 	if err != nil {
 		return nil, err
 	}
@@ -39,6 +38,20 @@ func NewParsingCard() (*ParsingCard, error) {
 		browser: browser,
 		page:    page,
 	}, nil
+}
+
+// Остановить ядро парсинга
+func (core *ParsingCard) Stop() error {
+
+	if err := core.browser.Close(); err != nil {
+		return err // could not close browser
+	}
+
+	if err := core.pw.Stop(); err != nil {
+		return err // could not stop Playwright
+	}
+
+	return nil
 }
 
 // Пропарсить карточку товара со всеми цветами
