@@ -23,11 +23,22 @@ func TestLineUrl(t *testing.T) {
 	if ErrNewParsingCard != nil {
 		t.Error(ErrNewParsingCard)
 	}
-	url, ErrLineUrl := core.LineUrl("/tr_tr/kadin/urune-gore-satin-al/elbise.html")
+	url, ErrLineUrl := core.LineUrl("/tr_tr/kadin/urune-gore-satin-al/ust.html")
 	if ErrLineUrl != nil {
 		t.Error(ErrLineUrl)
 	}
-	fmt.Println(url)
+	fmt.Println(hm.URL + url)
+	if url == "" {
+		t.Errorf("LineUrl: url is nil")
+	}
+}
+
+func TestLineUrl2(t *testing.T) {
+	url, ErrLineUrl := hm.LineUrl2("/tr_tr/kadin/urune-gore-satin-al/ust.html")
+	if ErrLineUrl != nil {
+		t.Error(ErrLineUrl)
+	}
+	fmt.Println(hm.URL + url)
 	if url == "" {
 		t.Errorf("LineUrl: url is nil")
 	}

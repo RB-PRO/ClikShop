@@ -22,8 +22,7 @@ import (
 func Start() {
 	err := playwright.Install()
 	if err != nil {
-		// panic(err)
-		fmt.Println(err)
+		panic(err)
 	}
 
 	// Создаём объект ядра парсинга, который включает в себя все необходимые функции
@@ -97,6 +96,7 @@ func Start() {
 	// Сохранить товары в файл XLSX
 	varSa := bases.Variety2{Product: products}
 	varSa.SaveXlsxCsvs("H&M_Products")
+	log.Println("Всего товаров", len(products))
 	log.Println("SaveXlsxCsvs: Сохраняю результат парсинга")
 
 	///////////////////////////////////////

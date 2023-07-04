@@ -30,10 +30,7 @@ build-linux-to-windows:
 build-car:
 	set GOARCH=amd64
 	set GOOS=linux
-	set CGO_ENABLED=0
-	export GOARCH=amd64
-	export GOOS=linux
-	export CGO_ENABLED=0
+	set CGO_ENABLED=0 
 	go env GOOS GOARCH
 	go build cmd/main/main.go
 	scp main Delivery.xlsx config_rb.json config_wp.json root@45.132.18.81:go/SanctionedClothing/

@@ -16,17 +16,17 @@ type ParsingCard struct {
 
 func NewParsingCard() (*ParsingCard, error) {
 
-	pw, err := playwright.Run()
+	pw, err := playwright.Run(&playwright.RunOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	browser, err := pw.Chromium.Launch()
+	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{Headless: playwright.Bool(false)})
 	if err != nil {
 		return nil, err
 	}
 
-	page, err := browser.NewPage()
+	page, err := browser.NewPage(playwright.BrowserNewContextOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +57,11 @@ func (core *ParsingCard) Stop() error {
 // Пропарсить карточку товара со всеми цветами
 func (core *ParsingCard) VariableProduct3(Prod *bases.Product2, IndexItem int) (ErrParseProduct error) {
 	Prod.Specifications = make(map[string]string)
+
+	// page, err := core.browser.NewPage()
+	// if err != nil {
+	// 	return err
+	// }
 
 	// Переходим по ссылке с запроса
 	core.page.Goto(Prod.Item[IndexItem].Link)
@@ -127,6 +132,7 @@ func (core *ParsingCard) VariableProduct3(Prod *bases.Product2, IndexItem int) (
 		Prod.Description.Eng += "\n" + dt_test + " - " + dd_test
 		Prod.Specifications[dt_test] = dd_test
 	}
+	// core.page.Close()
 
 	return nil
 }

@@ -10,6 +10,8 @@ import (
 	"strings"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/gocolly/colly"
+	"github.com/playwright-community/playwright-go"
 )
 
 type Line struct {
@@ -172,10 +174,20 @@ func Line2Product2(line Line, cat []bases.Cat, GenderCatrogy string) []bases.Pro
 		} else {
 			PriceStr = line.Products[i].RedPrice
 		}
-		PriceStr = strings.ReplaceAll(PriceStr, " TL", "")
+		PriceStr = strings.ReplaceAll(PriceStr, "TL", "")
 		PriceStr = strings.ReplaceAll(PriceStr, ",", ".")
 		PriceStr = strings.ReplaceAll(PriceStr, " ", "")
-		price, _ := strconv.ParseFloat(PriceStr, 64)
+		// В случае нахождения определённого пробела в виде ASCLL символов 194 и 160, домается переврд во float
+		// Например 3 299.00 не отработает.
+		// Поэтому идём по всему слайсу байтов и отфильтровывем цифры и точки
+		bytes := []byte(PriceStr)
+		FilterBytes := make([]byte, 0)
+		for _, v := range bytes {
+			if v >= 46 && v <= 59 {
+				FilterBytes = append(FilterBytes, v)
+			}
+		}
+		price, _ := strconv.ParseFloat(string(FilterBytes), 64)
 
 		// Цикл по всем цветам
 		products[i].Item = make([]bases.ColorItem, len(line.Products[i].Swatches))
@@ -191,16 +203,56 @@ func Line2Product2(line Line, cat []bases.Cat, GenderCatrogy string) []bases.Pro
 }
 
 func (core *ParsingCard) LineUrl(link string) (string, error) {
-	core.page.Goto(URL + link) // Переходим по ссылке с запроса
-	Handle, _ := core.page.WaitForSelector("form[class=js-product-filter-form]")
-	// Handle, _ := core.page.WaitForSelector("form[class=js-product-filter-form]", playwright.PageWaitForSelectorOptions{Timeout: playwright.Float(5)})
-	if Handle != nil {
 
+	core.page.Goto(URL + link) // Переходим по ссылке с запроса
+	// time.Sleep(5 * time.Second)
+
+	// screenfile := strings.ReplaceAll(link, "/", "")
+	// screenfile = strings.ReplaceAll(screenfile, ".html", ".png")
+	// core.Screen(screenfile)
+	Handle, _ := core.page.WaitForSelector("form[class=js-product-filter-form]",
+		playwright.PageWaitForSelectorOptions{
+			State:   playwright.WaitForSelectorStateAttached,
+			Timeout: playwright.Float(30000),
+		}) // WaitForSelector
+
+	if Handle != nil {
 		AttrLink, ErrAttr := Handle.GetAttribute("data-filtered-products-url")
 		if ErrAttr != nil {
 			return "", ErrAttr
 		}
 		return AttrLink, nil
 	}
+
 	return "", errors.New("LineUrl: Не дождался появления тега со ссылкой")
+}
+
+// Сделать запрос на загрузку списка товаров
+func LineUrl2(link string) (FormLink string, Err error) {
+
+	// var err error
+	c := colly.NewCollector()
+	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.4.603 Yowser/2.5 Safari/537.36"
+
+	// Find and visit all links
+	c.OnHTML("form[class=js-product-filter-form]", func(e *colly.HTMLElement) {
+		FormLink = e.Attr("data-filtered-products-url")
+	})
+
+	// Set error handler
+	c.OnError(func(r *colly.Response, err error) {
+		Err = fmt.Errorf("LineUrl2: Request URL: %v failed with response: %v Error: %v", r.Request.URL, r, err)
+	})
+
+	c.Visit(URL + link)
+	return FormLink, Err
+}
+
+// Сделать скриншот браузера
+func (core *ParsingCard) Screen(FileName string) (ErrorScreen error) {
+	_, ErrorScreen = core.page.Screenshot(playwright.PageScreenshotOptions{Path: playwright.String("tmp/" + FileName)})
+	if ErrorScreen != nil {
+		return ErrorScreen
+	}
+	return nil
 }
