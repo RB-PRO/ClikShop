@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/gocolly/colly"
 )
@@ -17,7 +18,6 @@ func VariableProduct2(Product bases.Product2) (bases.Product2, error) {
 	var Err error
 	var Index int
 	var TecalSKU string // Текущий артикул для цвета
-	Product.Specifications = make(map[string]string)
 
 	c := colly.NewCollector()
 	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.4.603 Yowser/2.5 Safari/537.36"
@@ -53,5 +53,63 @@ func VariableProduct2(Product bases.Product2) (bases.Product2, error) {
 		}
 	}
 
+	return Product, nil
+}
+
+// Пропарсить товар по классической [ссылке] и получить его описание вместе с дополнительными полями
+//
+// [ссылке]: https://www2.hm.com/tr_tr/productpage.1205348002.html
+func VariableDescription2(Product bases.Product2) (bases.Product2, error) {
+	c := colly.NewCollector()
+	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.4.603 Yowser/2.5 Safari/537.36"
+	Product.Specifications = make(map[string]string)
+
+	// Описание
+	c.OnHTML(`meta[name=description]`, func(e *colly.HTMLElement) {
+		Product.Description.Eng, _ = e.DOM.Attr("content")
+	})
+
+	// Вторичное описание
+	// c.OnHTML("div[id^=section-descriptionAccordion]>dl>div", func(e *colly.HTMLElement) {
+	// 	dt := e.DOM.Find("dt").Text()
+	// 	dd := e.DOM.Find("dd").Text()
+
+	// 	fmt.Println(dt, dd)
+
+	// 	dt = strings.ReplaceAll(dt, ":", "")
+	// 	dt = strings.TrimSpace(dt)
+	// 	// Product.Description.Eng += "\n" + dt + " - " + dd
+	// 	Product.Specifications[dt] = dd
+	// })
+	c.OnHTML(`div[class="content pdp-text pdp-content"]`, func(e *colly.HTMLElement) {
+		// fmt.Println(e.DOM.Find("noscript").SetHtml(e.DOM.Find("noscript").Text()))
+		html, _ := e.DOM.Html()
+		d, _ := goquery.NewDocumentFromReader(strings.NewReader(html))
+		d.Find("noscript").SetHtml(d.Find("noscript").Text())
+		// fmt.Println(d.Html())
+		d.Find("noscript").Each(func(i int, s *goquery.Selection) {
+			s.ReplaceWithHtml(s.Text())
+		})
+		d.Find("div[id=section-descriptionAccordion]>dl>div").Each(func(i int, s *goquery.Selection) {
+			dt := s.Find("dt").Text()
+			dd := s.Find("dd").Text()
+
+			dt = strings.ReplaceAll(dt, ":", "")
+			dt = strings.ReplaceAll(dt, "\n", " ")
+			dt = strings.ReplaceAll(dt, "\t", " ")
+			dt = strings.ReplaceAll(dt, "  ", " ")
+			dt = strings.TrimSpace(dt)
+			dd = strings.ReplaceAll(dd, "\n", " ")
+			dd = strings.ReplaceAll(dd, "\t", " ")
+			dd = strings.ReplaceAll(dd, "  ", " ")
+			dd = strings.TrimSpace(dd)
+			// Product.Description.Eng += "\n" + dt + " - " + dd
+			Product.Specifications[dt] = dd
+		})
+
+		// fmt.Println(d.Find("div[id=section-descriptionAccordion]>dl>div").Html())
+	})
+
+	c.Visit(fmt.Sprintf("%s/tr_tr/productpage.%s.html", URL, Product.Article))
 	return Product, nil
 }

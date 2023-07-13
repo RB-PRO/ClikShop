@@ -132,7 +132,6 @@ func (core *ParsingCard) VariableProduct3(Prod *bases.Product2, IndexItem int) (
 		Prod.Description.Eng += "\n" + dt_test + " - " + dd_test
 		Prod.Specifications[dt_test] = dd_test
 	}
-	// core.page.Close()
 
 	return nil
 }

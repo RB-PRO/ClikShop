@@ -1,0 +1,48 @@
+// Кастомный пакет логгирования в файл
+package gol
+
+import (
+	"log"
+	"os"
+	"time"
+)
+
+type Gol struct {
+	logInfo    *log.Logger
+	logWarning *log.Logger
+	logError   *log.Logger
+}
+
+// Создать объект логгирования
+func NewGol() *Gol {
+	FileName := "logs/" + time.Now().Format("15h04m 02Jan2006") + ".log"
+	flags := log.LstdFlags | log.Lshortfile
+	FileInfo, _ := os.OpenFile(FileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	FileWarinig, _ := os.OpenFile(FileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	FileError, _ := os.OpenFile(FileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+
+	LogInfo := log.New(FileInfo, "Info:\t", flags)
+	LogWarning := log.New(FileWarinig, "Warn:\t", flags)
+	LogError := log.New(FileError, "Err:\t", flags)
+
+	return &Gol{
+		logInfo:    LogInfo,
+		logWarning: LogWarning,
+		logError:   LogError,
+	}
+}
+
+// Логировать состояние
+func (l *Gol) Info(value ...interface{}) {
+	l.logInfo.Println(value...)
+}
+
+// Логгировать предупреждение
+func (l *Gol) Warn(value ...interface{}) {
+	l.logWarning.Println(value...)
+}
+
+// Логгировать ошибку
+func (l *Gol) Err(value ...interface{}) {
+	l.logError.Println(value...)
+}

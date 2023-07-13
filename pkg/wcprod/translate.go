@@ -125,6 +125,21 @@ func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 		// }
 	}
 
+	// Вторичное описание
+	var Spec []string
+	for i, v := range prod.Specifications {
+		Spec = append(Spec, i, v)
+	}
+	TransSpec, ErorTransSpec := woo.Tr.Trans(Spec)
+	if ErorTransSpec != nil {
+		return prod, ErorTransSpec
+	}
+	NewSpec := make(map[string]string)
+	for i := 0; i < len(TransSpec); i += 2 {
+		NewSpec[TransSpec[i]] = TransSpec[i+1]
+	}
+	prod.Specifications = NewSpec
+
 	return prod, nil
 }
 

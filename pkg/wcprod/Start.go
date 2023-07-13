@@ -245,3 +245,26 @@ func New2() (*WcAdd, error) {
 		UserWC:    userWC,
 	}, nil
 }
+
+// Новый клиент, содержащий ТОЛЬКО переводчик
+// На входе кушает только мой локальный файл "config_rb.json"
+func NewTranslate() (*WcAdd, error) {
+
+	// Загрузка конфига
+	ConfigRBFileName := "config_rb.json"
+	ConfigRB, ErrOpenConfigRB := LoadConfig(ConfigRBFileName)
+	if ErrOpenConfigRB != nil {
+		return nil, fmt.Errorf("wcprod: New: Read config file '%s' error: %v", ConfigRBFileName, ErrOpenConfigRB.Error())
+	}
+
+	// Переводчик
+	tr, ErrTranslate := transrb.New(ConfigRB.FolderID, ConfigRB.OAuthToken)
+	if ErrTranslate != nil {
+		return nil, ErrTranslate
+	}
+	log.Println("New: transrb.New: Создаю пользователя Яндекс переводчка")
+
+	return &WcAdd{
+		Tr: tr,
+	}, nil
+}
