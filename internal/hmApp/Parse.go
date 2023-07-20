@@ -65,6 +65,7 @@ func Parsing() {
 		// Добавляем полученный слайс с товарами в общий слайс товаров
 		products = append(products, AddProducts...)
 		BarCategory.Increment()
+		break
 	}
 	BarCategory.Finish()
 	gol.Info("Line: Done")

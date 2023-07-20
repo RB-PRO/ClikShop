@@ -22,11 +22,18 @@ func VariableProduct2(Product bases.Product2) (bases.Product2, error) {
 	c := colly.NewCollector()
 	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.4.603 Yowser/2.5 Safari/537.36"
 
-	// Цвета
+	// Картинки
 	c.OnHTML(`div[class="product-detail-thumbnails"]>ul>li>img`, func(e *colly.HTMLElement) {
 		ImageLink := e.Attr("src")
-		ImageLink = strings.ReplaceAll(ImageLink, "[file:/product/quickthumb]", "[file:/product/main]")
-		Product.Item[Index].Image = append(Product.Item[Index].Image, "	https:"+ImageLink)
+
+		ImageLink = strings.ReplaceAll(ImageLink, "&call=url[file:/product/quickthumb]", "")
+
+		ImageLink = "https:" + ImageLink + "&call=url[file:/product/main]"
+		ImageLink = strings.ReplaceAll(ImageLink, "\u0026", "&")
+		ImageLink = strings.ReplaceAll(ImageLink, `\u0026`, "&")
+		ImageLink = strings.ReplaceAll(ImageLink, "u0026", "&")
+
+		Product.Item[Index].Image = append(Product.Item[Index].Image, ImageLink)
 	})
 
 	// Допустимые размеры

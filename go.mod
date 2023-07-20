@@ -7,6 +7,7 @@ replace github.com/hiscaler/woocommerce-go => ./pkg/woocommerce-go
 // C:\Users\roman\Desktop\go\SanctionedClothing\pkg\woocommerce-go
 
 require (
+	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/bas24/googletranslatefree v0.0.0-20220326200502-05ed9e639439
 	github.com/cheggaaa/pb v1.0.29
 	github.com/gocolly/colly v1.2.0
@@ -22,7 +23,6 @@ require (
 )
 
 require (
-	github.com/PuerkitoBio/goquery v1.8.1 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/antchfx/htmlquery v1.3.0 // indirect
 	github.com/antchfx/xmlquery v1.3.15 // indirect

@@ -110,12 +110,20 @@ func PullOutCat(link string) ([]bases.Cat, error) {
 	}
 
 	// Делаем слайс категорий
-	cat := make([]bases.Cat, 3)
-	for i := 0; i < len(cat); i++ {
-		CategoryName := strings.ReplaceAll(paths[i+2], ".html", "")
-		cat[i].Slug = CategoryName
-		cat[i].Name = bases.Slug2Name(cat[i].Slug)
-	}
+	// cat := make([]bases.Cat, 3)
+	// for i := 0; i < len(cat); i++ {
+	// 	CategoryName := strings.ReplaceAll(paths[i+2], ".html", "")
+	// 	// if CategoryName == "urune-gore-satin-al" {
+	// 	// 	continue
+	// 	// }
+	// 	cat[i].Slug = CategoryName
+	// 	cat[i].Name = bases.Slug2Name(cat[i].Slug)
+	// }
+	cat := make([]bases.Cat, 2)
+	cat[0].Slug = strings.ReplaceAll(paths[2], ".html", "")
+	cat[0].Name = bases.Slug2Name(cat[0].Slug)
+	cat[1].Slug = strings.ReplaceAll(paths[4], ".html", "")
+	cat[1].Name = bases.Slug2Name(cat[1].Slug)
 
 	return cat, nil
 }
