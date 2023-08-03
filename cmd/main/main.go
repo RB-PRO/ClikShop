@@ -1,7 +1,7 @@
 package main
 
 import (
-	hmapp "github.com/RB-PRO/SanctionedClothing/internal/hmApp"
+	massimoduttiapp "github.com/RB-PRO/SanctionedClothing/internal/MassimoDuttiApp"
 )
 
 func main() {
@@ -20,7 +20,9 @@ func main() {
 	//zaraapp.Parse()
 
 	// hmapp.Start()
-	hmapp.Parsing()
+	// hmapp.Parsing()
+
+	massimoduttiapp.Parsing()
 
 	// clicker.Click()
 	// app.Start2()

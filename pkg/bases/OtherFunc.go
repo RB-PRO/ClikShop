@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"strings"
 	"unicode"
@@ -166,4 +167,25 @@ func ExitSoft() {
 			fmt.Println("Press 'q' to quit")
 		}
 	}
+}
+
+// Редактирование цены по товарам
+func EditCoast(prod Product2, usd float64, walrus float64, delivery int) Product2 {
+	for indexKey := range prod.Item {
+		// Корректируем данные
+		// Курс доллара * цена в долларах * наценка + цена доставки
+		price := usd*prod.Item[indexKey].Price*walrus + float64(delivery)
+		price = EditDecadense(price)
+		prod.Item[indexKey].Price = price
+	}
+	return prod
+}
+
+// Редактирование цены в большую сторону
+//
+// # Округляем цену в большую сторону по десяткам
+//
+// Если цена была 5225.77, то станет 5230
+func EditDecadense(coast float64) float64 {
+	return math.Round(coast/10.0) * 10.0
 }

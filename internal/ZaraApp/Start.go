@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"math"
 	"os"
 
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
@@ -52,7 +51,7 @@ func Start() {
 			if _, ok := Adding.AllProdSKU[varient.Product[i].Article]; !ok {
 				// Формирование адекватной цены доставки из файла
 				ActualDelivery := Adding.EditDelivery(varient.Product[i].Cat, delivery)
-				varient.Product[i] = EditCoast(varient.Product[i], cb.Data.Valute.Try.Value/10, walrus, ActualDelivery)
+				varient.Product[i] = bases.EditCoast(varient.Product[i], cb.Data.Valute.Try.Value/10, walrus, ActualDelivery)
 				// var ErrorTranstate error
 				// varient.Product[i], ErrorTranstate = Adding.YandexTranslate(varient.Product[i])
 				// if ErrorTranstate != nil {
@@ -79,25 +78,4 @@ func Start() {
 			fmt.Println("Press 'q' to quit")
 		}
 	}
-}
-
-// Редактирование цены по товарам
-func EditCoast(prod bases.Product2, usd float64, walrus float64, delivery int) bases.Product2 {
-	for indexKey := range prod.Item {
-		// Корректируем данные
-		// Курс доллара * цена в долларах * наценка + цена доставки
-		price := usd*prod.Item[indexKey].Price*walrus + float64(delivery)
-		price = EditDecadense(price)
-		prod.Item[indexKey].Price = price
-	}
-	return prod
-}
-
-// Редактирование цены в большую сторону
-//
-// # Округляем цену в большую сторону по десяткам
-//
-// Если цена была 5225.77, то станет 5230
-func EditDecadense(coast float64) float64 {
-	return math.Round(coast/10.0) * 10.0
 }

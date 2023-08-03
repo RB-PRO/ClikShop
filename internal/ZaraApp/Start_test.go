@@ -5,7 +5,6 @@ import (
 	"log"
 	"testing"
 
-	zaraapp "github.com/RB-PRO/SanctionedClothing/internal/ZaraApp"
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
@@ -97,7 +96,7 @@ func TestSingleAddProduct(t *testing.T) {
 		if !Variety.Product[i].Upload {
 			// Формирование адекватной цены доставки из файла
 			ActualDelivery := Adding.EditDelivery(Variety.Product[i].Cat, delivery)
-			Variety.Product[i] = zaraapp.EditCoast(Variety.Product[i], cb.Data.Valute.Try.Value/10, walrus, ActualDelivery)
+			Variety.Product[i] = bases.EditCoast(Variety.Product[i], cb.Data.Valute.Try.Value/10, walrus, ActualDelivery)
 			//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(variety.Product[i])) //.AddAttr()
 			Variety.Product[i], _ = Adding.YandexTranslate(Variety.Product[i])
 			errorAddProductWC := Adding.AddProduct(Variety.Product[i]) //.AddAttr()
@@ -138,7 +137,7 @@ func TestSingleAddProductLink(t *testing.T) {
 	}
 	delivery := 500 // Доставка
 	walrus := 1.3   // Моржа
-	Prod2 = zaraapp.EditCoast(Prod2, cb.Data.Valute.Try.Value/10, walrus, delivery)
+	Prod2 = bases.EditCoast(Prod2, cb.Data.Valute.Try.Value/10, walrus, delivery)
 	//errorAddProductWC := Adding.AddProduct(wcprod.ProductTranslate(variety.Product[i])) //.AddAttr()
 	// Prod2, _ = Adding.YandexTranslate(Prod2)
 	Prod2.Article += "_test"
