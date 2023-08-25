@@ -20,6 +20,7 @@ type SScat struct {
 func Category() (cc []SScat) {
 	c := colly.NewCollector()
 
+	var RealChildParentName string
 	// Find and visit all links
 	c.OnHTML(`div[class="MenuLink spec-list"]>a`, func(e *colly.HTMLElement) {
 
@@ -38,10 +39,14 @@ func Category() (cc []SScat) {
 		ChildParentName = strings.TrimSpace(ChildParentName)
 		ChildParentLink, _ := e.DOM.Parent().Parent().Parent().Find("a:first-of-type").Attr("href")
 
+		if ChildParentName != "" {
+			RealChildParentName = ChildParentName
+		}
+
 		cc = append(cc, SScat{
 			cat: []bases.Cat{{Name: "sneaksup", Slug: "sneaksup"},
 				{Name: ManParentName, Slug: Name2Slug(ManParentLink)},
-				{Name: ChildParentName, Slug: Name2Slug(ChildParentLink)},
+				{Name: RealChildParentName, Slug: Name2Slug(ChildParentLink)},
 				{Name: Name, Slug: Name2Slug(Link)}},
 			link: URL + Link,
 		})

@@ -23,12 +23,12 @@ type LineStruct struct {
 			CustomProperties    struct {
 			} `json:"CustomProperties"`
 		} `json:"Pictures"`
-		ShortDescription interface{} `json:"ShortDescription"`
+		ShortDescription string `json:"ShortDescription"`
 		ProductPrice     struct {
 			OldPrice                             interface{} `json:"OldPrice"`
 			Price                                string      `json:"Price"`
 			PriceValue                           float64     `json:"PriceValue"`
-			OldPriceValue                        float64     `json:"OldPriceValue"`
+			OldPriceValue                        int         `json:"OldPriceValue"`
 			PriceWithoutDiscount                 string      `json:"PriceWithoutDiscount"`
 			PriceWithoutDiscountValue            float64     `json:"PriceWithoutDiscountValue"`
 			DisableBuyButton                     bool        `json:"DisableBuyButton"`
@@ -50,7 +50,7 @@ type LineStruct struct {
 			FullSizeImageURL    string      `json:"FullSizeImageUrl"`
 			Title               string      `json:"Title"`
 			AlternateText       string      `json:"AlternateText"`
-			OriginalImageURL    interface{} `json:"OriginalImageUrl"`
+			OriginalImageURL    string      `json:"OriginalImageUrl"`
 			ThumbImageURL       interface{} `json:"ThumbImageUrl"`
 			PictureID           int         `json:"PictureId"`
 			IntegrationFileName interface{} `json:"IntegrationFileName"`
@@ -178,8 +178,13 @@ type LineStruct struct {
 			EndDate                         string      `json:"EndDate"`
 			OptionID                        int         `json:"OptionId"`
 			CustomProperties                struct {
-				ColorNames      string `json:"ColorNames,omitempty"`
-				ColorHexCode    string `json:"ColorHexCode,omitempty"`
+				ColorNames string `json:"ColorNames"`
+			} `json:"CustomProperties,omitempty"`
+			CustomProperties0 struct {
+				ColorNames   string `json:"ColorNames"`
+				ColorHexCode string `json:"ColorHexCode"`
+			} `json:"CustomProperties,omitempty"`
+			CustomProperties1 struct {
 				NewProductBadge string `json:"NewProductBadge"`
 			} `json:"CustomProperties,omitempty"`
 		} `json:"SpecificationAttributeModels"`
@@ -201,7 +206,7 @@ type LineStruct struct {
 				FullSizeImageURL    string      `json:"FullSizeImageUrl"`
 				Title               string      `json:"Title"`
 				AlternateText       string      `json:"AlternateText"`
-				OriginalImageURL    interface{} `json:"OriginalImageUrl"`
+				OriginalImageURL    string      `json:"OriginalImageUrl"`
 				ThumbImageURL       interface{} `json:"ThumbImageUrl"`
 				PictureID           int         `json:"PictureId"`
 				IntegrationFileName interface{} `json:"IntegrationFileName"`

@@ -65,16 +65,16 @@ func Parsing() {
 		// Добавляем полученный слайс с товарами в общий слайс товаров
 		products = append(products, AddProducts...)
 		BarCategory.Increment()
-		break
+		// break
 	}
 	BarCategory.Finish()
 	gol.Info("Line: Done")
 
 	// Сохранить товары в файл XLSX
 	varSa := bases.Variety2{Product: products}
-	varSa.SaveXlsxCsvs("tmp/" + "H&M_ALL")
+	varSa.SaveXlsxCsvs("tmp/" + "HM_ALL")
 	gol.Info("SaveXlsxCsvs: Сохраняю результат line")
-	products = products[:10]
+	// products = products[:10]
 
 	// Парсинг по подслайсами с размером size
 	size := 1000
@@ -93,7 +93,7 @@ func Parsing() {
 		for i := range SubSlice {
 			// Парсинг всех подпродуктов
 			AddingProduct := SubSlice[i]
-			gol.Info("Parsing: ", AddingProduct.Link)
+			// gol.Info("Parsing: ", AddingProduct.Link)
 
 			// Размеры и картинки
 			var ErrorParseProduct error
@@ -136,8 +136,8 @@ func Parsing() {
 			BarProducts.Increment()
 		}
 		cout++
-		bases.Variety2{Product: SubSlice}.SaveXlsxCsvs(fmt.Sprintf("tmp/H&M_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
-		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("tmp/H&M_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
+		// bases.Variety2{Product: SubSlice}.SaveXlsxCsvs(fmt.Sprintf("tmp/HM_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
+		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("tmp/HM_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
 	}
 	BarProducts.Finish()
 }

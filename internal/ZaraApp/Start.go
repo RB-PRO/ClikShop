@@ -1,10 +1,7 @@
 package zaraapp
 
 import (
-	"bufio"
-	"fmt"
 	"log"
-	"os"
 
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
@@ -12,11 +9,6 @@ import (
 	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 )
-
-func Parse() {
-	varient := zaratr.Parsing()
-	varient.SaveXlsxCsvs("Zara")
-}
 
 // Начать парсить и одновременно загружать товары
 func Start() {
@@ -68,14 +60,6 @@ func Start() {
 		bar.Increment()
 	}
 	bar.Finish()
-	// "Мягкий" выход из программы
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		exit := scanner.Text()
-		if exit == "q" {
-			break
-		} else {
-			fmt.Println("Press 'q' to quit")
-		}
-	}
+
+	bases.ExitSoft() // "Мягкий" выход из программы
 }

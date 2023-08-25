@@ -1,7 +1,7 @@
 package main
 
 import (
-	massimoduttiapp "github.com/RB-PRO/SanctionedClothing/internal/MassimoDuttiApp"
+	"github.com/RB-PRO/SanctionedClothing/internal/settings"
 )
 
 func main() {
@@ -17,13 +17,15 @@ func main() {
 	//pm6wp.Start()
 
 	//zaraapp.Start()
-	//zaraapp.Parse()
+	// zaraapp.Parse()
+	// zaraapp.Parsing()
 
 	// hmapp.Start()
 	// hmapp.Parsing()
 
-	massimoduttiapp.Parsing()
+	// massimoduttiapp.Parsing()
 
 	// clicker.Click()
 	// app.Start2()
+	settings.EditJson()
 }

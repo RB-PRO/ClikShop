@@ -119,7 +119,7 @@ func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 	}
 
 	for KeyColor := range prod.Item {
-		prod.Item[KeyColor].ColorEng = TranslateItem[KeyColor]
+		prod.Item[KeyColor].ColorRus = TranslateItem[KeyColor]
 		// for KeySize := range prod.Item[KeyColor].Item {
 		// 	prod.Item[KeyColor].Item[KeySize].ColorEng = TranslateItem[KeyColor]
 		// }
@@ -172,7 +172,7 @@ func (woo *WcAdd) YandexTranslatePart(prod bases.Product2) (bases.Product2, erro
 	}
 
 	for KeyColor := range prod.Item {
-		prod.Item[KeyColor].ColorEng = TranslateItem[KeyColor]
+		prod.Item[KeyColor].ColorRus = TranslateItem[KeyColor]
 	}
 
 	return prod, nil

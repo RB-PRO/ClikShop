@@ -32,6 +32,9 @@ type Product2 struct {
 		Rus string
 	}
 
+	ImageMain string
+	Img       []string
+
 	// Описание товара по значению "цвет"
 	// "Цвет" будет определять, как вариацию товара
 	// "Цвет на русском"
@@ -45,6 +48,7 @@ type Product2 struct {
 type ColorItem struct {
 	ColorCode string   // Цвет ключ-значение
 	ColorEng  string   // Цвет на английском
+	ColorRus  string   // Цвет на русском
 	Link      string   // Ссылка на товар нужного цвета
 	Price     float64  // Цена
 	Size      []Size   // Размеры

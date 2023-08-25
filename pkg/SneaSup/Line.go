@@ -3,11 +3,40 @@ package sneaksup
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
+	"strconv"
+
+	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
 
-func LinePost(link, pagenumber string) (Line LineStruct, ErrLine error) {
+// Получить список товаров в результате выполнения ф-й Line
+func Lines(link string) (Products []bases.Product2, Err error) {
 
-	url := "https://www.sneaksup.com/kadin-ayakkabi-sneaker?paginationType=20&orderby=0&pagenumber=1"
+	// Цикл по всем страницам
+	for i := 1; ; i++ {
+
+		// Загружаем данные
+		line, ErrLinePost := LinePost(link, i)
+		if ErrLinePost != nil {
+			return Products, ErrLinePost
+		}
+
+		// Выход по причине того, что товаров больше нет
+		if line.Pager.PageIndex+1 >= line.Pager.TotalPages {
+			break
+		}
+	}
+
+	return Products, Err
+}
+
+// Загрузить список товаров
+func LinePost(link string, pagenumber int) (Line LineStruct, ErrLine error) {
+
+	url, errMakeLink := linkTranstore(link, pagenumber)
+	if errMakeLink != nil {
+		return Line, errMakeLink
+	}
 
 	client := &http.Client{}
 	req, ErrNewRequest := http.NewRequest(http.MethodGet, url, nil)
@@ -25,7 +54,6 @@ func LinePost(link, pagenumber string) (Line LineStruct, ErrLine error) {
 	req.Header.Add("sec-fetch-mode", "cors")
 	req.Header.Add("sec-fetch-site", "same-origin")
 	req.Header.Add("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.1.906 (beta) Yowser/2.5 Safari/537.36")
-	req.Header.Add("Cookie", "inCommerce.customer.info=c1d75719-734a-45a9-9fbd-15298b12b72f; inveonSessionId=11dw5bf3nuzj1ht1q1ix4ojg")
 
 	res, ErrDo := client.Do(req)
 	if ErrDo != nil {
@@ -39,4 +67,43 @@ func LinePost(link, pagenumber string) (Line LineStruct, ErrLine error) {
 	}
 
 	return Line, ErrNewRequest
+}
+
+// Преобразовать ссылку на парсинга line
+func linkTranstore(link string, pagenumber int) (string, error) {
+
+	// Парсим ссылку в формат отдачи json
+	u, ErrParse := url.Parse(link)
+	if ErrParse != nil {
+		return "", ErrParse
+	}
+
+	// Добавляем аттрибусы, которые соответствуют запросу, который отдаёт json
+	q := u.Query()
+	q.Set("paginationType", "20")
+	q.Set("orderby", "0")
+	q.Set("pagenumber", strconv.Itoa(pagenumber))
+	u.RawQuery = q.Encode()
+
+	return u.String(), nil
+}
+
+// Перевести из line в структуру product2
+func Line2Product(line LineStruct) (prods []bases.Product2) {
+	for _, LineProd := range line.Products {
+		var prod bases.Product2
+
+		prod.Name = LineProd.Name
+		prod.Link = URL + LineProd.URL
+		prod.Article = LineProd.Sku
+		prod.FullName = LineProd.DefaultPictureModel.AlternateText
+		prod.Manufacturer = LineProd.ManufacturerName
+
+		// for _, Sibligs := range prod.Sibligs {
+
+		// }
+
+		prods = append(prods, prod)
+	}
+	return prods
 }
