@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/RB-PRO/SanctionedClothing/internal/settings"
-)
+import zaraapp "github.com/RB-PRO/SanctionedClothing/internal/ZaraApp"
 
 func main() {
 	//app.Run(os.Args[1])
@@ -17,8 +15,8 @@ func main() {
 	//pm6wp.Start()
 
 	//zaraapp.Start()
-	// zaraapp.Parse()
-	// zaraapp.Parsing()
+	//zaraapp.Parse()
+	zaraapp.Parsing()
 
 	// hmapp.Start()
 	// hmapp.Parsing()
@@ -27,5 +25,6 @@ func main() {
 
 	// clicker.Click()
 	// app.Start2()
-	settings.EditJson()
+
+	// settings.EditJson()
 }

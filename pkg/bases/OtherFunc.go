@@ -189,3 +189,16 @@ func EditCoast(prod Product2, usd float64, walrus float64, delivery int) Product
 func EditDecadense(coast float64) float64 {
 	return math.Round(coast/10.0) * 10.0
 }
+
+// Создать список картинок для создания main-картинки.
+//
+//	bases.Product2.Img
+func EditIMG(prod Product2) (img []string) {
+	for _, item := range prod.Item {
+		for _, image := range item.Image {
+			img = append(img, image)
+		}
+
+	}
+	return img
+}

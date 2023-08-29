@@ -45,8 +45,8 @@ func Parsing() bases.Variety2 {
 	// парсим товары
 	var Variety bases.Variety2
 	bar2 := pb.StartNew(len(ProductsLine))
-	for i, prod := range ProductsLine {
-		log.Printf("(%d/%d) Парсинг товара: %v", i+1, len(ProductsLine), fmt.Sprintf(TouchURL, prod.Seo.Keyword+"-p"+prod.Seo.SeoProductID))
+	for _, prod := range ProductsLine {
+		// log.Printf("(%d/%d) Парсинг товара: %v", i+1, len(ProductsLine), fmt.Sprintf(TouchURL, prod.Seo.Keyword+"-p"+prod.Seo.SeoProductID))
 		touch, _ := LoadTouch(prod.Seo.Keyword + "-p" + prod.Seo.SeoProductID) // Выполняем запрос
 		Prod2 := Touch2Product2(touch)                                         // АПереводим в структуру Product2
 		Prod2.Cat = prod.Cat                                                   // Обновляем категории
