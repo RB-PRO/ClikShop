@@ -54,6 +54,7 @@ func VariableProduct2(Product bases.Product2) (bases.Product2, error) {
 		TecalSKU = strings.ReplaceAll(TecalSKU, "/tr_tr/productpage.", "")
 		TecalSKU = strings.ReplaceAll(TecalSKU, ".html", "")
 
+		// fmt.Println(URL + "/tr_tr/productpage/_jcr_content/product.quickbuy." + TecalSKU + ".html")
 		c.Visit(URL + "/tr_tr/productpage/_jcr_content/product.quickbuy." + TecalSKU + ".html")
 		if Err != nil {
 			return Product, Err

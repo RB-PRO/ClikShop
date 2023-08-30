@@ -71,6 +71,22 @@ func ProductTranslate(prod bases.Product2) bases.Product2 {
 	return prod
 }
 
+func (woo *WcAdd) YandexCat(InputCat []bases.Cat) ([]bases.Cat, error) {
+	// Категории
+	var cats []string
+	for i := 1; i < len(InputCat); i++ {
+		cats = append(cats, InputCat[i].Name)
+	}
+	TranslateCats, ErorTranslateCat := woo.Tr.Trans(cats)
+	if ErorTranslateCat != nil {
+		return []bases.Cat{}, ErorTranslateCat
+	}
+	for ind := 1; ind < len(InputCat); ind++ {
+		InputCat[ind].Name = TranslateCats[ind-1]
+	}
+	return InputCat, nil
+}
+
 func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 	// Описание
 	prod.Description.Eng = strings.ReplaceAll(prod.Description.Eng, "\t", "")
@@ -94,19 +110,7 @@ func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 	if len(TranslateNames) == 3 {
 		prod.Description.Rus, prod.Name, prod.FullName = TranslateNames[0], TranslateNames[1], TranslateNames[2]
 	}
-
-	// Категории
-	var cats []string
-	for _, CatName := range prod.Cat {
-		cats = append(cats, CatName.Name)
-	}
-	TranslateCats, ErorTranslateCat := woo.Tr.Trans(cats)
-	if ErorTranslateCat != nil {
-		return prod, ErorTranslateCat
-	}
-	for ind := range prod.Cat {
-		prod.Cat[ind].Name = TranslateCats[ind]
-	}
+	// fmt.Printf("TranslateNames %d %+#v", len(TranslateNames), TranslateNames)
 
 	// Вариации
 	var item []string

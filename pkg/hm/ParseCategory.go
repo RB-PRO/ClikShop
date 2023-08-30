@@ -36,7 +36,7 @@ func Categorys() (Category []CategorysCat, ErrParse error) {
 			if SelectorSpan := e.DOM.Parent().Parent().Parent().Find("span"); SelectorSpan.Text() == ProductCategory {
 				if cat, ErrorParseCat := PullOutCat(URL + Link); ErrorParseCat == nil {
 					if Filter(cat[0].Slug) {
-						NewCategorys := append([]bases.Cat{{Name: "H&M", Slug: "hm", ID: 0}}, cat...)
+						NewCategorys := append([]bases.Cat{{Name: "HM", Slug: "hm", ID: 0}}, cat...)
 						Category = append(Category, CategorysCat{Link: Link, Cat: NewCategorys, GendetTag: TransCategoryTR(NewCategorys[1].Slug)})
 					}
 				}

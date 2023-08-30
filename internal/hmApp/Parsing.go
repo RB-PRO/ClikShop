@@ -2,9 +2,10 @@ package hmapp
 
 import (
 	"fmt"
-	"strconv"
+	"log"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
 	"github.com/RB-PRO/SanctionedClothing/pkg/gol"
 	"github.com/RB-PRO/SanctionedClothing/pkg/hm"
 	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
@@ -12,46 +13,54 @@ import (
 	"github.com/cheggaaa/pb"
 )
 
+// Парсинг данных и сохранение их в файлы
+//
+//	Заменить во всех файлах нужно символы '\u0026' на '&'
 func Parsing() {
+	glog := gol.NewGol()
 
-	gol := gol.NewGol()
+	// Нало работы с центральным банком
+	cb, ErrorCB := cbbank.New() // Получить курс валюты
+	if ErrorCB != nil {
+		panic(ErrorCB)
+	}
+	glog.Info("Курс лиры", cb.Data.Valute.Try.Value/10)
 
 	// Создать оьбъект переводчика
 	Adding, ErrNewTranslate := wcprod.NewTranslate()
 	if ErrNewTranslate != nil {
 		panic(ErrNewTranslate)
 	}
+	glog.Info("Загрузил переводчик", Adding.Tr.OAuthToken)
 
 	// Получить слайс категорий
 	Categorys, ErrorCategorys := hm.Categorys()
 	if ErrorCategorys != nil {
 		panic(ErrorCategorys)
 	}
-	gol.Info("wcprod.New: Получен слайс категорий")
+	glog.Info("wcprod.New: Получен слайс категорий")
 
-	// Получить ядро парсинга эмулятора
-	var products []bases.Product2
-
-	// Парсинг всех товаров
-	BarCategory := pb.StartNew(len(Categorys))
-	BarCategory.Prefix("Парсинг категорий")
-	for _, categ := range Categorys {
+	var count int
+	for icateg, categ := range Categorys {
+		if icateg < 28 {
+			continue
+		}
 
 		// Получить ссылку на все товары json
 		LineUrl, ErrLineUrl := hm.LineUrl2(categ.Link)
 		if ErrLineUrl != nil {
-			gol.Err(ErrLineUrl)
+			glog.Err(ErrLineUrl)
 			panic(ErrLineUrl)
 		}
 		if LineUrl == "" {
-			gol.Err("LineUrl: Nil output")
+			glog.Err("LineUrl: Nil output")
 			panic("LineUrl: Nil output")
 		}
 
 		// Получить к-во товаров в категории
 		cout, ErrorCount := hm.LinesCount(LineUrl)
 		if ErrorCount != nil {
-			gol.Warn("LinesCount:", hm.URL+categ.Link, hm.URL+LineUrl)
+			glog.Warn("LinesCount:", hm.URL+categ.Link, hm.URL+LineUrl)
 			fmt.Println("LinesCount:", hm.URL+categ.Link, hm.URL+LineUrl)
 		}
 
@@ -60,36 +69,17 @@ func Parsing() {
 
 		// Перевести полученый ответ от сервера в слайс Product2 и добавить в него соответствующие данные по каждому товару
 		// в зависимоти от категории, а именно: Гендер, Каталог.
-		AddProducts := hm.Line2Product2(line, categ.Cat, categ.GendetTag)
+		SubSlice := hm.Line2Product2(line, categ.Cat, categ.GendetTag)
 
-		// Добавляем полученный слайс с товарами в общий слайс товаров
-		products = append(products, AddProducts...)
-		BarCategory.Increment()
-		// break
-	}
-	BarCategory.Finish()
-	gol.Info("Line: Done")
-
-	// Сохранить товары в файл XLSX
-	varSa := bases.Variety2{Product: products}
-	varSa.SaveXlsxCsvs("tmp/" + "HM_ALL")
-	gol.Info("SaveXlsxCsvs: Сохраняю результат line")
-	// products = products[:10]
-
-	// Парсинг по подслайсами с размером size
-	size := 1000
-	BarProducts := pb.StartNew(len(products))
-	var SubSlice_j, cout int
-	for SubSlice_i := 0; SubSlice_i < len(products); SubSlice_i += size {
-		SubSlice_j += size
-		if SubSlice_j > len(products) {
-			SubSlice_j = len(products)
+		// Переведённая категория
+		if len(SubSlice) == 0 {
+			continue
 		}
+		ProdTranslateCat := SubSlice[0].Cat
+		ProdTranslateCat, _ = Adding.YandexCat(ProdTranslateCat)
 
-		// Подслайс. Работаем именно с подслайсами, чтобы не перегружать оперативку
-		SubSlice := products[SubSlice_i:SubSlice_j]
-
-		BarProducts.Prefix(strconv.Itoa(cout))
+		BarProducts := pb.StartNew(len(SubSlice))
+		BarProducts.Prefix(fmt.Sprintf("[%d/%d]", icateg, len(Categorys)))
 		for i := range SubSlice {
 			// Парсинг всех подпродуктов
 			AddingProduct := SubSlice[i]
@@ -99,24 +89,27 @@ func Parsing() {
 			var ErrorParseProduct error
 			AddingProduct, ErrorParseProduct = hm.VariableProduct2(AddingProduct)
 			if ErrorParseProduct != nil {
-				gol.Err("Parsing: VariableProduct2:", ErrorParseProduct)
-				panic(ErrorParseProduct)
+				glog.Err("Parsing: VariableProduct2:", ErrorParseProduct)
+				continue
+				//panic(ErrorParseProduct)
 			}
 
 			// Данные по рамерам
 			var ErrAvailabilityProduct error
 			AddingProduct, ErrAvailabilityProduct = hm.AvailabilityProduct(AddingProduct)
 			if ErrAvailabilityProduct != nil {
-				gol.Err("Parsing: AvailabilityProduct:", ErrAvailabilityProduct)
-				panic(ErrAvailabilityProduct)
+				glog.Err("Parsing: AvailabilityProduct:", ErrAvailabilityProduct)
+				continue
+				//panic(ErrAvailabilityProduct)
 			}
 
 			// Описание товара
 			var ErrVariableDescription2 error
 			AddingProduct, ErrVariableDescription2 = hm.VariableDescription2(AddingProduct)
 			if ErrVariableDescription2 != nil {
-				gol.Err("Parsing: VariableDescription2:", ErrVariableDescription2)
-				panic(ErrVariableDescription2)
+				glog.Err("Parsing: VariableDescription2:", ErrVariableDescription2)
+				continue
+				//panic(ErrVariableDescription2)
 			}
 
 			// Перевести товар
@@ -129,15 +122,18 @@ func Parsing() {
 
 			// Добавить все размеры в товар из всех вариаций товара
 			AddingProduct.Size = bases.EditProdSize(AddingProduct)
+			AddingProduct = bases.EditCoast(AddingProduct, cb.Data.Valute.Try.Value/10, 1.3, 500)
+			AddingProduct.Img = bases.EditIMG(AddingProduct)
+			AddingProduct.Cat = ProdTranslateCat
 
 			SubSlice[i] = AddingProduct
 
-			gol.Info("Parsing: Done")
 			BarProducts.Increment()
+			count++
 		}
-		cout++
 		// bases.Variety2{Product: SubSlice}.SaveXlsxCsvs(fmt.Sprintf("tmp/HM_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
-		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("tmp/HM_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
+		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("tmp/HM/json/hm_%d_%s", icateg, categ.Cat[len(categ.Cat)-1].Slug))
+		BarProducts.Finish()
 	}
-	BarProducts.Finish()
+	log.Println("Всего", count, "товара(ов)")
 }

@@ -198,7 +198,6 @@ func EditIMG(prod Product2) (img []string) {
 		for _, image := range item.Image {
 			img = append(img, image)
 		}
-
 	}
 	return img
 }

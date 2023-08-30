@@ -11,3 +11,4 @@ token
 *.html
 tmp/*
 *.log
+*.json
