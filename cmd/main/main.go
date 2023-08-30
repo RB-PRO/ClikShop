@@ -25,5 +25,6 @@ func main() {
 	// clicker.Click()
 	// app.Start2()
 
-	settings.EditJson()
+	// settings.EditJson()
+	settings.EditZara()
 }
