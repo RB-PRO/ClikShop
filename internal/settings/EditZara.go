@@ -10,6 +10,7 @@ import (
 
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
 	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
 )
 
@@ -83,5 +84,61 @@ func EditZara() {
 		}
 
 		varient.SaveJson("internal/settings/out/" + file.Name())
+	}
+}
+
+func EditZara2() {
+	// Создать оьбъект переводчика
+	Adding, ErrNewTranslate := wcprod.NewTranslate()
+	if ErrNewTranslate != nil {
+		panic(ErrNewTranslate)
+	}
+	fmt.Println(Adding)
+	files, err := ioutil.ReadDir("internal/settings/jsonzara2/")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for i, file := range files {
+		// fmt.Println(file.Name())
+
+		filenameReplace := strings.ReplaceAll(file.Name(), ".json", "")
+
+		filenameReplaces := strings.Split(filenameReplace, "_")
+		filenameReplace = filenameReplaces[2]
+
+		// FilePatch := "internal/settings/out/" + filenameReplace + ".json"
+		filenameReplace = strings.ReplaceAll(filenameReplace, ".json", "")
+		FilePatch := fmt.Sprintf("internal/settings/out/zara_%d_%s", i, filenameReplace)
+		fmt.Println(i, FilePatch)
+
+		// read file
+		data, err := os.ReadFile("internal/settings/jsonzara2/" + file.Name())
+		if err != nil {
+			panic(err)
+		}
+
+		var varient bases.Variety2
+		err = json.Unmarshal(data, &varient)
+		if err != nil {
+			panic(err)
+		}
+
+		for j := range varient.Product {
+			// varient.Product[j].Cat = ProdTranslateCat // mapFileNameCat[filenameReplace]
+			Adding.YandexDeskription(varient.Product[j].Description.Eng)
+
+			DescriptRus, ErrorTranstate := Adding.YandexDeskription(varient.Product[j].Description.Eng)
+			if ErrorTranstate != nil {
+				Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
+				DescriptRus, _ = Adding.YandexDeskription(varient.Product[j].Description.Eng)
+			}
+
+			fmt.Println(i, j, DescriptRus)
+
+			varient.Product[j].Description.Rus = DescriptRus
+		}
+
+		varient.SaveJson(FilePatch)
 	}
 }

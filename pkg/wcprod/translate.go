@@ -86,6 +86,29 @@ func (woo *WcAdd) YandexCat(InputCat []bases.Cat) ([]bases.Cat, error) {
 	}
 	return InputCat, nil
 }
+func (woo *WcAdd) YandexDeskription(InputSrt string) (string, error) {
+	// Категории
+	// Описание
+	InputSrt = strings.ReplaceAll(InputSrt, "\t", "")
+	InputSrt = strings.ReplaceAll(InputSrt, "#", "")
+
+	// Первая буква заглавная
+	r := []rune(InputSrt)
+	if len(r) != 0 {
+		r[0] = unicode.ToUpper(r[0])
+		InputSrt = string(r)
+	}
+
+	TranslateNames, ErorTranslate := woo.Tr.Trans([]string{InputSrt})
+	if ErorTranslate != nil {
+		return "", ErorTranslate
+	}
+	if len(TranslateNames) == 1 {
+		InputSrt = TranslateNames[0]
+	}
+
+	return InputSrt, nil
+}
 
 func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {
 	// Описание

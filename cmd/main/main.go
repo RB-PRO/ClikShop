@@ -26,5 +26,7 @@ func main() {
 	// app.Start2()
 
 	// settings.EditJson()
-	settings.EditZara()
+	// settings.EditZara()
+	// settings.EditZara2()
+	settings.EditHM()
 }
