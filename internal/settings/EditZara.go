@@ -142,3 +142,54 @@ func EditZara2() {
 		varient.SaveJson(FilePatch)
 	}
 }
+
+func EditZaraColorRus() {
+	// Создать оьбъект переводчика
+	Adding, ErrNewTranslate := wcprod.NewTranslate()
+	if ErrNewTranslate != nil {
+		panic(ErrNewTranslate)
+	}
+	fmt.Println(Adding)
+	files, err := ioutil.ReadDir("internal/settings/zara/")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for i, file := range files {
+		// fmt.Println(file.Name())
+
+		filenameReplace := strings.ReplaceAll(file.Name(), ".json", "")
+
+		filenameReplaces := strings.Split(filenameReplace, "_")
+		filenameReplace = filenameReplaces[2]
+
+		// FilePatch := "internal/settings/out/" + filenameReplace + ".json"
+		filenameReplace = strings.ReplaceAll(filenameReplace, ".json", "")
+		FilePatch := fmt.Sprintf("internal/settings/zara_output/zara_%d_%s", i, filenameReplace)
+		fmt.Println(i, FilePatch)
+
+		// read file
+		data, err := os.ReadFile("internal/settings/zara/" + file.Name())
+		if err != nil {
+			panic(err)
+		}
+
+		var varient bases.Variety2
+		err = json.Unmarshal(data, &varient)
+		if err != nil {
+			panic(err)
+		}
+
+		for j := range varient.Product {
+			var ErrorTranstate error
+			varient.Product[j], ErrorTranstate = Adding.YandexColorRus(varient.Product[j])
+			if ErrorTranstate != nil {
+				Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
+				varient.Product[j], _ = Adding.YandexColorRus(varient.Product[j])
+			}
+			fmt.Println(i, j)
+		}
+
+		varient.SaveJson(FilePatch)
+	}
+}

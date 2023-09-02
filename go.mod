@@ -19,7 +19,7 @@ require (
 	github.com/nikoksr/notify v0.38.1
 	github.com/playwright-community/playwright-go v0.2000.1
 	github.com/xuri/excelize/v2 v2.7.0
-	golang.org/x/text v0.8.0
+	golang.org/x/text v0.12.0
 )
 
 require (

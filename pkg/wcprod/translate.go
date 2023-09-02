@@ -1,6 +1,7 @@
 package wcprod
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
 
@@ -108,6 +109,39 @@ func (woo *WcAdd) YandexDeskription(InputSrt string) (string, error) {
 	}
 
 	return InputSrt, nil
+}
+
+// перевести цвета вариаций
+func (woo *WcAdd) YandexColorRus(prod bases.Product2) (bases.Product2, error) {
+
+	ColorRusSlice := make([]string, 0, len(prod.Item))
+	ColorRus := make(map[string]string)
+	var cout int
+	for _, item := range prod.Item {
+		if item.ColorRus == "" {
+			ColorRusSlice = append(ColorRusSlice, item.ColorEng)
+			cout++
+		}
+	}
+	if cout == 0 {
+		return prod, nil
+	}
+
+	TranslateColorRusSlice, ErorTranslate := woo.Tr.Trans(ColorRusSlice)
+	if ErorTranslate != nil {
+		return prod, ErorTranslate
+	}
+
+	for i := range ColorRusSlice {
+		ColorRus[ColorRusSlice[i]] = TranslateColorRusSlice[i]
+	}
+	for i := range prod.Item {
+		if val, ok := ColorRus[prod.Item[i].ColorEng]; ok {
+			prod.Item[i].ColorRus = val
+		}
+	}
+	fmt.Println("Перевожу")
+	return prod, nil
 }
 
 func (woo *WcAdd) YandexTranslate(prod bases.Product2) (bases.Product2, error) {

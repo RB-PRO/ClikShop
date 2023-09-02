@@ -28,5 +28,6 @@ func main() {
 	// settings.EditJson()
 	// settings.EditZara()
 	// settings.EditZara2()
-	settings.EditHM()
+	// settings.EditHM()
+	settings.EditZaraColorRus()
 }

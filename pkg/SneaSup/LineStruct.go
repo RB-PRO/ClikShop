@@ -180,13 +180,13 @@ type LineStruct struct {
 			CustomProperties                struct {
 				ColorNames string `json:"ColorNames"`
 			} `json:"CustomProperties,omitempty"`
-			CustomProperties0 struct {
-				ColorNames   string `json:"ColorNames"`
-				ColorHexCode string `json:"ColorHexCode"`
-			} `json:"CustomProperties,omitempty"`
-			CustomProperties1 struct {
-				NewProductBadge string `json:"NewProductBadge"`
-			} `json:"CustomProperties,omitempty"`
+			// CustomProperties0 struct {
+			// 	ColorNames   string `json:"ColorNames"`
+			// 	ColorHexCode string `json:"ColorHexCode"`
+			// } `json:"CustomProperties,omitempty"`
+			// CustomProperties1 struct {
+			// 	NewProductBadge string `json:"NewProductBadge"`
+			// } `json:"CustomProperties,omitempty"`
 		} `json:"SpecificationAttributeModels"`
 		HasStock                                           bool   `json:"HasStock"`
 		Sku                                                string `json:"Sku"`
