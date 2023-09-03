@@ -53,6 +53,8 @@ func (cr *Core) PageSingle(CategoryTag string, page int) (PageRes PageResponse, 
 
 	url := fmt.Sprintf("https://api.louisvuitton.com/eco-eu/search-merch-eapi/v1/rus-ru/plp/products/%s?page=%d", CategoryTag, page)
 
+	// fmt.Println(url)
+
 	client := &http.Client{}
 	req, ErrNewRequest := http.NewRequest(http.MethodGet, url, nil)
 	if ErrNewRequest != nil {

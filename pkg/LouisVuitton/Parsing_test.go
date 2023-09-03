@@ -19,6 +19,10 @@ func TestCategory(t *testing.T) {
 	if Err != nil {
 		t.Error(Err)
 	}
+
+	for i, v := range categs {
+		fmt.Println(i, v.CategoryTag, v.Path)
+	}
 	fmt.Println("len(categs)", len(categs))
 }
 
@@ -47,5 +51,50 @@ func TestTouch(t *testing.T) {
 	}
 	if touch.Name == "" {
 		t.Error("Toucher: Не получить получить ответ или распарсить его")
+	}
+}
+
+func TestLink2Cat(t *testing.T) {
+
+	var tests = []struct {
+		input   string
+		output  string
+		output2 string
+	}{
+		{"/rus-ru/art-of-living/books-and-stationery/hard-cover-books/_/N-t1134j9w", "LV/art-of-living/books-and-stationery/hard-cover-books/", "t1134j9w"},
+		{"/rus-ru/women/handbags/_/N-tfr7qdp", "LV/women/handbags/", "tfr7qdp"},
+		{"/rus-ru/stories/gifting", "LV/stories/gifting/", ""},
+		{"/rus-ru/magazine", "LV/magazine/", ""},
+	}
+
+	for _, e := range tests {
+		res := Link2Cat(e.input)
+		if res.Path != e.output {
+			t.Errorf("Link2Cat(%s) = %s, expected %s",
+				e.input, res, e.output)
+		}
+		if res.CategoryTag != e.output2 {
+			t.Errorf("Link2Cat(%s) = %s, expected %s",
+				e.input, res, e.output2)
+		}
+	}
+}
+
+func TestSaveXLSX(t *testing.T) {
+	core := coreTest()
+	touch, ErrTouch := core.Toucher("001054")
+	if ErrTouch != nil {
+		t.Error(ErrTouch)
+	}
+	if touch.Name == "" {
+		t.Error("Toucher: Не получить получить ответ или распарсить его")
+	}
+
+	Prod := TouchResponse2Product(touch)
+	Prods := []Product{Prod}
+
+	ErrSave := SaveXLSX("lv.xlsx", Prods)
+	if ErrSave != nil {
+		t.Error(ErrSave)
 	}
 }
