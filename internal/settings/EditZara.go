@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"unicode"
 
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
@@ -126,7 +127,7 @@ func EditZara2() {
 
 		for j := range varient.Product {
 			// varient.Product[j].Cat = ProdTranslateCat // mapFileNameCat[filenameReplace]
-			Adding.YandexDeskription(varient.Product[j].Description.Eng)
+			// Adding.YandexDeskription(varient.Product[j].Description.Eng)
 
 			DescriptRus, ErrorTranstate := Adding.YandexDeskription(varient.Product[j].Description.Eng)
 			if ErrorTranstate != nil {
@@ -150,7 +151,7 @@ func EditZaraColorRus() {
 		panic(ErrNewTranslate)
 	}
 	fmt.Println(Adding)
-	files, err := ioutil.ReadDir("internal/settings/zara/")
+	files, err := ioutil.ReadDir("internal/settings/zara_output/")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -165,11 +166,11 @@ func EditZaraColorRus() {
 
 		// FilePatch := "internal/settings/out/" + filenameReplace + ".json"
 		filenameReplace = strings.ReplaceAll(filenameReplace, ".json", "")
-		FilePatch := fmt.Sprintf("internal/settings/zara_output/zara_%d_%s", i, filenameReplace)
+		FilePatch := fmt.Sprintf("internal/settings/zara_output2/zara_%d_%s.json", i, filenameReplace)
 		fmt.Println(i, FilePatch)
 
 		// read file
-		data, err := os.ReadFile("internal/settings/zara/" + file.Name())
+		data, err := os.ReadFile("internal/settings/zara_output/" + file.Name())
 		if err != nil {
 			panic(err)
 		}
@@ -182,14 +183,35 @@ func EditZaraColorRus() {
 
 		for j := range varient.Product {
 			var ErrorTranstate error
-			varient.Product[j], ErrorTranstate = Adding.YandexColorRus(varient.Product[j])
-			if ErrorTranstate != nil {
-				Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
-				varient.Product[j], _ = Adding.YandexColorRus(varient.Product[j])
+			// varient.Product[j], ErrorTranstate = Adding.YandexColorRus(varient.Product[j])
+			// if ErrorTranstate != nil {
+			// 	Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
+			// 	varient.Product[j], _ = Adding.YandexColorRus(varient.Product[j])
+			// }
+			if !IsRussian(varient.Product[j].Name) {
+				varient.Product[j].Name, ErrorTranstate = Adding.YandexDeskription(varient.Product[j].Name)
+				if ErrorTranstate != nil {
+					Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
+					varient.Product[j].Name, _ = Adding.YandexDeskription(varient.Product[j].Name)
+				}
+				fmt.Println(i, j)
 			}
-			fmt.Println(i, j)
 		}
 
 		varient.SaveJson(FilePatch)
 	}
+}
+
+// Если эта фраза на русском языке
+func IsRussian(str string) bool {
+	var russianCount, englishCount int
+	for _, char := range str {
+		if unicode.Is(unicode.Latin, char) {
+			englishCount++
+		}
+		if unicode.Is(unicode.Cyrillic, char) {
+			russianCount++
+		}
+	}
+	return russianCount > englishCount
 }
