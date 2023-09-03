@@ -118,7 +118,7 @@ func TouchResponse2Product(touch TouchResponse) (prod Product) {
 				if len(ImageUrls) > 0 {
 					imageUrl = ImageUrls[0]
 				}
-				variat.Photo = append(variat.Photo, imageUrl+"%20view.png?wid=1090&hei=1090")
+				variat.Photo = append(variat.Photo, imageUrl+" view.png")
 			}
 		}
 

@@ -18,6 +18,7 @@ func Parsing() {
 
 	// Объект для работы с папками
 	dir := lv.NewDir("")
+	dir.MakeDir("LV/")
 
 	// Создаём ядро парсинга
 	core := lv.NewCore("", "")
@@ -33,7 +34,7 @@ func Parsing() {
 		// Парсинг внутри категории
 		var ProdsCategory []lv.Product
 		BarProducts := pb.StartNew(len(Products))
-		BarProducts.Prefix(fmt.Sprintf("[%d/%d]", icategory, len(Categorys)))
+		BarProducts.Prefix(fmt.Sprintf("[%d/%d] Парсинг", icategory, len(Categorys)))
 		for _, product := range Products {
 			touch, ErrToucher := core.Toucher(product.ProductID)
 			if ErrToucher != nil {
@@ -65,17 +66,19 @@ func Parsing() {
 		}
 
 		// Работа с папками и картинками
-		// category.Path
-		//
+		BarPhoto := pb.StartNew(len(Products))
+		BarPhoto.Prefix(fmt.Sprintf("[%d/%d] Фото", icategory, len(Categorys)))
 		for i := range ProdsCategory {
 			PathToProduct := category.Path + ProdsCategory[i].SKU + "/"
 			dir.MakeDir(PathToProduct)
 			for j := range ProdsCategory[i].Variations {
 				PathToVariation := PathToProduct + ProdsCategory[i].Variations[j].SKU + "/"
 				dir.MakeDir(PathToVariation)
-				dir.SavePhotos(ProdsCategory[i].Variations[j].Photo, PathToVariation)
+				ProdsCategory[i].Variations[j].Photo, _ = dir.SavePhotos(ProdsCategory[i].Variations[j].Photo, PathToVariation)
 			}
+			BarPhoto.Increment()
 		}
+		BarPhoto.Finish()
 
 		// Сохраняем полученные результаты
 		Prods = append(Prods, ProdsCategory...)
