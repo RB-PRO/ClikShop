@@ -112,7 +112,7 @@ func TouchResponse2Product(touch TouchResponse) (prod Product) {
 
 		// Фотографии
 		for _, image := range val.Image {
-			if image.Type == "ImageObject" {
+			if image.Type == "ImageObject" && image.PlayerType != "freecaster" {
 				var imageUrl string = image.ContentURL
 				ImageUrls := strings.Split(imageUrl, " ")
 				if len(ImageUrls) > 0 {

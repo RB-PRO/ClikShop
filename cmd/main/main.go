@@ -1,6 +1,8 @@
 package main
 
-import lvapp "github.com/RB-PRO/SanctionedClothing/internal/lvApp"
+import (
+	"github.com/RB-PRO/SanctionedClothing/internal/settings"
+)
 
 func main() {
 	//app.Run(os.Args[1])
@@ -30,6 +32,7 @@ func main() {
 	// settings.EditZara2()
 	// settings.EditHM()
 	// settings.EditZaraColorRus()
+	settings.PrintSizes()
 
-	lvapp.Parsing()
+	// lvapp.Parsing()
 }
