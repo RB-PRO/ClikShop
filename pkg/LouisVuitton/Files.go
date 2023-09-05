@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Фунционал файл отвечает за работу директорией, создание, отслеживание, скачивание данных по позициям
@@ -23,7 +24,9 @@ type Direction struct {
 
 // Созждать обхект работы с файловой системой
 func NewDir(zeroPath string) *Direction {
-	return &Direction{zeroPath: zeroPath}
+	dr := &Direction{zeroPath: zeroPath}
+	dr.MakeDir(zeroPath) // psd add error
+	return dr
 }
 
 // Пересоздать папку
@@ -56,7 +59,7 @@ func (dr *Direction) SavePhotos(links []string, Path string) ([]string, error) {
 		}
 
 		if FileName == "" {
-			FileName = strconv.Itoa(ilink) + ".pngs"
+			FileName = strconv.Itoa(ilink) + ".png"
 		}
 
 		FilePath := fmt.Sprintf("%s%s%s", dr.zeroPath, Path, FileName)
@@ -70,6 +73,7 @@ func (dr *Direction) SavePhotos(links []string, Path string) ([]string, error) {
 		}
 		NewPhotos[ilink] = dr.zeroPath + Path + FileName
 
+		time.Sleep(time.Second)
 	}
 	return NewPhotos, nil
 }
