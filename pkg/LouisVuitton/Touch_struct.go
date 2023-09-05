@@ -51,6 +51,7 @@ type TouchResponse struct {
 		} `json:"offers,omitempty"`
 		DisambiguatingDescription string `json:"disambiguatingDescription,omitempty"`
 		Image                     []struct {
+			PlayerType string `json:"playerType,omitempty"`
 			ContentURL string `json:"contentUrl,omitempty"`
 			Type       string `json:"@type,omitempty"`
 			Name       string `json:"name,omitempty"`

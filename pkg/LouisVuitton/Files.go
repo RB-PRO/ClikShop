@@ -3,6 +3,7 @@ package louisvuitton
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -49,7 +50,6 @@ func (dr *Direction) SavePhotos(links []string, Path string) ([]string, error) {
 	NewPhotos := make([]string, len(links))
 	for ilink, link := range links {
 		var FileName string
-
 		linkClasters := strings.Split(link, "_")
 		if len(linkClasters) > 2 {
 			FileName = strings.Join(linkClasters[len(linkClasters)-2:], "_")
@@ -59,74 +59,66 @@ func (dr *Direction) SavePhotos(links []string, Path string) ([]string, error) {
 			FileName = strconv.Itoa(ilink) + ".pngs"
 		}
 
-		NewPhotos[ilink] = dr.zeroPath + Path + FileName
 		FilePath := fmt.Sprintf("%s%s%s", dr.zeroPath, Path, FileName)
 		// fmt.Println("FilePath", FilePath, link)
 
-		client := &http.Client{}
-		req, ErrNewRequest := http.NewRequest(http.MethodGet, link, nil)
-		if ErrNewRequest != nil {
-			return nil, ErrNewRequest
+		// Сохраняем фото
+		ErrSavePhoto := dr.SavePhoto(link, FilePath)
+		if ErrSavePhoto != nil {
+			log.Println(ErrSavePhoto)
+			continue
 		}
+		NewPhotos[ilink] = dr.zeroPath + Path + FileName
 
-		req.Header.Add("authority", "ru.louisvuitton.com")
-		req.Header.Add("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
-		req.Header.Add("accept-language", "ru,en;q=0.9,lt;q=0.8,it;q=0.7")
-		req.Header.Add("cache-control", "max-age=0")
-		req.Header.Add("sec-ch-ua", "\"Chromium\";v=\"110\", \"Not A(Brand\";v=\"24\", \"YaBrowser\";v=\"23\"")
-		req.Header.Add("sec-ch-ua-mobile", "?0")
-		req.Header.Add("sec-ch-ua-platform", "\"Linux\"")
-		req.Header.Add("sec-fetch-dest", "document")
-		req.Header.Add("sec-fetch-mode", "navigate")
-		req.Header.Add("sec-fetch-site", "none")
-		req.Header.Add("sec-fetch-user", "?1")
-		req.Header.Add("upgrade-insecure-requests", "1")
-		req.Header.Add("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.1.906 (beta) Yowser/2.5 Safari/537.36")
-
-		// Выполнить запрос
-		res, ErrDo := client.Do(req)
-		if ErrDo != nil {
-			return nil, ErrDo
-		}
-		defer res.Body.Close() // Закрыть ответ в конце выполнения функции
-
-		// В случае положительного результата
-		if res.StatusCode != http.StatusOK {
-			return nil, fmt.Errorf("Price: wrong status code: %d", res.StatusCode)
-		}
-
-		//open a file for writing
-		file, ErrCreate := os.Create(FilePath)
-		if ErrCreate != nil {
-			return nil, ErrCreate
-		}
-		defer file.Close()
-
-		// Use io.Copy to just dump the response body to the file. This supports huge files
-		_, ErrCopy := io.Copy(file, res.Body)
-		if ErrCopy != nil {
-			return nil, ErrCopy
-		}
-
-		// // don't worry about errors
-		// response, ErrGet := http.Get(link)
-		// if ErrGet != nil {
-		// 	return ErrGet
-		// }
-		// defer response.Body.Close()
-
-		// //open a file for writing
-		// file, ErrCreate := os.Create(FilePath)
-		// if ErrCreate != nil {
-		// 	return ErrCreate
-		// }
-		// defer file.Close()
-
-		// // Use io.Copy to just dump the response body to the file. This supports huge files
-		// _, ErrCopy := io.Copy(file, response.Body)
-		// if ErrCopy != nil {
-		// 	return ErrCopy
-		// }
 	}
 	return NewPhotos, nil
+}
+
+func (dr *Direction) SavePhoto(link string, FilePath string) error {
+	client := &http.Client{}
+	// client.Timeout = time.Minute
+	req, ErrNewRequest := http.NewRequest(http.MethodGet, link, nil)
+	if ErrNewRequest != nil {
+		return ErrNewRequest
+	}
+
+	req.Header.Add("authority", "ru.louisvuitton.com")
+	req.Header.Add("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+	req.Header.Add("accept-language", "ru,en;q=0.9,lt;q=0.8,it;q=0.7")
+	req.Header.Add("cache-control", "max-age=0")
+	req.Header.Add("sec-ch-ua", "\"Chromium\";v=\"110\", \"Not A(Brand\";v=\"24\", \"YaBrowser\";v=\"23\"")
+	req.Header.Add("sec-ch-ua-mobile", "?0")
+	req.Header.Add("sec-ch-ua-platform", "\"Linux\"")
+	req.Header.Add("sec-fetch-dest", "document")
+	req.Header.Add("sec-fetch-mode", "navigate")
+	req.Header.Add("sec-fetch-site", "none")
+	req.Header.Add("sec-fetch-user", "?1")
+	req.Header.Add("upgrade-insecure-requests", "1")
+	req.Header.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 YaBrowser/23.7.4.971 Yowser/2.5 Safari/537.36")
+
+	// Выполнить запрос
+	res, ErrDo := client.Do(req)
+	if ErrDo != nil {
+		return ErrDo
+	}
+	defer res.Body.Close() // Закрыть ответ в конце выполнения функции
+
+	// В случае положительного результата
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("SavePhoto: wrong status code: %d", res.StatusCode)
+	}
+
+	//open a file for writing
+	file, ErrCreate := os.Create(FilePath)
+	if ErrCreate != nil {
+		return ErrCreate
+	}
+	defer file.Close()
+
+	// Use io.Copy to just dump the response body to the file. This supports huge files
+	_, ErrCopy := io.Copy(file, res.Body)
+	if ErrCopy != nil {
+		return ErrCopy
+	}
+	return nil
 }

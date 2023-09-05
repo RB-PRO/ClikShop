@@ -41,6 +41,9 @@ func TestPage(t *testing.T) {
 	if page.NbPages == 0 {
 		t.Error("PageSingle: Не получить получить ответ или распарсить его")
 	}
+	for _, v := range page.Hits {
+		fmt.Println(v.ProductID)
+	}
 }
 
 func TestTouch(t *testing.T) {
@@ -97,4 +100,45 @@ func TestSaveXLSX(t *testing.T) {
 	if ErrSave != nil {
 		t.Error(ErrSave)
 	}
+}
+
+func TestPageAndSaveImages(t *testing.T) {
+	core := coreTest()
+	page, errpage := core.PageSingle("t1z0ff7q", 0)
+	if errpage != nil {
+		t.Error(errpage)
+	}
+	if page.NbPages == 0 {
+		t.Error("PageSingle: Не получить получить ответ или распарсить его")
+	}
+	// for _, v := range page.Hits {
+	// 	fmt.Println(v.ProductID)
+	// }
+
+	// Объект для работы с папками
+	dir := NewDir("LV/")
+
+	fmt.Println("page.Hits[0].ProductID", page.Hits[0].ProductID)
+
+	touch, ErrToucher := core.Toucher(page.Hits[0].ProductID)
+	if ErrToucher != nil {
+		t.Error(ErrToucher)
+	}
+	Prod := TouchResponse2Product(touch)
+
+	for i := range Prod.Variations {
+		for j := range Prod.Variations[i].Photo {
+			fmt.Println(i, j, Prod.Variations[i].Photo[j])
+		}
+	}
+
+	PathToProduct := Prod.SKU + "/"
+	dir.MakeDir(PathToProduct)
+
+	for j := range Prod.Variations {
+		PathToVariation := PathToProduct + Prod.Variations[j].SKU + "/"
+		dir.MakeDir(PathToVariation)
+		Prod.Variations[j].Photo, _ = dir.SavePhotos(Prod.Variations[j].Photo, PathToVariation)
+	}
+
 }
