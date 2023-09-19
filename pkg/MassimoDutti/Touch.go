@@ -20,6 +20,8 @@ func Toucher(id int) (touch Touch, ErrCategory error) {
 
 	url := fmt.Sprintf("https://www.massimodutti.com/itxrest/2/catalog/store/34009471/30359503/category/0/product/%v/detail?languageId=-1&appId=1", id)
 
+	fmt.Println(url)
+
 	client := &http.Client{}
 	req, ErrNewRequest := http.NewRequest(http.MethodGet, url, nil)
 	if ErrNewRequest != nil {
@@ -107,6 +109,7 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 					if len(XmediaColor.XmediaItems) > 0 {
 						for _, MediasColor := range XmediaColor.XmediaItems[0].Medias {
 							images = append(images, fmt.Sprintf("https://static.massimodutti.net/3/photos/%s/%s16.jpg", XmediaColor.Path, MediasColor.IDMedia))
+							fmt.Println("IMAGES", fmt.Sprintf("https://static.massimodutti.net/3/photos/%s/%s16.jpg", XmediaColor.Path, MediasColor.IDMedia))
 						}
 					}
 				}
