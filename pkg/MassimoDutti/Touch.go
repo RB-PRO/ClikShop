@@ -20,7 +20,7 @@ func Toucher(id int) (touch Touch, ErrCategory error) {
 
 	url := fmt.Sprintf("https://www.massimodutti.com/itxrest/2/catalog/store/34009471/30359503/category/0/product/%v/detail?languageId=-1&appId=1", id)
 
-	fmt.Println(url)
+	// fmt.Println("url:", url)
 
 	client := &http.Client{}
 	req, ErrNewRequest := http.NewRequest(http.MethodGet, url, nil)
@@ -84,6 +84,61 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 	// fmt.Println("len(touch.Detail.Colors)", len(touch.Detail.Colors))
 	// fmt.Printf("%+v\n\n", touch.Detail)
 
+	IdToUrl := make(map[string]string)
+	if len(touch.Detail.Colors) != 0 {
+		for _, Colors := range touch.Detail.Colors {
+			IdToUrl[Colors.ID] = Colors.Image.URL
+		}
+	} else {
+		for _, Colors := range touch.BundleProductSummaries[0].Detail.Colors {
+			IdToUrl[Colors.ID] = Colors.Image.URL
+		}
+	}
+
+	// Картинки новой версии
+	images2 := make(map[string][]string, 0)
+	if len(touch.Detail.Colors) != 0 {
+		for _, Xmedia := range touch.Detail.Xmedia {
+			fmt.Println("Xmedia.ColorCode", Xmedia.ColorCode)
+			for _, XmediaLocations := range Xmedia.XmediaLocations {
+				if XmediaLocations.Set == 0 {
+					for _, Locations := range XmediaLocations.Locations {
+						if Locations.Location == 1 {
+							for _, imageCode := range Locations.MediaLocations {
+								LinkStrs := strings.Split(imageCode, "_")
+								if len(LinkStrs) == 4 {
+									images2[Xmedia.ColorCode] = append(images2[Xmedia.ColorCode], fmt.Sprintf("https://static.massimodutti.net/3/photos/%s_%s_%s_16.jpg", IdToUrl[Xmedia.ColorCode], LinkStrs[1], LinkStrs[2]))
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	} else {
+		for _, Xmedia := range touch.BundleProductSummaries[0].Detail.Xmedia {
+			fmt.Println("Xmedia.ColorCode", Xmedia.ColorCode)
+			for _, XmediaLocations := range Xmedia.XmediaLocations {
+				if XmediaLocations.Set == 0 {
+					for _, Locations := range XmediaLocations.Locations {
+						if Locations.Location == 1 {
+							for _, imageCode := range Locations.MediaLocations {
+								LinkStrs := strings.Split(imageCode, "_")
+								if len(LinkStrs) == 4 {
+									images2[Xmedia.ColorCode] = append(images2[Xmedia.ColorCode], fmt.Sprintf("https://static.massimodutti.net/3/photos/%s_%s_%s_16.jpg", IdToUrl[Xmedia.ColorCode], LinkStrs[1], LinkStrs[2]))
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// for iImg, Img := range images2 {
+	// 	fmt.Println("-", iImg, "--", Img)
+	// }
+
 	if len(touch.Detail.Colors) != 0 {
 		for _, colorSet := range touch.Detail.Colors {
 			// fmt.Println("colorSet.ID", colorSet.ID)
@@ -101,20 +156,20 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 				sizes = append(sizes, bases.Size{Val: ValSize.Name, IsExit: ValSize.IsBuyable})
 			}
 
-			// Картинки
-			images := make([]string, 0)
-			ColorCode := colorSet.ID // Получаем ID цвета
-			for _, XmediaColor := range touch.Detail.Xmedia {
-				if XmediaColor.ColorCode == ColorCode { // Если это тот самый необходимый цвет
-					if len(XmediaColor.XmediaItems) > 0 {
-						for _, MediasColor := range XmediaColor.XmediaItems[0].Medias {
-							images = append(images, fmt.Sprintf("https://static.massimodutti.net/3/photos/%s/%s16.jpg", XmediaColor.Path, MediasColor.IDMedia))
-							fmt.Println("IMAGES", fmt.Sprintf("https://static.massimodutti.net/3/photos/%s/%s16.jpg", XmediaColor.Path, MediasColor.IDMedia))
-						}
-					}
-				}
-			}
-			images = bases.RemoveDuplicateStr(images)
+			// // Картинки
+			// images := make([]string, 0)
+			// ColorCode := colorSet.ID // Получаем ID цвета
+			// for _, XmediaColor := range touch.Detail.Xmedia {
+			// 	if XmediaColor.ColorCode == ColorCode { // Если это тот самый необходимый цвет
+			// 		if len(XmediaColor.XmediaItems) > 0 {
+			// 			for _, MediasColor := range XmediaColor.XmediaItems[0].Medias {
+			// 				images = append(images, fmt.Sprintf("https://static.massimodutti.net/3/photos/%s/%s16.jpg", XmediaColor.Path, MediasColor.IDMedia))
+			// 				// fmt.Println("IMAGES", fmt.Sprintf("https://static.massimodutti.net/3/photos/%s/%s16.jpg", XmediaColor.Path, MediasColor.IDMedia))
+			// 			}
+			// 		}
+			// 	}
+			// }
+			// images = bases.RemoveDuplicateStr(images)
 
 			// Формируем структур цветов и размеров
 			Item = append(Item, bases.ColorItem{
@@ -123,7 +178,7 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 				Link:      fmt.Sprintf("https://www.massimodutti.com/itxrest/2/catalog/store/34009471/30359503/category/0/product/%v/detail?languageId=-1&appId=1", Product.Article),
 				Price:     Price,
 				Size:      sizes,
-				Image:     images,
+				Image:     images2[colorSet.ID],
 			})
 		}
 		Product.Article = touch.Detail.DisplayReference // Артикул(id)
@@ -144,19 +199,19 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 				sizes = append(sizes, bases.Size{Val: ValSize.Name, IsExit: ValSize.IsBuyable})
 			}
 
-			// Картинки
-			images := make([]string, 0)
-			ColorCode := colorSet.ID // Получаем ID цвета
-			for _, XmediaColor := range touch.BundleProductSummaries[0].Detail.Xmedia {
-				if XmediaColor.ColorCode == ColorCode { // Если это тот самый необходимый цвет
-					if len(XmediaColor.XmediaItems) > 0 {
-						for _, MediasColor := range XmediaColor.XmediaItems[0].Medias {
-							images = append(images, fmt.Sprintf("https://static.massimodutti.net/3/photos/%s/%s16.jpg", XmediaColor.Path, MediasColor.IDMedia))
-						}
-					}
-				}
-			}
-			images = bases.RemoveDuplicateStr(images)
+			// // Картинки
+			// images := make([]string, 0)
+			// ColorCode := colorSet.ID // Получаем ID цвета
+			// for _, XmediaColor := range touch.BundleProductSummaries[0].Detail.Xmedia {
+			// 	if XmediaColor.ColorCode == ColorCode { // Если это тот самый необходимый цвет
+			// 		if len(XmediaColor.XmediaItems) > 0 {
+			// 			for _, MediasColor := range XmediaColor.XmediaItems[0].Medias {
+			// 				images = append(images, fmt.Sprintf("https://static.massimodutti.net/3/photos/%s/%s16.jpg", XmediaColor.Path, MediasColor.IDMedia))
+			// 			}
+			// 		}
+			// 	}
+			// }
+			// images = bases.RemoveDuplicateStr(images)
 
 			// Формируем структур цветов и размеров
 			Item = append(Item, bases.ColorItem{
@@ -165,11 +220,14 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 				Link:      fmt.Sprintf("https://www.massimodutti.com/itxrest/2/catalog/store/34009471/30359503/category/0/product/%v/detail?languageId=-1&appId=1", Product.Article),
 				Price:     Price,
 				Size:      sizes,
-				Image:     images,
+				Image:     images2[colorSet.ID],
 			})
 		}
 		Product.Article = touch.BundleProductSummaries[0].Detail.DisplayReference // Артикул(id)
 	}
+	//fmt.Println("for _, Xmedia := range touch.Detail.Xmedia {")
+	// TEST
+
 	Product.Item = Item
 	Product.Link = fmt.Sprintf("https://www.massimodutti.com/itxrest/2/catalog/store/34009471/30359503/category/0/product/%v/detail?languageId=-1&appId=1", touch.ID)
 

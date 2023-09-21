@@ -121,7 +121,7 @@ func ProdStr(Prod Product2) (str string) {
 		str += fmt.Sprintf("--- Цена: %v\n", Sizen.Price)
 		str += fmt.Sprintf("--- Ссылка: %v\n", Sizen.Link)
 		str += fmt.Sprintf("--- Размеры: %v\n", Sizen.Size)
-		str += fmt.Sprintf("--- Картинки: %s\n", Sizen.Image)
+		str += fmt.Sprintf("--- Картинки: %s\n", "\n----"+strings.Join(Sizen.Image, "\n----"))
 	}
 	return str
 }

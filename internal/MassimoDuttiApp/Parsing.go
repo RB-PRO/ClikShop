@@ -8,8 +8,6 @@ import (
 	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 )
 
@@ -22,11 +20,11 @@ func Parsing() {
 	}
 	log.Println("Курс лиры", cb.Data.Valute.Try.Value/10)
 
-	// Создать оьбъект переводчика
-	Translate, ErrNewTranslate := wcprod.NewTranslate()
-	if ErrNewTranslate != nil {
-		panic(ErrNewTranslate)
-	}
+	// // Создать оьбъект переводчика
+	// Translate, ErrNewTranslate := wcprod.NewTranslate()
+	// if ErrNewTranslate != nil {
+	// 	panic(ErrNewTranslate)
+	// }
 
 	// Получить все категории
 	categ, ErrCateg := massimodutti.Category()
@@ -100,13 +98,13 @@ func Parsing() {
 			}
 			AddingProduct = massimodutti.Touch2Product2(AddingProduct, touch)
 
-			// Перевести товар
-			var ErrorTranstate error
-			AddingProduct, ErrorTranstate = Translate.YandexTranslatePart(AddingProduct)
-			if ErrorTranstate != nil {
-				Translate.Tr, _ = transrb.New(Translate.Tr.FolderID, Translate.Tr.OAuthToken)
-				AddingProduct, _ = Translate.YandexTranslatePart(AddingProduct)
-			}
+			// // Перевести товар
+			// var ErrorTranstate error
+			// AddingProduct, ErrorTranstate = Translate.YandexTranslatePart(AddingProduct)
+			// if ErrorTranstate != nil {
+			// 	Translate.Tr, _ = transrb.New(Translate.Tr.FolderID, Translate.Tr.OAuthToken)
+			// 	AddingProduct, _ = Translate.YandexTranslatePart(AddingProduct)
+			// }
 
 			// Добавить все размеры в товар из всех вариаций товара
 			AddingProduct.Size = bases.EditProdSize(AddingProduct)
@@ -120,7 +118,7 @@ func Parsing() {
 		}
 		cout++
 		// bases.Variety2{Product: SubSlice}.SaveXlsxCsvs(fmt.Sprintf("tmp/H&M_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
-		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("tmp/MD_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
+		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("tmp/MD/MD_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
 	}
 	BarProducts.Finish()
 	bases.ExitSoft()

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/RB-PRO/SanctionedClothing/internal/settings"
+	massimoduttiapp "github.com/RB-PRO/SanctionedClothing/internal/MassimoDuttiApp"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 	// hmapp.Start()
 	// hmapp.Parsing()
 
-	// massimoduttiapp.Parsing()
+	massimoduttiapp.Parsing()
 
 	// clicker.Click()
 	// app.Start2()
@@ -33,7 +33,7 @@ func main() {
 	// settings.EditHM()
 	// settings.EditZaraColorRus()
 	//settings.UpSizesEditProduct()
-	settings.EditIsExitHM()
+	// settings.EditIsExitHM()
 
 	// lvapp.Parsing()
 }
