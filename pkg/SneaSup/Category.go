@@ -13,8 +13,8 @@ const URL string = "https://www.sneaksup.com"
 type SScat struct {
 	// Name string // название категории, он же пол
 	// Slug string // Обозначение категории транслитом
-	link string // Ссылка на категорию
-	cat  []bases.Cat
+	Link string // Ссылка на категорию
+	Cat  []bases.Cat
 }
 
 func Category() (cc []SScat) {
@@ -44,11 +44,11 @@ func Category() (cc []SScat) {
 		}
 
 		cc = append(cc, SScat{
-			cat: []bases.Cat{{Name: "sneaksup", Slug: "sneaksup"},
+			Cat: []bases.Cat{{Name: "sneaksup", Slug: "sneaksup"},
 				{Name: ManParentName, Slug: Name2Slug(ManParentLink)},
 				{Name: RealChildParentName, Slug: Name2Slug(ChildParentLink)},
 				{Name: Name, Slug: Name2Slug(Link)}},
-			link: URL + Link,
+			Link: URL + Link,
 		})
 	})
 

@@ -107,14 +107,15 @@ func Slug2Name(str string) string {
 func ProdStr(Prod Product2) (str string) {
 	str += fmt.Sprintf("Название товара: '%v'\n", Prod.Name)
 	str += fmt.Sprintf("Полное Название товара: '%v'\n", Prod.FullName)
+	str += fmt.Sprintf("- Картинки: %s\n", "\n-"+strings.Join(Prod.Img, "\n-"))
 
 	str += fmt.Sprintf("Ссылка на товар: '%v'\n", Prod.Link)
 	str += fmt.Sprintf("Артикул: '%v'\n", Prod.Article)
 	str += fmt.Sprintf("Производитель: '%v'\n", Prod.Manufacturer)
 	str += fmt.Sprintf("Гендер: '%v'\n", Prod.GenderLabel)
 	str += fmt.Sprintf("Все Размеры: '%v'\n", Prod.Size)
-	str += fmt.Sprintf("Описание: '%v'\n", Prod.Description.Eng)
-	str += fmt.Sprintf("Описание: '%v'\n", Prod.Description.Rus)
+	str += fmt.Sprintf("Описание Eng: '%v'\n", Prod.Description.Eng)
+	str += fmt.Sprintf("Описание Rus: '%v'\n", Prod.Description.Rus)
 	for IndexSize, Sizen := range Prod.Item {
 		str += fmt.Sprintf("- %d Вариация с цветом: '%s'\n", IndexSize+1, Sizen.ColorEng)
 		str += fmt.Sprintf("--- Код цвета: %s\n", Sizen.ColorCode)

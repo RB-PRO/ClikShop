@@ -8,6 +8,8 @@ import (
 	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
+	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
+	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 )
 
@@ -20,11 +22,11 @@ func Parsing() {
 	}
 	log.Println("Курс лиры", cb.Data.Valute.Try.Value/10)
 
-	// // Создать оьбъект переводчика
-	// Translate, ErrNewTranslate := wcprod.NewTranslate()
-	// if ErrNewTranslate != nil {
-	// 	panic(ErrNewTranslate)
-	// }
+	// Создать оьбъект переводчика
+	Translate, ErrNewTranslate := wcprod.NewTranslate()
+	if ErrNewTranslate != nil {
+		panic(ErrNewTranslate)
+	}
 
 	// Получить все категории
 	categ, ErrCateg := massimodutti.Category()
@@ -75,7 +77,7 @@ func Parsing() {
 
 	// ***************************************
 	// Парсинг по подслайсами с размером size
-	size := 1000
+	size := 400
 	BarProducts := pb.StartNew(len(Products))
 	var SubSlice_j, cout int
 	for SubSlice_i := 0; SubSlice_i < len(Products); SubSlice_i += size {
@@ -98,13 +100,13 @@ func Parsing() {
 			}
 			AddingProduct = massimodutti.Touch2Product2(AddingProduct, touch)
 
-			// // Перевести товар
-			// var ErrorTranstate error
-			// AddingProduct, ErrorTranstate = Translate.YandexTranslatePart(AddingProduct)
-			// if ErrorTranstate != nil {
-			// 	Translate.Tr, _ = transrb.New(Translate.Tr.FolderID, Translate.Tr.OAuthToken)
-			// 	AddingProduct, _ = Translate.YandexTranslatePart(AddingProduct)
-			// }
+			// Перевести товар
+			var ErrorTranstate error
+			AddingProduct, ErrorTranstate = Translate.YandexTranslatePart(AddingProduct)
+			if ErrorTranstate != nil {
+				Translate.Tr, _ = transrb.New(Translate.Tr.FolderID, Translate.Tr.OAuthToken)
+				AddingProduct, _ = Translate.YandexTranslatePart(AddingProduct)
+			}
 
 			// Добавить все размеры в товар из всех вариаций товара
 			AddingProduct.Size = bases.EditProdSize(AddingProduct)

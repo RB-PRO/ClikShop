@@ -1,7 +1,7 @@
 package main
 
 import (
-	massimoduttiapp "github.com/RB-PRO/SanctionedClothing/internal/MassimoDuttiApp"
+	sneaksupapp "github.com/RB-PRO/SanctionedClothing/internal/SneakSupApp"
 )
 
 func main() {
@@ -22,7 +22,9 @@ func main() {
 	// hmapp.Start()
 	// hmapp.Parsing()
 
-	massimoduttiapp.Parsing()
+	//massimoduttiapp.Parsing()
+
+	sneaksupapp.Parsing()
 
 	// clicker.Click()
 	// app.Start2()
