@@ -1,8 +1,6 @@
 package main
 
-import (
-	sneaksupapp "github.com/RB-PRO/SanctionedClothing/internal/SneakSupApp"
-)
+import sneaksupapp "github.com/RB-PRO/SanctionedClothing/internal/SneakSupApp"
 
 func main() {
 	//app.Run(os.Args[1])
@@ -26,6 +24,8 @@ func main() {
 
 	sneaksupapp.Parsing()
 
+	// lvapp.Parsing()
+
 	// clicker.Click()
 	// app.Start2()
 
@@ -37,5 +37,4 @@ func main() {
 	//settings.UpSizesEditProduct()
 	// settings.EditIsExitHM()
 
-	// lvapp.Parsing()
 }
