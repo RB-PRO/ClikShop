@@ -227,8 +227,9 @@ func Line2Product(SSprods []Product, Category SScat) (prods []bases.Product2) {
 				pr.Item = append(pr.Item, ColorItem)
 			}
 		}
-
-		prods = append(prods, pr) // Суммирование товаров в общий слайс
+		if len(pr.Item) != 0 {
+			prods = append(prods, pr) // Суммирование товаров в общий слайс
+		}
 	}
 
 	return prods

@@ -20,7 +20,7 @@ func main() {
 	// hmapp.Start()
 	// hmapp.Parsing()
 
-	//massimoduttiapp.Parsing()
+	// massimoduttiapp.Parsing()
 
 	sneaksupapp.Parsing()
 
@@ -34,7 +34,15 @@ func main() {
 	// settings.EditZara2()
 	// settings.EditHM()
 	// settings.EditZaraColorRus()
-	//settings.UpSizesEditProduct()
+	// settings.UpSizesEditProduct()
+	// settings.PrintSizes()
+	// settings.EditHM_FilesOfSize2()
+	// settings.EditHM_FilesOfSize()
+	// settings.EditMD()
+	// settings.EditHM_FilesOfSize2()
+	// settings.Rezat()
+
+	// settings.UpSizesEditProduct()
 	// settings.EditIsExitHM()
 
 }

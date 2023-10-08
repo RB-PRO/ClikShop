@@ -56,6 +56,7 @@ type ColorItem struct {
 }
 
 type Size struct {
-	Val    string // Размер одежды
-	IsExit bool   // Есть в наличии
+	Val      string // Размер одежды
+	IsExit   bool   // Есть в наличии
+	DataCode string // Что-то вроде артикула товара от hm
 }

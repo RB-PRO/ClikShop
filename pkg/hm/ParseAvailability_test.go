@@ -45,3 +45,23 @@ func TestAvailabilityProduct(t *testing.T) {
 
 	fmt.Println(bases.ProdStr(Prods[LinkROI]))
 }
+
+func TestAvalimity(t *testing.T) {
+	var prod bases.Product2
+	prod.Link = "https://www2.hm.com/tr_tr/productpage.1170211001.html"
+	prod.Article = "1170211001"
+	prod.Item = make([]bases.ColorItem, 1)
+	prod.Item[0].Link = "https://www2.hm.com/tr_tr/productpage.1170211001.html"
+
+	prod, ErrorParseProduct := hm.VariableProduct2(prod)
+	if ErrorParseProduct != nil {
+		t.Error("Parsing: VariableProduct2:", ErrorParseProduct)
+	}
+
+	prod, ErrAvailabilityProduct := hm.AvailabilityProduct(prod)
+	if ErrAvailabilityProduct != nil {
+		t.Error(ErrAvailabilityProduct)
+	}
+
+	fmt.Println(bases.ProdStr(prod))
+}

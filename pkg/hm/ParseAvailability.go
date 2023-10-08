@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
@@ -30,7 +29,7 @@ type Availability struct {
 //	`https://www2.hm.com/hmwebservices/service/product/tr/availability/1157823.json`
 func availability(SKU string) ([]string, error) {
 	client := &http.Client{}
-	req, ErrNewRequest := http.NewRequest(http.MethodGet, fmt.Sprintf("https://www2.hm.com/hmwebservices/service/product/tr/availability/%s.json", SKU[:7]), nil)
+	req, ErrNewRequest := http.NewRequest(http.MethodGet, fmt.Sprintf("https://www2.hm.com/hmwebservices/service/product/tr/availability/%s.json", SKU), nil)
 	if ErrNewRequest != nil {
 		return nil, ErrNewRequest
 	}
@@ -64,79 +63,27 @@ func availability(SKU string) ([]string, error) {
 // Получить данные размеров товаров
 func AvailabilityProduct(Product bases.Product2) (bases.Product2, error) {
 
+	sku := Product.Article
+	if len(Product.Article) == 10 {
+		sku = Product.Article[:7]
+	}
+
 	// Получить все артикулы присутствубщих товаров
-	IsLiveSKUs, ErrAvailability := availability(Product.Article)
+	IsLiveSKUs, ErrAvailability := availability(sku)
 	if ErrAvailability != nil {
 		return Product, ErrAvailability
 	}
 
-	// Теперь надо перебрать все возможные размеры и есть размер есть в массиве артикулов имеющихся в наличии
-	// то выставляем true
+	// Теперь надо перебрать все возможные размеры и есть размер есть
+	// в массиве артикулов имеющихся в наличии то выставляем true
 	for i := range Product.Item { // Цикл по всем цветам
-		sku10 := Product.Item[i].Link
-		sku10 = strings.ReplaceAll(sku10, URL, "")
-		sku10 = strings.ReplaceAll(sku10, "/tr_tr/productpage.", "")
-		sku10 = strings.ReplaceAll(sku10, ".html", "")
 		for j := range Product.Item[i].Size { //  цикл по всем размерам цвета
-			code := size2number(Product.Item[i].Size[j].Val)
 			for _, ValExitSKU := range IsLiveSKUs { // Цикл по всем размерам в наличии
-				if sku10+code == ValExitSKU {
+				if Product.Item[i].Size[j].DataCode == ValExitSKU {
 					Product.Item[i].Size[j].IsExit = true
 				}
 			}
 		}
 	}
 	return Product, nil
-}
-
-// Перевести размеры hm кода в понятный вид:
-//
-// Пример:
-//
-// 002 -> XS
-func number2size(number string) string {
-	switch number {
-	case "001":
-		return "XXS"
-	case "002":
-		return "XS"
-	case "003":
-		return "S"
-	case "004":
-		return "M"
-	case "005":
-		return "L"
-	case "006":
-		return "XL"
-	case "007":
-		return "XXL"
-	default:
-		return ""
-	}
-}
-
-// Перевести размеры в hm коды:
-//
-// Пример:
-//
-// XS -> 002
-func size2number(size string) string {
-	switch size {
-	case "XXS":
-		return "001"
-	case "XS":
-		return "002"
-	case "S":
-		return "003"
-	case "M":
-		return "004"
-	case "L":
-		return "005"
-	case "XL":
-		return "006"
-	case "XXL":
-		return "007"
-	default:
-		return ""
-	}
 }

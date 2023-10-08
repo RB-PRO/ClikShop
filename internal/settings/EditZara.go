@@ -215,3 +215,13 @@ func IsRussian(str string) bool {
 	}
 	return russianCount > englishCount
 }
+
+// Если эта фраза на русском языке
+func RussianSymb(str string) (russianCount int) {
+	for _, char := range str {
+		if unicode.Is(unicode.Cyrillic, char) {
+			russianCount++
+		}
+	}
+	return russianCount
+}

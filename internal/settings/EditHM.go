@@ -10,6 +10,9 @@ import (
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/RB-PRO/SanctionedClothing/pkg/hm"
+	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
+	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/cheggaaa/pb"
 )
 
 func EditHM() {
@@ -127,5 +130,189 @@ func EditIsExitHM() {
 	}
 	for k := range mapingSize {
 		fmt.Println(k)
+	}
+}
+
+// ////////////////////////////
+// комплексная работа со всеми файлами hm
+func EditHM_FilesOfSize() {
+	FolderInput := "internal/settings/hm_output5/"
+	FolderOutput := "internal/settings/hm_output6/"
+
+	// Создать оьбъект переводчика
+	Adding, ErrNewTranslate := wcprod.NewTranslate()
+	if ErrNewTranslate != nil {
+		panic(ErrNewTranslate)
+	}
+	fmt.Println(Adding)
+
+	files, err := ioutil.ReadDir(FolderInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	vievall := "view-all"
+
+	sku := make(map[string]int)
+	filesName := make(map[string]bool)
+	for ifile, file := range files {
+		if ifile >= 51 && ifile <= 56 {
+			continue
+		}
+		if strings.Contains(file.Name(), vievall) {
+			continue
+		}
+		filenameReplace := file.Name() // output file
+		filenameReplace = strings.ReplaceAll(filenameReplace, "2.json2.json", "")
+		filenameReplace = strings.ReplaceAll(filenameReplace, ".json2.json", "")
+		filenameReplace = strings.ReplaceAll(filenameReplace, ".json", "")
+		if ok, _ := filesName[filenameReplace]; ok {
+			continue
+		}
+		filesName[filenameReplace] = true
+
+		FilePatch := fmt.Sprintf(FolderOutput+"%s", filenameReplace)
+		// fmt.Println(i, FilePatch)
+
+		// read file
+		data, err := os.ReadFile(FolderInput + file.Name())
+		if err != nil {
+			panic(err)
+		}
+		var varient bases.Variety2
+		err = json.Unmarshal(data, &varient)
+		if err != nil {
+			panic(err)
+		}
+
+		Bar := pb.StartNew(len(varient.Product))
+
+		for j := range varient.Product {
+			Bar.Prefix(file.Name())
+			// for jj := range varient.Product[j].Item {
+			// 	for jjj := range varient.Product[j].Item[jj].Size {
+			// 		mapingSize[varient.Product[j].Item[jj].Size[jjj].Val]++
+			// 	}
+			// }
+			// fmt.Println(file.Name(), "[", j, "/", len(varient.Product), "]")
+
+			if _, ok := sku[varient.Product[j].Article]; !ok {
+				//fmt.Println(varient.Product[j].Name, RussianSymb(varient.Product[j].Name), len(varient.Product[j].Name)/2, RussianSymb(varient.Product[j].Name) < len(varient.Product[j].Name)/2)
+
+				var ErrorTranstate error
+
+				Name := varient.Product[j].Name
+				if RussianSymb(Name) < len([]rune(Name))/2 {
+					Bar.Prefix(file.Name() + " Перевожу")
+					varient.Product[j], ErrorTranstate = Adding.YandexTranslate(varient.Product[j])
+					if ErrorTranstate != nil {
+						Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
+						varient.Product[j], _ = Adding.YandexTranslate(varient.Product[j])
+					}
+				}
+
+			}
+			// varient.Product[j], _ = hm.AvailabilityProduct(varient.Product[j])
+			sku[varient.Product[j].Article]++
+
+			Bar.Increment()
+		}
+		Bar.Finish()
+		varient.SaveJson(FilePatch)
+	}
+}
+
+// ////////////////////////////
+// комплексная работа со всеми файлами hm
+func EditHM_FilesOfSize2() {
+	FolderInput := "internal/settings/md_output4/"
+	FolderOutput := "internal/settings/md_output5/"
+
+	// Создать оьбъект переводчика
+	Adding, ErrNewTranslate := wcprod.NewTranslate()
+	if ErrNewTranslate != nil {
+		panic(ErrNewTranslate)
+	}
+	fmt.Println(Adding)
+
+	files, err := ioutil.ReadDir(FolderInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// vievall := "view-all"
+
+	filesName := make(map[string]bool)
+	for _, file := range files {
+		// if ifile >= 51 && ifile <= 56 {
+		// 	continue
+		// }
+		// if strings.Contains(file.Name(), vievall) {
+		// 	continue
+		// }
+		filenameReplace := file.Name() // output file
+		filenameReplace = strings.ReplaceAll(filenameReplace, "2.json2.json", "")
+		filenameReplace = strings.ReplaceAll(filenameReplace, ".json2.json", "")
+		filenameReplace = strings.ReplaceAll(filenameReplace, ".json", "")
+		if ok, _ := filesName[filenameReplace]; ok {
+			continue
+		}
+		filesName[filenameReplace] = true
+
+		FilePatch := fmt.Sprintf(FolderOutput+"%s", filenameReplace)
+		// fmt.Println(i, FilePatch)
+
+		// read file
+		data, err := os.ReadFile(FolderInput + file.Name())
+		if err != nil {
+			panic(err)
+		}
+		var varient bases.Variety2
+		err = json.Unmarshal(data, &varient)
+		if err != nil {
+			panic(err)
+		}
+
+		Bar := pb.StartNew(len(varient.Product))
+		for j := range varient.Product {
+			Bar.Prefix(file.Name())
+			// varient.Product[j].Img = bases.EditIMG(varient.Product[j])
+			// var prod bases.Product2 = varient.Product[j]
+
+			// prod, _ = hm.VariableProduct2(prod)
+
+			// prod, _ = hm.AvailabilityProduct(prod)
+
+			// mapcoloraval := make(map[string][]bases.Size)
+			// for _, v := range prod.Item {
+			// 	// fmt.Println(v, v.Size)
+			// 	mapcoloraval[v.ColorEng] = v.Size
+			// }
+			// // fmt.Println(mapcoloraval)
+			// for i := range varient.Product[j].Item {
+			// 	// prod.Item[i].Size = mapcoloraval[prod.Item[i].ColorEng]
+			// 	copy(prod.Item[i].Size, mapcoloraval[prod.Item[i].ColorEng])
+			// }
+			// varient.Product[j] = prod
+
+			// }
+			// varient.Product[j], _ = hm.AvailabilityProduct(varient.Product[j])
+
+			Name, ErrorTranstate := Adding.YandexDeskription(varient.Product[j].Name)
+			if ErrorTranstate != nil {
+				fmt.Println(ErrorTranstate)
+				Adding.Tr, _ = transrb.New(Adding.Tr.FolderID, Adding.Tr.OAuthToken)
+				Name, _ = Adding.YandexDeskription(varient.Product[j].Name)
+			}
+			varient.Product[j].Name = Name
+
+			Bar.Increment()
+			// if j == 10 {
+			// 	break
+			// }
+		}
+		Bar.Finish()
+		varient.SaveJson(FilePatch)
+		// break
 	}
 }

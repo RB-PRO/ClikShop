@@ -77,7 +77,7 @@ func Parsing() {
 
 	// ***************************************
 	// Парсинг по подслайсами с размером size
-	size := 400
+	size := 300
 	BarProducts := pb.StartNew(len(Products))
 	var SubSlice_j, cout int
 	for SubSlice_i := 0; SubSlice_i < len(Products); SubSlice_i += size {
@@ -100,6 +100,7 @@ func Parsing() {
 			}
 			AddingProduct = massimodutti.Touch2Product2(AddingProduct, touch)
 
+			// Name := AddingProduct.Name
 			// Перевести товар
 			var ErrorTranstate error
 			AddingProduct, ErrorTranstate = Translate.YandexTranslatePart(AddingProduct)
@@ -107,9 +108,12 @@ func Parsing() {
 				Translate.Tr, _ = transrb.New(Translate.Tr.FolderID, Translate.Tr.OAuthToken)
 				AddingProduct, _ = Translate.YandexTranslatePart(AddingProduct)
 			}
+			// AddingProduct.Name = Name
 
 			// Добавить все размеры в товар из всех вариаций товара
 			AddingProduct.Size = bases.EditProdSize(AddingProduct)
+
+			AddingProduct.Img = bases.EditIMG(AddingProduct)
 
 			// Редактирование цены
 			AddingProduct = bases.EditCoast(AddingProduct, cb.Data.Valute.Try.Value/10, 1.3, 500)
@@ -120,7 +124,7 @@ func Parsing() {
 		}
 		cout++
 		// bases.Variety2{Product: SubSlice}.SaveXlsxCsvs(fmt.Sprintf("tmp/H&M_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
-		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("tmp/MD/MD_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
+		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("tmp/MD/MD_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
 	}
 	BarProducts.Finish()
 	bases.ExitSoft()

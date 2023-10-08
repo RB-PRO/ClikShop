@@ -18,6 +18,10 @@ func VariableProduct2(Product bases.Product2) (bases.Product2, error) {
 	var Err error
 	var Index int
 	var TecalSKU string // Текущий артикул для цвета
+	// var Sizes []bases.Size
+	for Index = range Product.Item {
+		Product.Item[Index].Size = []bases.Size{}
+	}
 
 	c := colly.NewCollector()
 	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.4.603 Yowser/2.5 Safari/537.36"
@@ -39,7 +43,7 @@ func VariableProduct2(Product bases.Product2) (bases.Product2, error) {
 	// Допустимые размеры
 	c.OnHTML(`select[data-sizelist]>option[data-code]`, func(e *colly.HTMLElement) {
 		if Val, IsExit := e.DOM.Parent().Attr("data-sizelist"); IsExit && TecalSKU == Val {
-			Product.Item[Index].Size = append(Product.Item[Index].Size, bases.Size{Val: e.Attr("value")})
+			Product.Item[Index].Size = append(Product.Item[Index].Size, bases.Size{Val: e.Attr("value"), DataCode: e.Attr("data-code")})
 		}
 	})
 

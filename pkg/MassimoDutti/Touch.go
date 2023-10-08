@@ -99,7 +99,7 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 	images2 := make(map[string][]string, 0)
 	if len(touch.Detail.Colors) != 0 {
 		for _, Xmedia := range touch.Detail.Xmedia {
-			fmt.Println("Xmedia.ColorCode", Xmedia.ColorCode)
+			// fmt.Println("Xmedia.ColorCode", Xmedia.ColorCode)
 			for _, XmediaLocations := range Xmedia.XmediaLocations {
 				if XmediaLocations.Set == 0 {
 					for _, Locations := range XmediaLocations.Locations {
@@ -117,7 +117,7 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 		}
 	} else {
 		for _, Xmedia := range touch.BundleProductSummaries[0].Detail.Xmedia {
-			fmt.Println("Xmedia.ColorCode", Xmedia.ColorCode)
+			//fmt.Println("Xmedia.ColorCode", Xmedia.ColorCode)
 			for _, XmediaLocations := range Xmedia.XmediaLocations {
 				if XmediaLocations.Set == 0 {
 					for _, Locations := range XmediaLocations.Locations {

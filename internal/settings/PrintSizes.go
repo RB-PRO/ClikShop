@@ -12,8 +12,8 @@ import (
 )
 
 func PrintSizes() {
-	FolderInput := "internal/settings/md_output2/"
-	FolderOutput := "internal/settings/md_output3/"
+	FolderInput := "internal/settings/SS/"
+	// FolderOutput := "internal/settings/SS2/"
 
 	// // Создать оьбъект переводчика
 	// Adding, ErrNewTranslate := wcprod.NewTranslate()
@@ -27,7 +27,7 @@ func PrintSizes() {
 	}
 
 	mapingSize := make(map[string]int)
-	for i, file := range files {
+	for _, file := range files {
 		// read file
 		data, err := os.ReadFile(FolderInput + file.Name())
 		if err != nil {
@@ -39,8 +39,8 @@ func PrintSizes() {
 		filenameReplaces := strings.Split(filenameReplace, "_")
 		filenameReplace = filenameReplaces[2]
 		filenameReplace = strings.ReplaceAll(filenameReplace, ".json", "")
-		FilePatch := fmt.Sprintf(FolderOutput+"zara_%d_%s", i, filenameReplace)
-		FilePatch = strings.ReplaceAll(FilePatch, ".json.json", ".json")
+		// FilePatch := fmt.Sprintf(FolderOutput+"zara_%d_%s", i, filenameReplace)
+		// FilePatch = strings.ReplaceAll(FilePatch, ".json.json", ".json")
 		// fmt.Println(i, FilePatch)
 
 		//
@@ -56,7 +56,9 @@ func PrintSizes() {
 					mapingSize[varient.Product[j].Item[jj].Size[jjj].Val]++
 				}
 			}
+			// mapingSize[varient.Product[j].Manufacturer]++
 		}
+
 		// for j := range varient.Product {
 		// 	var ErrorTranstate error
 		// 	varient.Product[j], ErrorTranstate = Adding.YandexColorRus(varient.Product[j])
