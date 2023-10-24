@@ -1,6 +1,8 @@
 package main
 
-import sneaksupapp "github.com/RB-PRO/SanctionedClothing/internal/SneakSupApp"
+import (
+	"github.com/RB-PRO/SanctionedClothing/internal/settings"
+)
 
 func main() {
 	//app.Run(os.Args[1])
@@ -22,7 +24,7 @@ func main() {
 
 	// massimoduttiapp.Parsing()
 
-	sneaksupapp.Parsing()
+	// sneaksupapp.Parsing()
 
 	// lvapp.Parsing()
 
@@ -41,6 +43,8 @@ func main() {
 	// settings.EditMD()
 	// settings.EditHM_FilesOfSize2()
 	// settings.Rezat()
+	// settings.EditHM_FilesOfSize3()
+	settings.EditSS_FilesOfSize3()
 
 	// settings.UpSizesEditProduct()
 	// settings.EditIsExitHM()

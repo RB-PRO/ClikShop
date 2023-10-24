@@ -316,3 +316,82 @@ func EditHM_FilesOfSize2() {
 		// break
 	}
 }
+
+// ////////////////////////////
+func EditHM_FilesOfSize3() {
+	FolderInput := "internal/settings/hm_output10/"
+	FolderOutput := "internal/settings/hm_output11/"
+
+	files, err := ioutil.ReadDir(FolderInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// vievall := "view-all"
+
+	filesName := make(map[string]bool)
+	for _, file := range files {
+		filenameReplace := file.Name() // output file
+		filenameReplace = strings.ReplaceAll(filenameReplace, "2.json2.json", "")
+		filenameReplace = strings.ReplaceAll(filenameReplace, ".json2.json", "")
+		filenameReplace = strings.ReplaceAll(filenameReplace, ".json", "")
+		if ok, _ := filesName[filenameReplace]; ok {
+			continue
+		}
+		filesName[filenameReplace] = true
+
+		FilePatch := fmt.Sprintf(FolderOutput+"%s", filenameReplace)
+		// fmt.Println(i, FilePatch)
+
+		// read file
+		data, err := os.ReadFile(FolderInput + file.Name())
+		if err != nil {
+			panic(err)
+		}
+		var varient bases.Variety2
+		err = json.Unmarshal(data, &varient)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println(file.Name())
+		// Bar := pb.StartNew(len(varient.Product))
+		for j := range varient.Product {
+			gender := varient.Product[j].GenderLabel
+			varient.Product[j].Cat[1].Name = gender
+			varient.Product[j].Cat[1].Slug = gender
+
+			var description string
+			for k, v := range varient.Product[j].Specifications {
+				description += "\n" + k + ": " + v
+			}
+			varient.Product[j].Description.Rus += description
+			// varient.Product[j].Img = bases.EditIMG(varient.Product[j])
+			// var prod bases.Product2 = varient.Product[j]
+
+			// prod, _ = hm.VariableProduct2(prod)
+
+			// prod, _ = hm.AvailabilityProduct(prod)
+
+			// mapcoloraval := make(map[string][]bases.Size)
+			// for _, v := range prod.Item {
+			// 	// fmt.Println(v, v.Size)
+			// 	mapcoloraval[v.ColorEng] = v.Size
+			// }
+			// // fmt.Println(mapcoloraval)
+			// for i := range varient.Product[j].Item {
+			// 	// prod.Item[i].Size = mapcoloraval[prod.Item[i].ColorEng]
+			// 	copy(prod.Item[i].Size, mapcoloraval[prod.Item[i].ColorEng])
+			// }
+			// varient.Product[j] = prod
+
+			// }
+			// varient.Product[j], _ = hm.AvailabilityProduct(varient.Product[j])
+
+			// Bar.Increment()
+		}
+		// Bar.Finish()
+		varient.SaveJson(FilePatch)
+		// break
+	}
+}
