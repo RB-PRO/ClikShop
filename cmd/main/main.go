@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/RB-PRO/SanctionedClothing/internal/settings"
+	bitrixupdate "github.com/RB-PRO/SanctionedClothing/internal/BitrixUpdate"
 )
 
 func main() {
@@ -44,9 +44,10 @@ func main() {
 	// settings.EditHM_FilesOfSize2()
 	// settings.Rezat()
 	// settings.EditHM_FilesOfSize3()
-	settings.EditSS_FilesOfSize3()
+	// settings.EditSS_FilesOfSize3()
 
 	// settings.UpSizesEditProduct()
 	// settings.EditIsExitHM()
 
+	bitrixupdate.Start()
 }
