@@ -7,6 +7,8 @@ import (
 
 	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/adrg/strutil"
+	"github.com/adrg/strutil/metrics"
 )
 
 func Start() {
@@ -77,10 +79,17 @@ func (bx *BitrixUser) UpdateProduct(ProductID string) error {
 
 		for _, BXproduct := range ProductsDetail.Products[0].Colors {
 			for _, ProdItem := range Product.Item {
-				fmt.Println("BXproduct.ColorEng, ProdItem.ColorEng", BXproduct.ColorEng, ProdItem.ColorEng)
+				BXproduct.ColorEng = EditColorName(BXproduct.ColorEng)
+				ProdItem.ColorEng = EditColorName(ProdItem.ColorEng)
+
+				similarity := strutil.Similarity(BXproduct.ColorEng, ProdItem.ColorEng, metrics.NewLevenshtein())
+
+				fmt.Println(similarity, BXproduct.ColorEng, ProdItem.ColorEng)
+
 				if strings.Contains(BXproduct.ColorEng, ProdItem.ColorEng) {
 					for _, ProdColor := range ProdItem.Size {
-						fmt.Println("BXproduct.Size, ProdColor.Val", BXproduct.Size, ProdColor.Val)
+						// fmt.Println("BXproduct.Size, ProdColor.Val", BXproduct.Size, ProdColor.Val)
+						// fmt.Println()
 						if strings.Contains(BXproduct.Size, ProdColor.Val) {
 							variationReq = append(variationReq, Variation_Request{
 								ID: BXproduct.ID,
@@ -91,6 +100,7 @@ func (bx *BitrixUser) UpdateProduct(ProductID string) error {
 						}
 					}
 				}
+
 			}
 		}
 		fmt.Printf("%+v\n", variationReq)
@@ -104,4 +114,14 @@ func (bx *BitrixUser) UpdateProduct(ProductID string) error {
 	}
 
 	return nil
+}
+
+func EditColorName(str string) string {
+
+	str = strings.ReplaceAll(str, "-", "")
+	str = strings.ReplaceAll(str, "_", "")
+	str = strings.ReplaceAll(str, " ", "")
+	str = strings.ToLower(str)
+
+	return str
 }

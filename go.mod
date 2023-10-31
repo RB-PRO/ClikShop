@@ -8,6 +8,7 @@ replace github.com/hiscaler/woocommerce-go => ./pkg/woocommerce-go
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
+	github.com/adrg/strutil v0.3.1
 	github.com/bas24/googletranslatefree v0.0.0-20220326200502-05ed9e639439
 	github.com/cheggaaa/pb v1.0.29
 	github.com/gocolly/colly v1.2.0
