@@ -6,23 +6,21 @@ import (
 	"net/http"
 	"time"
 
-	notification "github.com/RB-PRO/SanctionedClothing/pkg/Notification"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 )
 
 // Получить [Ссылки]+[Ссылки на источники] на все товары
 func Click() {
-	token, ErrorDataLoad := bases.DataFile("token")
-	if ErrorDataLoad != nil {
-		log.Fatalln(ErrorDataLoad)
-	}
+	// token, ErrorDataLoad := bases.DataFile("token")
+	// if ErrorDataLoad != nil {
+	// 	log.Fatalln(ErrorDataLoad)
+	// }
 
-	not, ErrorNotif := notification.NewNotification(token, "-768253730", "Отчёт кликера", "Clicker")
-	if ErrorNotif != nil {
-		log.Fatalln(ErrorNotif)
-	}
+	// not, ErrorNotif := notification.NewNotification(token, "-768253730", "Отчёт кликера", "Clicker")
+	// if ErrorNotif != nil {
+	// 	log.Fatalln(ErrorNotif)
+	// }
 
 	Adding, errorInitWcAdd := wcprod.New2() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {
@@ -30,7 +28,7 @@ func Click() {
 	}
 
 	fmt.Println("Получаем все ссылки на товары")
-	not.Sends("Получаем все ссылки на товары")
+	// not.Sends("Получаем все ссылки на товары")
 	// Получаем все ссылки
 	hands, ErrorHand := Hands(Adding)
 	if ErrorHand != nil {

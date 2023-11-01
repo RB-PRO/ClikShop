@@ -60,5 +60,8 @@ func (user *BitrixUser) Coasts() (map[string]CoastMap, error) {
 		CM[market.Market] = CoastMap{Walrus: market.Walrus, Delivery: market.Delivery}
 	}
 
+	// Сохранение результата
+	user.MapCoast = CM
+
 	return CM, nil
 }

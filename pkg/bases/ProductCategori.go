@@ -53,6 +53,9 @@ type ColorItem struct {
 	Price     float64  // Цена
 	Size      []Size   // Размеры
 	Image     []string // Картинки
+
+	// Это показатель схожести строк. [0.0;1.0]
+	Similarity float64 `json:"-"`
 }
 
 type Size struct {

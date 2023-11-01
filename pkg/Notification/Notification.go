@@ -2,6 +2,10 @@ package notification
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"os"
 	"strconv"
 
 	"github.com/nikoksr/notify"
@@ -14,18 +18,29 @@ type Notification struct {
 	name    string // Название программы
 }
 
-func NewNotification(token, ChatID, subject, name string) (Notification, error) {
+type JsonStartFile struct {
+	Token   string `json:"Token"`
+	ChatID  string `json:"ChatID"`
+	Subject string `json:"Subject"`
+	Name    string `json:"Name"`
+}
+
+func NewNotification(FileName string) (*Notification, error) {
+	Config, ErrorDataLoad := LoadConfig(FileName)
+	if ErrorDataLoad != nil {
+		return nil, fmt.Errorf("notify: NewNotification: LoadConfig: %w", ErrorDataLoad)
+	}
 
 	// Create a telegram service. Ignoring error for demo simplicity.
-	telegramService, ErrorServece := telegram.New(token)
+	telegramService, ErrorServece := telegram.New(Config.Token)
 	if ErrorServece != nil {
-		return Notification{}, ErrorServece
+		return nil, fmt.Errorf("notify: NewNotification: telegram.New: %w", ErrorServece)
 	}
 
 	// Переводить ChatID из string в int64
-	ChatID_int, ErrParseInt := strconv.ParseInt(ChatID, 10, 64)
+	ChatID_int, ErrParseInt := strconv.ParseInt(Config.ChatID, 10, 64)
 	if ErrParseInt != nil {
-		return Notification{}, ErrParseInt
+		return nil, fmt.Errorf("notify: NewNotification: trconv.ParseInt: %w", ErrParseInt)
 	}
 
 	// Добавить ID,куда будут посылаться уведомления
@@ -39,20 +54,42 @@ func NewNotification(token, ChatID, subject, name string) (Notification, error) 
 	// Send a test message.
 	ErrorTelegramSend := notify.Send(
 		context.Background(),
-		subject,
-		name+": "+"Начинаю работу",
+		Config.Subject,
+		Config.Name+": "+"Начинаю работу",
 	)
 	if ErrorTelegramSend != nil {
-		return Notification{}, ErrorTelegramSend
+		return nil, fmt.Errorf("notify: NewNotification: Send: %w", ErrorTelegramSend)
 	}
 
-	return Notification{TG: telegramService, subject: subject, name: name}, nil
+	return &Notification{TG: telegramService, subject: Config.Subject, name: Config.Name}, nil
 }
 
-func (notif Notification) Sends(message string) error {
+func (notif *Notification) Sends(message string) error {
 	return notif.TG.Send(
 		context.Background(),
 		notif.subject,
 		message,
 	)
+}
+
+// Загрузить данные из файла
+func LoadConfig(filename string) (config JsonStartFile, ErrorFIle error) {
+	// Открыть файл
+	jsonFile, ErrorFIle := os.Open(filename)
+	if ErrorFIle != nil {
+		return config, ErrorFIle
+	}
+	defer jsonFile.Close()
+
+	// Прочитать файл и получить массив byte
+	jsonData, ErrorFIle := io.ReadAll(jsonFile)
+	if ErrorFIle != nil {
+		return config, ErrorFIle
+	}
+
+	// Распарсить массив byte в структуру
+	if ErrorFIle := json.Unmarshal(jsonData, &config); ErrorFIle != nil {
+		return config, ErrorFIle
+	}
+	return config, ErrorFIle
 }
