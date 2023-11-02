@@ -15,7 +15,7 @@ type Gol struct {
 
 // Создать объект логгирования
 func NewGol() *Gol {
-	FileName := "logs/" + time.Now().Format("15h04m 02Jan2006") + ".log"
+	FileName := "logs/" + time.Now().Format("2006-01-02_15-04") + ".log"
 	flags := log.LstdFlags | log.Lshortfile
 	FileInfo, _ := os.OpenFile(FileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	FileWarinig, _ := os.OpenFile(FileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)

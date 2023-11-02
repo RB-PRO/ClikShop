@@ -27,3 +27,7 @@ func TestVariableProduct3(t *testing.T) {
 
 	fmt.Println(bases.ProdStr(Prods[LinkROI]))
 }
+
+func TestStrFromSKU(t *testing.T) {
+	fmt.Println(hm.StrFromSKU("1163274001002"))
+}

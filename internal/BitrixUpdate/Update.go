@@ -27,23 +27,27 @@ func (bx *BitrixUser) UpdateProduct(ProductID string) error {
 	case strings.Contains(Link, "massimodutti"):
 		variationReq, ErrUpdate = bx.UpdateMassimoDutti(ProductsDetail)
 		if ErrUpdate != nil {
-			bx.Nots.Sends(fmt.Sprintf("bitrix: UpdateMassimoDutti: %v", ErrUpdate))
+			return fmt.Errorf("bitrix: UpdateMassimoDutti: %w", ErrUpdate)
+		}
+	case strings.Contains(Link, "hm.com"):
+		variationReq, ErrUpdate = bx.UpdateHandM(ProductsDetail)
+		if ErrUpdate != nil {
 			return fmt.Errorf("bitrix: UpdateMassimoDutti: %w", ErrUpdate)
 		}
 	default:
 		return fmt.Errorf("bitrix: UpdateProduct: Не знаю, какую логику применить к товару %s", ProductsDetail.Products[0].ID)
 	}
 
-	///////////////////////////////////////////////////////
-
-	fmt.Printf("\nvariationReq\n")
-	for i := range variationReq {
-		fmt.Printf("%+v\n", variationReq[i])
-	}
+	// fmt.Printf("\nvariationReq\n")
+	// for i := range variationReq {
+	// 	fmt.Printf("%+v\n", variationReq[i])
+	// }
 	// Запрос на обновление даннных
-	_, ErrVariation := bx.Variation(variationReq)
-	if ErrVariation != nil {
-		return fmt.Errorf("bitrix: Variation: %w", ErrVariation)
+	if len(variationReq) != 0 {
+		_, ErrVariation := bx.Variation(variationReq)
+		if ErrVariation != nil {
+			return fmt.Errorf("bitrix: Variation: %w", ErrVariation)
+		}
 	}
 
 	return nil

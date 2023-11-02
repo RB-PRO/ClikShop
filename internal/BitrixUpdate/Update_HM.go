@@ -13,22 +13,23 @@ import (
 )
 
 // Обновить цены и наличие по ОДНОМУ товару
-func (bx *BitrixUser) UpdateMassimoDutti(ProductsDetail Product_Response) ([]Variation_Request, error) {
+func (bx *BitrixUser) UpdateHandM(ProductsDetail Product_Response) ([]Variation_Request, error) {
+	return nil, nil
 
 	Link := ProductsDetail.Products[0].Link // Основная ссылка на товар
 	// fmt.Println(Link)
 	// Получение ID товара в системе massimodutti. Оно же Toucher
-	Link = strings.ReplaceAll(Link, "https://www.massimodutti.com/itxrest/2/catalog/store/34009471/30359503/category/0/product/", "")
-	Link = strings.ReplaceAll(Link, "/detail?languageId=-1&appId=1", "")
+	Link = strings.ReplaceAll(Link, "https://www2.hm.com/tr_tr/productpage.", "")
+	Link = strings.ReplaceAll(Link, ".html", "")
 	ID, ErrAtoi := strconv.Atoi(Link)
 	if ErrAtoi != nil {
-		return nil, fmt.Errorf("update: MD: Atoi: %w", ErrAtoi)
+		return nil, fmt.Errorf("update: HM: Atoi: %w", ErrAtoi)
 	}
 
 	// Делаем запрос на получение данных
 	touch, ErrToucher := massimodutti.Toucher(ID)
 	if ErrToucher != nil {
-		return nil, fmt.Errorf("update: MD: Toucher: %w", ErrToucher)
+		return nil, fmt.Errorf("update: HM: Toucher: %w", ErrToucher)
 	}
 	var Product bases.Product2
 	Product = massimodutti.Touch2Product2(Product, touch)
@@ -87,6 +88,13 @@ func (bx *BitrixUser) UpdateMassimoDutti(ProductsDetail Product_Response) ([]Var
 				}
 			}
 		}
+
+		// for iItem, ProdItem := range Product.Item {
+		// 	BxCr := EditColorName(BXproduct.ColorEng) // Citrix Color Name
+		// 	PrCr := EditColorName(ProdItem.ColorEng)  // Product Color Name
+		// }
+
 	}
+
 	return variationReq, nil
 }

@@ -8,6 +8,7 @@ import (
 )
 
 func Start() {
+
 	bx := NewBitrixUser()
 	Nots, ErrNotification := notification.NewNotification("notification.json")
 	if ErrNotification != nil {
@@ -16,18 +17,16 @@ func Start() {
 	bx.Nots = Nots
 
 	// Загружаем цены
-	Coasts, ErrCoasts := bx.Coasts()
+	_, ErrCoasts := bx.Coasts()
 	if ErrCoasts != nil {
 		panic(ErrCoasts)
 	}
-	fmt.Println(Coasts)
 
 	// Получаем списки товаров
 	ProductsID, ErrProducts := bx.Products()
 	if ErrProducts != nil {
 		panic(ErrProducts)
 	}
-	fmt.Println("В Bitrix всего", len(ProductsID), "товаров.")
 	bx.Nots.Sends(fmt.Sprintf("В Bitrix всего %d товаров.", len(ProductsID)))
 
 	// Цикл по всем товарам
@@ -36,7 +35,7 @@ func Start() {
 		// Обновляем данные по товару
 		ErrUpdateProduct := bx.UpdateProduct(ProductID)
 		if ErrUpdateProduct != nil {
-			fmt.Println(ErrUpdateProduct)
+			bx.log.Warn(fmt.Sprintf("Цикл: UpdateProduct %s: %s", ProductID, ErrUpdateProduct))
 		}
 
 		// break
