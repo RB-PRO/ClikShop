@@ -2,6 +2,7 @@ package hm
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -66,6 +67,25 @@ func VariableProduct2(Product bases.Product2) (bases.Product2, error) {
 	}
 
 	return Product, nil
+}
+
+// получить цену по SKU в 7 символов
+func VariablePrice2(sku string) (Price float64, Err error) {
+	c := colly.NewCollector()
+	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.4.603 Yowser/2.5 Safari/537.36"
+
+	// Допустимые размеры
+	c.OnHTML(`span[class="price-value"]`, func(e *colly.HTMLElement) {
+		PriceStr := e.DOM.Text()
+		PriceStr = strings.ReplaceAll(PriceStr, "TL", "")
+		PriceStr = strings.ReplaceAll(PriceStr, ",", ".")
+		PriceStr = strings.TrimSpace(PriceStr)
+		// fmt.Printf("PriceStr '%s'", PriceStr)
+		Price, _ = strconv.ParseFloat(PriceStr, 64)
+	})
+
+	Err = c.Visit(URL + "/tr_tr/productpage/_jcr_content/product.quickbuy." + sku + ".html")
+	return Price, Err
 }
 
 // Пропарсить товар по классической [ссылке] и получить его описание вместе с дополнительными полями

@@ -2,99 +2,93 @@ package bitrixupdate
 
 import (
 	"fmt"
-	"sort"
-	"strconv"
 	"strings"
 
-	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/adrg/strutil"
-	"github.com/adrg/strutil/metrics"
+	hm "github.com/RB-PRO/SanctionedClothing/pkg/hm"
 )
+
+// Ключ для хэш-мапы для определения каждой вариации
+type key struct {
+	size  string
+	color string
+}
 
 // Обновить цены и наличие по ОДНОМУ товару
 func (bx *BitrixUser) UpdateHandM(ProductsDetail Product_Response) ([]Variation_Request, error) {
-	return nil, nil
 
-	Link := ProductsDetail.Products[0].Link // Основная ссылка на товар
-	// fmt.Println(Link)
-	// Получение ID товара в системе massimodutti. Оно же Toucher
-	Link = strings.ReplaceAll(Link, "https://www2.hm.com/tr_tr/productpage.", "")
-	Link = strings.ReplaceAll(Link, ".html", "")
-	ID, ErrAtoi := strconv.Atoi(Link)
-	if ErrAtoi != nil {
-		return nil, fmt.Errorf("update: HM: Atoi: %w", ErrAtoi)
+	// Запрос данных по наличию товаров на HM
+	SKUhm := ProductsDetail.Products[0].Link
+	SKUhm = strings.ReplaceAll(SKUhm, "https://www2.hm.com/tr_tr/productpage.", "")
+	SKUhm = strings.ReplaceAll(SKUhm, ".html", "")
+	Avalibs, Aavailability := hm.Aavailability(SKUhm[:7])
+	if Aavailability != nil {
+		return nil, fmt.Errorf("hm.Aavailability: Не получилось получить данные по артикулу %s из ссылки %s", SKUhm[:7], ProductsDetail.Products[0].Link)
 	}
 
-	// Делаем запрос на получение данных
-	touch, ErrToucher := massimodutti.Toucher(ID)
-	if ErrToucher != nil {
-		return nil, fmt.Errorf("update: HM: Toucher: %w", ErrToucher)
+	// Формирование мапы наличия для каждой вариации
+	MapAvalibs := make(map[key]bool)
+	for _, Avalib := range Avalibs {
+		MapAvalibs[key{size: hm.StrFromSKU(Avalib), color: Avalib[:10]}] = true
 	}
-	var Product bases.Product2
-	Product = massimodutti.Touch2Product2(Product, touch)
+
+	// Мапа вариаций, котоыре лежат в битиксе, пара значений размер+цвет обозначают каждую вариацию
+	// Правда вмето size по факту у меня 10 символов SKU с HM
+	BxMap := make(map[key]Variation_Request)
+	for _, Prod := range ProductsDetail.Products[0].Colors {
+		SKU := Prod.Link
+		SKU = strings.ReplaceAll(SKU, "https://www2.hm.com/tr_tr/productpage.", "")
+		SKU = strings.ReplaceAll(SKU, ".html", "")
+		BxMap[key{size: Prod.Size, color: SKU[:10]}] =
+			Variation_Request{
+				ID: Prod.ID,
+			}
+	}
+
+	// Делаем мапу цен, где в качестве ключа используется артикул товара(7 символов)
+	PriceMap := make(map[string]float64)
+	for _, Prod := range ProductsDetail.Products[0].Colors {
+		SKU := Prod.Link
+		SKU = strings.ReplaceAll(SKU, "https://www2.hm.com/tr_tr/productpage.", "")
+		SKU = strings.ReplaceAll(SKU, ".html", "")
+		if _, ok := PriceMap[SKU]; !ok {
+			Price, ErrVariablePrice2 := hm.VariablePrice2(SKU)
+			if ErrVariablePrice2 != nil {
+				return nil, fmt.Errorf("hm.VariablePrice2: Не получилось получить данные цене по артикулу %s из ссылки https://www2.hm.com/tr_tr/productpage/_jcr_content/product.quickbuy.%s.html", SKUhm, SKUhm)
+			}
+			PriceMap[SKU] = Price
+		}
+	}
 
 	// Алгоритм обхода по результатам bx.Product в соответствии с massimodutti.Toucher
 	// с целью созданию нового запросника для обновления данных в bitrix. Сложность o(n*n) - ужасная
 	variationReq := make([]Variation_Request, 0)
-
-	BxColors := ProductsDetail.Products[0].Colors
-	for _, BXproduct := range BxColors {
-		for iItem, ProdItem := range Product.Item {
-			BxCr := EditColorName(BXproduct.ColorEng) // Citrix Color Name
-			PrCr := EditColorName(ProdItem.ColorEng)  // Product Color Name
-
-			// Вероятность того, что слова похожи - BxCr, PrCr
-			similarity := strutil.Similarity(BxCr, PrCr, metrics.NewLevenshtein())
-			Product.Item[iItem].Similarity = similarity // Сохраняем результат
-
+	for BxKey, BxVal := range BxMap {
+		if hmVal, ok := MapAvalibs[BxKey]; ok {
+			// fmt.Println(BxKey.color, "PRICE", (bx.cb.Data.Valute.Try.Value / 10), PriceMap[BxKey.color], bx.MapCoast["H&M"].Walrus)
+			Price := bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*PriceMap[BxKey.color]*bx.MapCoast["H&M"].Walrus +
+				float64(bx.MapCoast["H&M"].Delivery))
+			variationReq = append(variationReq, Variation_Request{
+				ID:           BxVal.ID,
+				Availability: hmVal,
+				Price:        Price,
+			})
+			delete(BxMap, BxKey)
 		}
-
-		// Сортирвоать по убыванию
-		sort.Slice(Product.Item, func(i, j int) bool {
-			return Product.Item[i].Similarity > Product.Item[j].Similarity
-		})
-
-		// Если нет никаких товаров, то пропускаем
-		if len(Product.Item) == 0 {
-			continue
-		}
-
-		// Проверка того, что similarity у первых элементов одинаково
-		if len(Product.Item) > 1 {
-			if Product.Item[0].Similarity == Product.Item[1].Similarity {
-				fmt.Printf("В товаре %s совпадают параметры похожести Similarity. %.3f для цвета %s и %.3f для цвета %s. А в Битрикс - %s.\n",
-					ProductsDetail.Products[0].ID, Product.Item[0].Similarity, Product.Item[0].ColorEng, Product.Item[1].Similarity, Product.Item[1].ColorEng, BXproduct.ColorEng)
-
-				bx.Nots.Sends(fmt.Sprintf("В товаре %s совпадают параметры похожести Similarity. %.3f для цвета %s и %.3f для цвета %s. А в Битрикс - %s.\n",
-					ProductsDetail.Products[0].ID, Product.Item[0].Similarity, Product.Item[0].ColorEng, Product.Item[1].Similarity, Product.Item[1].ColorEng, BXproduct.ColorEng))
-			}
-		}
-
-		// Если вариации есть и необходимо обновлние
-		if len(Product.Item) >= 1 {
-			// Смотрим все размер на соответствие
-			for _, ProdColor := range Product.Item[0].Size {
-				if strings.Contains(EditColorName(BXproduct.Size), EditColorName(ProdColor.Val)) {
-					// fmt.Println(Product.Item[0].Price,
-					// 	bx.MapCoast[Product.Manufacturer].Walrus,
-					// 	float64(bx.MapCoast[Product.Manufacturer].Delivery))
-					variationReq = append(variationReq, Variation_Request{
-						ID: BXproduct.ID,
-						Price: Product.Item[0].Price*bx.MapCoast[Product.Manufacturer].Walrus +
-							float64(bx.MapCoast[Product.Manufacturer].Delivery),
-						Availability: ProdColor.IsExit,
-					})
-				}
-			}
-		}
-
-		// for iItem, ProdItem := range Product.Item {
-		// 	BxCr := EditColorName(BXproduct.ColorEng) // Citrix Color Name
-		// 	PrCr := EditColorName(ProdItem.ColorEng)  // Product Color Name
-		// }
-
 	}
 
+	// Теперь готовим обновление по товарам, котоыре недоступны
+	for BxKey, BxVal := range BxMap {
+		Price := bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*PriceMap[BxKey.color]*bx.MapCoast["H&M"].Walrus +
+			float64(bx.MapCoast["H&M"].Delivery))
+		variationReq = append(variationReq, Variation_Request{
+			ID:           BxVal.ID,
+			Availability: false,
+			Price:        Price,
+		})
+	}
+
+	bx.log.Info(fmt.Sprintf("HM: В товаре %s  на обвновление идут %d товара",
+		ProductsDetail.Products[0].ID, len(variationReq)))
 	return variationReq, nil
 }

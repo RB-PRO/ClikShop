@@ -39,7 +39,7 @@ func (user *BitrixUser) Variation(VrtReq []Variation_Request) (VrtResp Variation
 		return Variation_Response{}, fmt.Errorf("bitrix: Product: Не смог создать запрос: %w", errNewRequest)
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Cookie", "BITRIX_SM_GUEST_ID=5009; BITRIX_SM_LAST_VISIT=07.08.2023%2001%3A19%3A12; BITRIX_SM_SALE_UID=1524ac0f1701198a7380ac70768d3606; PHPSESSID=kbNuDok3oE8R6fJ7dExSGO8fbympRahj")
+	// req.Header.Add("Cookie", "BITRIX_SM_GUEST_ID=5009; BITRIX_SM_LAST_VISIT=07.08.2023%2001%3A19%3A12; BITRIX_SM_SALE_UID=1524ac0f1701198a7380ac70768d3606; PHPSESSID=kbNuDok3oE8R6fJ7dExSGO8fbympRahj")
 
 	// Выполняем запрос
 	resp, errDo := http.DefaultClient.Do(req)

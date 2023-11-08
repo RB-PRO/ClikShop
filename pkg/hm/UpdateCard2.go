@@ -3,6 +3,7 @@ package hm
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
@@ -11,6 +12,9 @@ import (
 
 // Получить актуальные данные по товарам.
 // По [ссылке] получить данные, как по размерам, так и по ценам
+//
+// Выведено из использования, в виду того, что загружается только часть тега,
+// остальная часть содержимого загружается с помощью js
 //
 // [ссылке]: https://www2.hm.com/tr_tr/productpage.1163274001.html
 func VariableActual2(url string) (Item bases.ColorItem, Err error) {
@@ -64,24 +68,36 @@ func VariableActual2(url string) (Item bases.ColorItem, Err error) {
 			Err = fmt.Errorf("VariableActual2: Unmarshal: %s", ErrUnmarshal)
 		}
 		// Items = make([]bases.ColorItem, len(Product.Offers))
+		// fmt.Printf("%+v\n", Product)
+		Price := 0.0
 
-		Size := make([]bases.Size, len(Product.Offers))
-		for ioffer, offer := range Product.Offers {
+		fmt.Println("len(Product.Offers)", len(Product.Offers))
+		fmt.Println(jsonTxt)
+
+		Size := make([]bases.Size, 0)
+		for _, offer := range Product.Offers {
 			SizeVal := StrFromSKU(offer.Sku)
+			fmt.Println("offer.Sku", offer.Sku, "--------", SizeVal)
 			IsExit := strings.Contains(offer.Availability, "InStock")
+			Price, _ = strconv.ParseFloat(offer.Price, 64)
 			if SizeVal != "" {
-				Size[ioffer] = bases.Size{
+				Size = append(Size, bases.Size{
 					Val:    SizeVal,
 					IsExit: IsExit,
-				}
+				})
 			}
 		}
+		Item.Price = Price
 		Item.Size = Size
 		Item.ColorEng = bases.Name2Slug(Product.Color)
 		Item.ColorCode = bases.KeepLettersAndSpaces(bases.Translit(Product.Color))
 	})
 
 	c.Visit(url)
+	if Err != nil {
+		return bases.ColorItem{}, fmt.Errorf("VariableActual2: %s", Err)
+	}
+	fmt.Printf("%+v\n", Item)
 	return Item, nil
 }
 
@@ -103,6 +119,12 @@ func StrFromSKU(str string) string {
 			return "XL"
 		case "007":
 			return "XXL"
+		case "016":
+			return "3XL"
+		case "015":
+			return "4XL"
+		default:
+			return "NOSIZE"
 		}
 	}
 	return ""

@@ -5,16 +5,25 @@ import (
 	"strings"
 
 	notification "github.com/RB-PRO/SanctionedClothing/pkg/Notification"
+	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
 )
 
 func Start() {
 
+	// Приложение Битрикс
 	bx := NewBitrixUser()
 	Nots, ErrNotification := notification.NewNotification("notification.json")
 	if ErrNotification != nil {
 		panic(ErrNotification)
 	}
+	cb, ErrorCB := cbbank.New() // Цены ЦБ для получение актуального курса
+	if ErrorCB != nil {
+		panic(ErrorCB)
+	}
+	bx.cb = cb
 	bx.Nots = Nots
+
+	bx.Nots.Sends(fmt.Sprintf("Курс: 1₤ = %.2f₽", cb.Data.Valute.Try.Value/10))
 
 	// Загружаем цены
 	_, ErrCoasts := bx.Coasts()

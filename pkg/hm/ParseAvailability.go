@@ -27,7 +27,7 @@ type Availability struct {
 // Example:
 //
 //	`https://www2.hm.com/hmwebservices/service/product/tr/availability/1157823.json`
-func availability(SKU string) ([]string, error) {
+func Aavailability(SKU string) ([]string, error) {
 	client := &http.Client{}
 	req, ErrNewRequest := http.NewRequest(http.MethodGet, fmt.Sprintf("https://www2.hm.com/hmwebservices/service/product/tr/availability/%s.json", SKU), nil)
 	if ErrNewRequest != nil {
@@ -69,7 +69,7 @@ func AvailabilityProduct(Product bases.Product2) (bases.Product2, error) {
 	}
 
 	// Получить все артикулы присутствубщих товаров
-	IsLiveSKUs, ErrAvailability := availability(sku)
+	IsLiveSKUs, ErrAvailability := Aavailability(sku)
 	if ErrAvailability != nil {
 		return Product, ErrAvailability
 	}

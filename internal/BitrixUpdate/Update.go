@@ -14,7 +14,7 @@ func (bx *BitrixUser) UpdateProduct(ProductID string) error {
 		return fmt.Errorf("bitrix: UpdateProduct: %w", ErrProduct)
 	}
 	if len(ProductsDetail.Products) == 0 {
-		return fmt.Errorf("bitrix: UpdateProduct: %w", ErrProduct)
+		return fmt.Errorf("bitrix: UpdateProduct: len(ProductsDetail.Products) == 0")
 	}
 
 	// Запрос на обновление цен и наличия
@@ -27,23 +27,27 @@ func (bx *BitrixUser) UpdateProduct(ProductID string) error {
 	case strings.Contains(Link, "massimodutti"):
 		variationReq, ErrUpdate = bx.UpdateMassimoDutti(ProductsDetail)
 		if ErrUpdate != nil {
-			return fmt.Errorf("bitrix: UpdateMassimoDutti: %w", ErrUpdate)
+			return fmt.Errorf("bitrix: Update: MD: %w", ErrUpdate)
 		}
 	case strings.Contains(Link, "hm.com"):
 		variationReq, ErrUpdate = bx.UpdateHandM(ProductsDetail)
 		if ErrUpdate != nil {
-			return fmt.Errorf("bitrix: UpdateMassimoDutti: %w", ErrUpdate)
+			return fmt.Errorf("bitrix: Update: HM: %w", ErrUpdate)
+		}
+	case strings.Contains(Link, "zara"):
+		variationReq, ErrUpdate = bx.UpdateZara(ProductsDetail)
+		if ErrUpdate != nil {
+			return fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate)
 		}
 	default:
-		return fmt.Errorf("bitrix: UpdateProduct: Не знаю, какую логику применить к товару %s", ProductsDetail.Products[0].ID)
+		return fmt.Errorf("bitrix: Update: Не знаю, какую логику применить к товару %s", ProductsDetail.Products[0].ID)
 	}
 
-	// fmt.Printf("\nvariationReq\n")
-	// for i := range variationReq {
-	// 	fmt.Printf("%+v\n", variationReq[i])
-	// }
 	// Запрос на обновление даннных
 	if len(variationReq) != 0 {
+		for i := range variationReq {
+			fmt.Printf("%d. %+v\n", i, variationReq[i])
+		}
 		_, ErrVariation := bx.Variation(variationReq)
 		if ErrVariation != nil {
 			return fmt.Errorf("bitrix: Variation: %w", ErrVariation)

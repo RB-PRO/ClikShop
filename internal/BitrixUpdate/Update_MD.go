@@ -22,13 +22,13 @@ func (bx *BitrixUser) UpdateMassimoDutti(ProductsDetail Product_Response) ([]Var
 	Link = strings.ReplaceAll(Link, "/detail?languageId=-1&appId=1", "")
 	ID, ErrAtoi := strconv.Atoi(Link)
 	if ErrAtoi != nil {
-		return nil, fmt.Errorf("update: MD: Atoi: %w", ErrAtoi)
+		return nil, fmt.Errorf("atoi: %w", ErrAtoi)
 	}
 
 	// Делаем запрос на получение данных
 	touch, ErrToucher := massimodutti.Toucher(ID)
 	if ErrToucher != nil {
-		return nil, fmt.Errorf("update: MD: Toucher: %w", ErrToucher)
+		return nil, fmt.Errorf("toucher: %w", ErrToucher)
 	}
 	var Product bases.Product2
 	Product = massimodutti.Touch2Product2(Product, touch)
@@ -62,17 +62,17 @@ func (bx *BitrixUser) UpdateMassimoDutti(ProductsDetail Product_Response) ([]Var
 		// Проверка того, что similarity у первых элементов одинаково
 		if len(Product.Item) > 1 {
 			if Product.Item[0].Similarity == Product.Item[1].Similarity {
-				fmt.Printf("В товаре %s совпадают параметры похожести Similarity. %.3f для цвета %s и %.3f для цвета %s. А в Битрикс - %s.\n",
+				fmt.Printf("MD: В товаре %s совпадают параметры похожести Similarity. %.3f для цвета %s и %.3f для цвета %s. А в Битрикс - %s.\n",
 					ProductsDetail.Products[0].ID, Product.Item[0].Similarity, Product.Item[0].ColorEng, Product.Item[1].Similarity, Product.Item[1].ColorEng, BXproduct.ColorEng)
-
-				bx.Nots.Sends(fmt.Sprintf("В товаре %s совпадают параметры похожести Similarity. %.3f для цвета %s и %.3f для цвета %s. А в Битрикс - %s.\n",
+				bx.Nots.Sends(fmt.Sprintf("MD: В товаре %s совпадают параметры похожести Similarity. %.3f для цвета %s и %.3f для цвета %s. А в Битрикс - %s.\n",
 					ProductsDetail.Products[0].ID, Product.Item[0].Similarity, Product.Item[0].ColorEng, Product.Item[1].Similarity, Product.Item[1].ColorEng, BXproduct.ColorEng))
+				continue
 			}
 		}
 
 		// Если вариации есть и необходимо обновлние
 		if len(Product.Item) >= 1 {
-			// Смотрим все размер на соответствие
+			// Смотрим все размер на соответствие размеров
 			for _, ProdColor := range Product.Item[0].Size {
 				if strings.Contains(EditColorName(BXproduct.Size), EditColorName(ProdColor.Val)) {
 					// fmt.Println(Product.Item[0].Price,
@@ -80,13 +80,15 @@ func (bx *BitrixUser) UpdateMassimoDutti(ProductsDetail Product_Response) ([]Var
 					// 	float64(bx.MapCoast[Product.Manufacturer].Delivery))
 					variationReq = append(variationReq, Variation_Request{
 						ID: BXproduct.ID,
-						Price: Product.Item[0].Price*bx.MapCoast[Product.Manufacturer].Walrus +
-							float64(bx.MapCoast[Product.Manufacturer].Delivery),
+						Price: bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*Product.Item[0].Price*bx.MapCoast[Product.Manufacturer].Walrus +
+							float64(bx.MapCoast[Product.Manufacturer].Delivery)),
 						Availability: ProdColor.IsExit,
 					})
 				}
 			}
 		}
 	}
+	bx.log.Info(fmt.Sprintf("В товаре %s  на обвновление идут %d товара",
+		ProductsDetail.Products[0].ID, len(variationReq)))
 	return variationReq, nil
 }
