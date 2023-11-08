@@ -8,7 +8,6 @@ replace github.com/hiscaler/woocommerce-go => ./pkg/woocommerce-go
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/adrg/strutil v0.3.1
 	github.com/bas24/googletranslatefree v0.0.0-20220326200502-05ed9e639439
 	github.com/cheggaaa/pb v1.0.29
 	github.com/gocolly/colly v1.2.0
@@ -61,6 +60,7 @@ require (
 	github.com/rivo/uniseg v0.1.0 // indirect
 	github.com/robertkrimen/otto v0.2.1 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
+	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect

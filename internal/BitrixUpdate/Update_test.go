@@ -56,7 +56,7 @@ func PrintnVariationReq(variationReq []Variation_Request) {
 }
 
 func TestUpdates(t *testing.T) {
-	ProductID := "47253"
+	ProductID := "64978"
 
 	// Приложение Битрикс
 	bx := NewBitrixUser()

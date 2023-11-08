@@ -2,14 +2,11 @@ package bitrixupdate
 
 import (
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
 
 	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/adrg/strutil"
-	"github.com/adrg/strutil/metrics"
 )
 
 // Обновить цены и наличие по ОДНОМУ товару
@@ -33,61 +30,47 @@ func (bx *BitrixUser) UpdateMassimoDutti(ProductsDetail Product_Response) ([]Var
 	var Product bases.Product2
 	Product = massimodutti.Touch2Product2(Product, touch)
 
-	// Алгоритм обхода по результатам bx.Product в соответствии с massimodutti.Toucher
-	// с целью созданию нового запросника для обновления данных в bitrix. Сложность o(n*n) - ужасная
-	variationReq := make([]Variation_Request, 0)
+	// Решение задачи сличения данных из битрикса и из донора
 
-	BxColors := ProductsDetail.Products[0].Colors
-	for _, BXproduct := range BxColors {
-		for iItem, ProdItem := range Product.Item {
-			BxCr := EditColorName(BXproduct.ColorEng) // Citrix Color Name
-			PrCr := EditColorName(ProdItem.ColorEng)  // Product Color Name
-
-			// Вероятность того, что слова похожи - BxCr, PrCr
-			similarity := strutil.Similarity(BxCr, PrCr, metrics.NewLevenshtein())
-			Product.Item[iItem].Similarity = similarity // Сохраняем результат
-
-		}
-
-		// Сортирвоать по убыванию
-		sort.Slice(Product.Item, func(i, j int) bool {
-			return Product.Item[i].Similarity > Product.Item[j].Similarity
-		})
-
-		// Если нет никаких товаров, то пропускаем
-		if len(Product.Item) == 0 {
-			continue
-		}
-
-		// Проверка того, что similarity у первых элементов одинаково
-		if len(Product.Item) > 1 {
-			if Product.Item[0].Similarity == Product.Item[1].Similarity {
-				fmt.Printf("MD: В товаре %s совпадают параметры похожести Similarity. %.3f для цвета %s и %.3f для цвета %s. А в Битрикс - %s.\n",
-					ProductsDetail.Products[0].ID, Product.Item[0].Similarity, Product.Item[0].ColorEng, Product.Item[1].Similarity, Product.Item[1].ColorEng, BXproduct.ColorEng)
-				bx.Nots.Sends(fmt.Sprintf("MD: В товаре %s совпадают параметры похожести Similarity. %.3f для цвета %s и %.3f для цвета %s. А в Битрикс - %s.\n",
-					ProductsDetail.Products[0].ID, Product.Item[0].Similarity, Product.Item[0].ColorEng, Product.Item[1].Similarity, Product.Item[1].ColorEng, BXproduct.ColorEng))
-				continue
+	// Мапа вариаций, котоыре лежат в битиксе, пара значений размер+цвет обозначают каждую вариацию
+	// Правда вмето size по факту у меня 10 символов SKU с HM
+	BxMap := make(map[key]Variation_Request)
+	for _, Prod := range ProductsDetail.Products[0].Colors {
+		BxMap[key{size: bases.Name2Slug(Prod.Size), color: bases.Name2Slug(Prod.ColorEng)}] =
+			Variation_Request{
+				ID:    Prod.ID,
+				Price: Prod.Price,
 			}
-		}
+	}
 
-		// Если вариации есть и необходимо обновлние
-		if len(Product.Item) >= 1 {
-			// Смотрим все размер на соответствие размеров
-			for _, ProdColor := range Product.Item[0].Size {
-				if strings.Contains(EditColorName(BXproduct.Size), EditColorName(ProdColor.Val)) {
-					// fmt.Println(Product.Item[0].Price,
-					// 	bx.MapCoast[Product.Manufacturer].Walrus,
-					// 	float64(bx.MapCoast[Product.Manufacturer].Delivery))
-					variationReq = append(variationReq, Variation_Request{
-						ID: BXproduct.ID,
-						Price: bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*Product.Item[0].Price*bx.MapCoast[Product.Manufacturer].Walrus +
-							float64(bx.MapCoast[Product.Manufacturer].Delivery)),
-						Availability: ProdColor.IsExit,
-					})
-				}
+	// Теперь донорская мапа с данными по товарами со специфичной структурой в качестве ключа
+	DonMap := make(map[key]Variation_Request)
+	for _, Item := range Product.Item {
+		for _, Size := range Item.Size {
+			Price := bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*Item.Price*bx.MapCoast["H&M"].Walrus +
+				float64(bx.MapCoast["Massimo Dutti"].Delivery))
+			DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug(Size.Val)}] = Variation_Request{
+				Price:        Price,
+				Availability: Size.IsExit,
 			}
 		}
 	}
+
+	// Теперь объединяется всё в единую мапу битрикса
+	for BxKey, BxVal := range BxMap {
+		BxVal.Availability = DonMap[BxKey].Availability
+		BxVal.Price = DonMap[BxKey].Price
+		BxMap[BxKey] = BxVal
+	}
+
+	// Алгоритм обхода по результатам bx.Product в соответствии с massimodutti.Toucher
+	// с целью созданию нового запросника для обновления данных в bitrix. Сложность o(n*n) - ужасная
+	variationReq := make([]Variation_Request, 0)
+	// формирование слайза запроса на обновление данных со всеми входными характеристиками
+	for _, BxVal := range BxMap {
+		variationReq = append(variationReq, BxVal)
+	}
+
 	bx.log.Info(fmt.Sprintf("В товаре %s  на обвновление идут %d товара",
 		ProductsDetail.Products[0].ID, len(variationReq)))
 	return variationReq, nil
