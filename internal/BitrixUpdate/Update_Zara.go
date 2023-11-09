@@ -34,6 +34,7 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 				Price: Prod.Price,
 			}
 	}
+	// fmt.Println(BxMap)
 
 	// Теперь донорская мапа с данными по товарами со специфичной структурой в качестве ключа
 	DonMap := make(map[key]Variation_Request)
@@ -47,6 +48,7 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 			}
 		}
 	}
+	// fmt.Println(DonMap)
 
 	// Теперь объединяется всё в единую мапу битрикса
 	for BxKey, BxVal := range BxMap {
@@ -61,6 +63,7 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 	// формирование слайза запроса на обновление данных со всеми входными характеристиками
 	for _, BxVal := range BxMap {
 		variationReq = append(variationReq, BxVal)
+		// fmt.Printf("%+v\n", BxVal)
 	}
 
 	bx.log.Info(fmt.Sprintf("Zara: В товаре %s(%s) на обвновление идут %d товара",

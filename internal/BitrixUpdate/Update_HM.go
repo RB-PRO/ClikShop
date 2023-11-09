@@ -44,6 +44,7 @@ func (bx *BitrixUser) UpdateHandM(ProductsDetail Product_Response) ([]Variation_
 				ID: Prod.ID,
 			}
 	}
+	// fmt.Println(BxMap)
 
 	// Делаем мапу цен, где в качестве ключа используется артикул товара(7 символов)
 	PriceMap := make(map[string]float64)
@@ -59,6 +60,7 @@ func (bx *BitrixUser) UpdateHandM(ProductsDetail Product_Response) ([]Variation_
 			PriceMap[SKU] = Price
 		}
 	}
+	// fmt.Println(PriceMap)
 
 	// Алгоритм обхода по результатам bx.Product в соответствии с massimodutti.Toucher
 	// с целью созданию нового запросника для обновления данных в bitrix. Сложность o(n*n) - ужасная

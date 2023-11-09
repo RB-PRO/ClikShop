@@ -39,7 +39,11 @@ func Start() {
 	bx.Nots.Sends(fmt.Sprintf("В Bitrix всего %d товаров.", len(ProductsID)))
 
 	// Цикл по всем товарам
-	for _, ProductID := range ProductsID {
+	for iProductID, ProductID := range ProductsID {
+
+		if (iProductID+1)%100 == 0 {
+			bx.Nots.Sends(fmt.Sprintf("Обработка товаров: (%d/%d)", iProductID+1, len(ProductsID)))
+		}
 
 		// Обновляем данные по товару
 		ErrUpdateProduct := bx.UpdateProduct(ProductID)

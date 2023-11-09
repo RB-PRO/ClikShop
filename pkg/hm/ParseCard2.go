@@ -78,10 +78,12 @@ func VariablePrice2(sku string) (Price float64, Err error) {
 	c.OnHTML(`span[class="price-value"]`, func(e *colly.HTMLElement) {
 		PriceStr := e.DOM.Text()
 		PriceStr = strings.ReplaceAll(PriceStr, "TL", "")
-		PriceStr = strings.ReplaceAll(PriceStr, ",", ".")
+		PriceStr = strings.ReplaceAll(PriceStr, ",", "")
+		PriceStr = strings.ReplaceAll(PriceStr, ".", "")
 		PriceStr = strings.TrimSpace(PriceStr)
 		// fmt.Printf("PriceStr '%s'", PriceStr)
 		Price, _ = strconv.ParseFloat(PriceStr, 64)
+		Price /= 100.0
 	})
 
 	Err = c.Visit(URL + "/tr_tr/productpage/_jcr_content/product.quickbuy." + sku + ".html")

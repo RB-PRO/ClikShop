@@ -88,6 +88,8 @@ func Name2Slug(str string) string {
 	str = strings.ReplaceAll(str, " ", "-")
 	str = strings.ReplaceAll(str, "/", "-")
 	str = strings.ReplaceAll(str, "--", "-")
+	str = strings.ReplaceAll(str, "--", "-")
+	str = strings.TrimSpace(str)
 	// В идеале добавить регулярные выражения для отсеивания лишнего
 	return str
 }
