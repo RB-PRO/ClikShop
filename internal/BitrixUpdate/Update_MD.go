@@ -43,7 +43,9 @@ func (bx *BitrixUser) UpdateMassimoDutti(ProductsDetail Product_Response) ([]Var
 		if _, ok := BxMap[key{size: bases.Name2Slug(Prod.Size), color: bases.Name2Slug(Prod.ColorEng)}]; ok {
 			variationReq = append(variationReq, Variation_Request{
 				Availability: false,
+				ID:           Prod.ID,
 			})
+			continue
 		}
 
 		BxMap[key{size: bases.Name2Slug(Prod.Size), color: bases.Name2Slug(Prod.ColorEng)}] =

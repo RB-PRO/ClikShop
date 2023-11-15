@@ -77,6 +77,6 @@ func TestUpdates(t *testing.T) {
 	fmt.Println(bx.MapCoast)
 	ErrUpdateProduct := bx.UpdateProduct(ProductID) // Обновляем данные по товару
 	if ErrUpdateProduct != nil {
-		t.Error("Цикл: UpdateProduct", ProductID, ":", ErrUpdateProduct)
+		t.Error("bitrix: UpdateProduct", ProductID, ":", ErrUpdateProduct)
 	}
 }
