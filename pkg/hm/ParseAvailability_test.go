@@ -46,6 +46,15 @@ func TestAvailabilityProduct(t *testing.T) {
 	fmt.Println(bases.ProdStr(Prods[LinkROI]))
 }
 
+func TestAavailabilityMap(t *testing.T) {
+	url := "https://www2.hm.com/tr_tr/productpage.1183407001.html"
+	mapAv, ErrAvailabilityProduct := hm.AavailabilityMap(url)
+	if ErrAvailabilityProduct != nil {
+		t.Error(ErrAvailabilityProduct)
+	}
+	fmt.Println(mapAv)
+}
+
 func TestAvalimity(t *testing.T) {
 	var prod bases.Product2
 	prod.Link = "https://www2.hm.com/tr_tr/productpage.1170211001.html"

@@ -21,15 +21,28 @@ func (bx *BitrixUser) UpdateHandM(ProductsDetail Product_Response) ([]Variation_
 	SKUhm := ProductsDetail.Products[0].Link
 	SKUhm = strings.ReplaceAll(SKUhm, "https://www2.hm.com/tr_tr/productpage.", "")
 	SKUhm = strings.ReplaceAll(SKUhm, ".html", "")
-	Avalibs, Aavailability := hm.Aavailability(SKUhm[:7])
+	Avalibs, Aavailability := hm.Aavailability(ProductsDetail.Products[0].Link)
 	if Aavailability != nil {
 		return nil, fmt.Errorf("hm.Aavailability: Не получилось получить данные по артикулу %s из ссылки %s", SKUhm[:7], ProductsDetail.Products[0].Link)
+	}
+	// fmt.Println(Avalibs)
+
+	AvalibMap, ErrAavailability2 := hm.AavailabilityMap(ProductsDetail.Products[0].Link)
+	if ErrAavailability2 != nil {
+		return nil, fmt.Errorf("hm.Aavailability2: %v: Не получилось получить данные по артикулу %s из ссылки %s",
+			ErrAavailability2, SKUhm[:7], ProductsDetail.Products[0].Link)
 	}
 
 	// Формирование мапы наличия для каждой вариации
 	MapAvalibs := make(map[key]bool)
 	for _, Avalib := range Avalibs {
-		MapAvalibs[key{size: hm.StrFromSKU(Avalib), color: Avalib[:10]}] = true
+		lenstr := len([]byte(Avalib))
+		if lenstr == 13 {
+			MapAvalibs[key{size: AvalibMap[Avalib[lenstr-3:]], color: Avalib[:10]}] = true
+		}
+		// MapAvalibs[key{size: hm.StrFromSKU(Avalib), color: Avalib[:10]}] = true
+		// MapAvalibs[key{size: hm.StrFromSKU2(Avalib), color: Avalib[:10]}] = true
+		// MapAvalibs[key{size: hm.StrFromSKU3(Avalib), color: Avalib[:10]}] = true
 	}
 
 	// Мапа вариаций, котоыре лежат в битиксе, пара значений размер+цвет обозначают каждую вариацию

@@ -129,3 +129,73 @@ func StrFromSKU(str string) string {
 	}
 	return ""
 }
+
+// Получить строку по размеру
+func StrFromSKU2(str string) string {
+	lenstr := len([]byte(str))
+	if lenstr == 13 {
+		switch str[lenstr-3:] {
+		case "001":
+			return "32"
+		case "002":
+			return "34"
+		case "003":
+			return "36"
+		case "004":
+			return "38"
+		case "005":
+			return "40"
+		case "006":
+			return "42"
+		case "007":
+			return "44"
+		case "008":
+			return "46"
+		case "009":
+			return "48"
+		case "010":
+			return "50"
+		default:
+			return "NOSIZE"
+		}
+	}
+	return ""
+}
+func StrFromSKU3(str string) string {
+	lenstr := len([]byte(str))
+	if lenstr == 13 {
+		switch str[lenstr-3:] {
+		case "001":
+			return "22"
+		case "002":
+			return "23"
+		case "003":
+			return "24"
+		case "004":
+			return "25"
+		case "005":
+			return "26"
+		case "006":
+			return "27"
+		case "007":
+			return "28"
+		case "008":
+			return "29"
+		case "009":
+			return "30"
+		case "010":
+			return "31"
+		case "011":
+			return "32"
+		case "012":
+			return "33"
+		case "013":
+			return "34"
+		case "014":
+			return "35"
+		default:
+			return "NOSIZE"
+		}
+	}
+	return ""
+}

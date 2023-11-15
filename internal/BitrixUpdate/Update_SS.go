@@ -2,71 +2,49 @@ package bitrixupdate
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 
-	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
+	sneaksup "github.com/RB-PRO/SanctionedClothing/pkg/SneaSup"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
 
-// Обновить цены и наличие по ОДНОМУ товару
-func (bx *BitrixUser) UpdateMassimoDutti(ProductsDetail Product_Response) ([]Variation_Request, error) {
+// const URL string = "https://www.sneaksup.com"
 
-	Link := ProductsDetail.Products[0].Link // Основная ссылка на товар
-	// fmt.Println(Link)
-	// Получение ID товара в системе massimodutti. Оно же Toucher
-	Link = strings.ReplaceAll(Link, "https://www.massimodutti.com/itxrest/2/catalog/store/34009471/30359503/category/0/product/", "")
-	Link = strings.ReplaceAll(Link, "/detail?languageId=-1&appId=1", "")
-	ID, ErrAtoi := strconv.Atoi(Link)
-	if ErrAtoi != nil {
-		return nil, fmt.Errorf("atoi: %w", ErrAtoi)
-	}
+func (bx *BitrixUser) UpdateSS(ProductsDetail Product_Response) (variationReq []Variation_Request, Err error) {
 
-	// Делаем запрос на получение данных
-	touch, ErrToucher := massimodutti.Toucher(ID)
-	if ErrToucher != nil {
-		return nil, fmt.Errorf("toucher: %w", ErrToucher)
+	// Получить мапу ссылок
+	ColorsItem, ErrAavailability := sneaksup.Aavailability(ProductsDetail.Products[0].Link)
+	if ErrAavailability != nil {
+		return nil, fmt.Errorf("sneaksup.Aavailability: %v", ErrAavailability)
 	}
-	var Product bases.Product2
-	Product = massimodutti.Touch2Product2(Product, touch)
-	variationReq := make([]Variation_Request, 0)
+	fmt.Println(ColorsItem)
 
 	// Решение задачи сличения данных из битрикса и из донора
-	// fmt.Printf("ProductsDetail.Products[0] %v\n\n", len(ProductsDetail.Products[0].Colors))
 
 	// Мапа вариаций, котоыре лежат в битиксе, пара значений размер+цвет обозначают каждую вариацию
 	// Правда вмето size по факту у меня 10 символов SKU с HM
 	BxMap := make(map[key]Variation_Request)
 	for _, Prod := range ProductsDetail.Products[0].Colors {
-		// fmt.Println(i, bases.Name2Slug(Prod.ColorEng), bases.Name2Slug(Prod.Size))
-
-		if _, ok := BxMap[key{size: bases.Name2Slug(Prod.Size), color: bases.Name2Slug(Prod.ColorEng)}]; ok {
-			variationReq = append(variationReq, Variation_Request{
-				Availability: false,
-			})
-		}
-
 		BxMap[key{size: bases.Name2Slug(Prod.Size), color: bases.Name2Slug(Prod.ColorEng)}] =
 			Variation_Request{
 				ID:    Prod.ID,
 				Price: Prod.Price,
 			}
 	}
-	// fmt.Printf("BxMap %d - %+v\n\n", len(BxMap), BxMap)
+	// 	fmt.Println("BxMap", BxMap)
 
 	// Теперь донорская мапа с данными по товарами со специфичной структурой в качестве ключа
 	DonMap := make(map[key]Variation_Request)
-	for _, Item := range Product.Item {
+	for _, Item := range ColorsItem {
 		for _, Size := range Item.Size {
 			Price := bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*Item.Price*bx.MapCoast["H&M"].Walrus +
-				float64(bx.MapCoast["Massimo Dutti"].Delivery))
+				float64(bx.MapCoast["ss"].Delivery))
 			DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug(Size.Val)}] = Variation_Request{
 				Price:        Price,
 				Availability: Size.IsExit,
 			}
 		}
 	}
-	// fmt.Printf("DonMap %d - %+v\n\n", len(DonMap), DonMap)
+	// fmt.Println("DonMap", DonMap)
 
 	// Теперь объединяется всё в единую мапу битрикса
 	for BxKey, BxVal := range BxMap {
@@ -74,17 +52,16 @@ func (bx *BitrixUser) UpdateMassimoDutti(ProductsDetail Product_Response) ([]Var
 		BxVal.Price = DonMap[BxKey].Price
 		BxMap[BxKey] = BxVal
 	}
-	// fmt.Printf("BxMap %d - %+v\n\n", len(BxMap), BxMap)
+	// fmt.Println("BxMap", BxMap)
 
 	// Алгоритм обхода по результатам bx.Product в соответствии с massimodutti.Toucher
 	// с целью созданию нового запросника для обновления данных в bitrix. Сложность o(n*n) - ужасная
-
+	variationReq = make([]Variation_Request, 0)
 	// формирование слайза запроса на обновление данных со всеми входными характеристиками
 	for _, BxVal := range BxMap {
 		variationReq = append(variationReq, BxVal)
+		// fmt.Printf("%+v\n", BxVal)
 	}
 
-	bx.log.Info(fmt.Sprintf("В товаре %s  на обвновление идут %d товара",
-		ProductsDetail.Products[0].ID, len(variationReq)))
 	return variationReq, nil
 }

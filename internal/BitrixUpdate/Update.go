@@ -37,13 +37,21 @@ func (bx *BitrixUser) UpdateProduct(ProductID string) error {
 	case strings.Contains(Link, "zara"):
 		variationReq, ErrUpdate = bx.UpdateZara(ProductsDetail)
 		if ErrUpdate != nil {
+			// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
 			return fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate)
+		}
+	case strings.Contains(Link, "sneaksup.com"):
+		variationReq, ErrUpdate = bx.UpdateSS(ProductsDetail)
+		if ErrUpdate != nil {
+			// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
+			return fmt.Errorf("bitrix: Update: SS: %w", ErrUpdate)
 		}
 	default:
 		return fmt.Errorf("bitrix: Update: Не знаю, какую логику применить к товару %s", ProductsDetail.Products[0].ID)
 	}
 
 	// Запрос на обновление даннных
+	// fmt.Println("len(variationReq)", len(variationReq))
 	if len(variationReq) != 0 {
 		// for i := range variationReq {
 		// 	fmt.Printf("%d. %+v\n", i, variationReq[i])

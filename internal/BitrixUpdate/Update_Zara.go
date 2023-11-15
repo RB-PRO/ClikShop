@@ -16,11 +16,11 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 	Code := strings.ReplaceAll(Link, "https://www.zara.com/tr/en/", "")
 	Code = strings.ReplaceAll(Code, ".html?ajax=true", "")
 
-	touch, ErrTouch := zaratr.LoadTouch(Code) // Выполняем запрос
+	Prod2, ErrTouch := zaratr.LoadFantomTouch(Code) // Выполняем запрос
 	if ErrTouch != nil {
+		// fmt.Println(fmt.Errorf("touch: %s", ErrTouch))
 		return nil, fmt.Errorf("touch: %s", ErrTouch)
 	}
-	Prod2 := zaratr.Touch2Product2(touch) // АПереводим в структуру Product2
 
 	// Решение задачи сличения данных из битрикса и из донора
 
@@ -34,7 +34,7 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 				Price: Prod.Price,
 			}
 	}
-	// fmt.Println(BxMap)
+	// fmt.Println("BxMap", BxMap)
 
 	// Теперь донорская мапа с данными по товарами со специфичной структурой в качестве ключа
 	DonMap := make(map[key]Variation_Request)
@@ -46,9 +46,16 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 				Price:        Price,
 				Availability: Size.IsExit,
 			}
+
+			if Size.Val == "XXL" {
+				DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug("xxxl")}] = Variation_Request{
+					Price:        Price,
+					Availability: Size.IsExit,
+				}
+			}
 		}
 	}
-	// fmt.Println(DonMap)
+	// fmt.Println("BxMap", DonMap)
 
 	// Теперь объединяется всё в единую мапу битрикса
 	for BxKey, BxVal := range BxMap {
@@ -56,6 +63,7 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 		BxVal.Price = DonMap[BxKey].Price
 		BxMap[BxKey] = BxVal
 	}
+	// fmt.Println("BxMap", BxMap)
 
 	// Алгоритм обхода по результатам bx.Product в соответствии с massimodutti.Toucher
 	// с целью созданию нового запросника для обновления данных в bitrix. Сложность o(n*n) - ужасная

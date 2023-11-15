@@ -2,7 +2,6 @@ package massimodutti
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -45,13 +44,17 @@ func Toucher(id int) (touch Touch, ErrCategory error) {
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode == http.StatusOK {
-		ErrNewDecoder := json.NewDecoder(res.Body).Decode(&touch)
-		if ErrNewDecoder != nil {
-			return touch, ErrNewDecoder
-		}
-	} else {
-		return touch, errors.New("Toucher: http.Status is not ok")
+	// if res.StatusCode == http.StatusOK {
+	// 	ErrNewDecoder := json.NewDecoder(res.Body).Decode(&touch)
+	// 	if ErrNewDecoder != nil {
+	// 		return touch, ErrNewDecoder
+	// 	}
+	// } else {
+	// 	return touch, errors.New("Toucher: http.Status is not ok")
+	// }
+	ErrNewDecoder := json.NewDecoder(res.Body).Decode(&touch)
+	if ErrNewDecoder != nil {
+		return touch, ErrNewDecoder
 	}
 
 	return touch, nil
@@ -59,6 +62,10 @@ func Toucher(id int) (touch Touch, ErrCategory error) {
 
 // Перевести результаты парсинга в стандартный для нас формат
 func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
+
+	if len(touch.BundleProductSummaries) == 0 {
+		return bases.Product2{}
+	}
 
 	// Название товара
 	Product.Name = strings.TrimSpace(touch.Name)

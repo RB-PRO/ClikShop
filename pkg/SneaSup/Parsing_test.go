@@ -80,3 +80,13 @@ func TestDescription(t *testing.T) {
 	}
 	fmt.Printf("'%s'\n", Description)
 }
+
+func TestAavailability(t *testing.T) {
+	colors, ErrAavailability := Aavailability("https://www.sneaksup.com/jordan-w-j-brkln-flc-pant-dq4478-010")
+	if ErrAavailability != nil {
+		t.Error(ErrAavailability)
+	}
+	for _, color := range colors {
+		fmt.Printf("%+v\n", color)
+	}
+}

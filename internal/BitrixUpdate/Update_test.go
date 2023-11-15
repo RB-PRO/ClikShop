@@ -56,8 +56,7 @@ func PrintnVariationReq(variationReq []Variation_Request) {
 }
 
 func TestUpdates(t *testing.T) {
-	ProductID := "49374"
-
+	ProductID := "61043"
 	// Приложение Битрикс
 	bx := NewBitrixUser()
 	Nots, ErrNotification := notification.NewNotification("..\\..\\notification.json")
@@ -71,17 +70,13 @@ func TestUpdates(t *testing.T) {
 	bx.cb = cb
 	bx.Nots = Nots
 	fmt.Printf("Курс: 1₤ = %.2f₽\n", cb.Data.Valute.Try.Value/10)
-
-	// Загружаем цены
-	_, ErrCoasts := bx.Coasts()
+	_, ErrCoasts := bx.Coasts() // Загружаем цены
 	if ErrCoasts != nil {
 		panic(ErrCoasts)
 	}
-
-	// Обновляем данные по товару
-	ErrUpdateProduct := bx.UpdateProduct(ProductID)
+	fmt.Println(bx.MapCoast)
+	ErrUpdateProduct := bx.UpdateProduct(ProductID) // Обновляем данные по товару
 	if ErrUpdateProduct != nil {
 		t.Error("Цикл: UpdateProduct", ProductID, ":", ErrUpdateProduct)
 	}
-
 }
