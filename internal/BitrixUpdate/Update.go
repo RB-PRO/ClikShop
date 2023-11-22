@@ -3,13 +3,15 @@ package bitrixupdate
 import (
 	"fmt"
 	"strings"
+
+	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
 )
 
 // Обновить цены и наличие по ОДНОМУ товару
-func (bx *BitrixUser) UpdateProduct(ProductID string) error {
+func (bx *bitrixUpdator) UpdateProduct(ProductID string) error {
 
 	// Получить подробнее о товаре
-	ProductsDetail, ErrProduct := bx.Product([]string{ProductID})
+	ProductsDetail, ErrProduct := bx.BX.Product([]string{ProductID})
 	if ErrProduct != nil {
 		return fmt.Errorf("bx.Product: %w", ErrProduct)
 	}
@@ -18,7 +20,7 @@ func (bx *BitrixUser) UpdateProduct(ProductID string) error {
 	}
 
 	// Запрос на обновление цен и наличия
-	var variationReq []Variation_Request
+	var variationReq []apibitrix.Variation_Request
 	var ErrUpdate error
 
 	// Смотрим ссылку  для определения источника того, откуда пришёл товар
@@ -56,7 +58,7 @@ func (bx *BitrixUser) UpdateProduct(ProductID string) error {
 		for i := range variationReq {
 			fmt.Printf("%d. %+v\n", i, variationReq[i])
 		}
-		_, ErrVariation := bx.Variation(variationReq)
+		_, ErrVariation := bx.BX.Variation(variationReq)
 		if ErrVariation != nil {
 			return fmt.Errorf("bitrix: Variation: %w", ErrVariation)
 		}

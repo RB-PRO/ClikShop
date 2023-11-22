@@ -1,4 +1,4 @@
-package bitrixupdate
+package apibitrix
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 
 // "https://clikshop.ru/parser/Update.json"
 
-type Coast struct {
+type coast struct {
 	Main []struct {
 		Market   string  `json:"market"`
 		Walrus   float64 `json:"walrus"`
@@ -44,7 +44,7 @@ func (user *BitrixUser) Coasts() (map[string]CoastMap, error) {
 	}
 
 	// Распарсить полученные данные
-	var CoastsResp Coast
+	var CoastsResp coast
 	responseErrorUnmarshal := json.Unmarshal(bodyBytesRes, &CoastsResp)
 	if responseErrorUnmarshal != nil {
 		return nil, fmt.Errorf("bitrix: Coasts: Не смог распарсить данные из ответа: %w", responseErrorUnmarshal)

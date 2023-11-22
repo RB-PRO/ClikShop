@@ -1,4 +1,4 @@
-package bitrixupdate
+package apibitrix
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 )
 
 // Стуктура ответа метода getProducts
-type Products_Response struct {
+type products_Response struct {
 	ProductsId []string `json:"products_id"`
 }
 
@@ -36,7 +36,7 @@ func (user *BitrixUser) Products() ([]string, error) {
 	}
 
 	// Распарсить полученные данные
-	var ProdsResp Products_Response
+	var ProdsResp products_Response
 	responseErrorUnmarshal := json.Unmarshal(bodyBytesRes, &ProdsResp)
 	if responseErrorUnmarshal != nil {
 		return nil, fmt.Errorf("bitrix: Products: Не смог распарсить данные из ответа: %w", responseErrorUnmarshal)

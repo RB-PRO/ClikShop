@@ -1,4 +1,4 @@
-package bitrixupdate
+package apibitrix
 
 import (
 	"bytes"

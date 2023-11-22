@@ -5,11 +5,12 @@ import (
 	"strings"
 
 	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
+	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
 
 // Обновить цены и наличие по ОДНОМУ товару
-func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_Request, error) {
+func (bx *bitrixUpdator) UpdateZara(ProductsDetail apibitrix.Product_Response) ([]apibitrix.Variation_Request, error) {
 
 	// Ссылки на все вариации в подтоваре
 	Link := ProductsDetail.Products[0].Link
@@ -26,10 +27,10 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 
 	// Мапа вариаций, котоыре лежат в битиксе, пара значений размер+цвет обозначают каждую вариацию
 	// Правда вмето size по факту у меня 10 символов SKU с HM
-	BxMap := make(map[key]Variation_Request)
+	BxMap := make(map[key]apibitrix.Variation_Request)
 	for _, Prod := range ProductsDetail.Products[0].Colors {
 		BxMap[key{size: bases.Name2Slug(Prod.Size), color: bases.Name2Slug(Prod.ColorEng)}] =
-			Variation_Request{
+			apibitrix.Variation_Request{
 				ID:    Prod.ID,
 				Price: Prod.Price,
 			}
@@ -37,18 +38,18 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 	// fmt.Println("BxMap", BxMap)
 
 	// Теперь донорская мапа с данными по товарами со специфичной структурой в качестве ключа
-	DonMap := make(map[key]Variation_Request)
+	DonMap := make(map[key]apibitrix.Variation_Request)
 	for _, Item := range Prod2.Item {
 		for _, Size := range Item.Size {
-			Price := bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*Item.Price*bx.MapCoast["H&M"].Walrus +
-				float64(bx.MapCoast["zara"].Delivery))
-			DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug(Size.Val)}] = Variation_Request{
+			Price := bases.EditDecadense((bx.BX.CB.Data.Valute.Try.Value/10)*Item.Price*bx.BX.MapCoast["H&M"].Walrus +
+				float64(bx.BX.MapCoast["zara"].Delivery))
+			DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug(Size.Val)}] = apibitrix.Variation_Request{
 				Price:        Price,
 				Availability: Size.IsExit,
 			}
 
 			if Size.Val == "XXL" {
-				DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug("xxxl")}] = Variation_Request{
+				DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug("xxxl")}] = apibitrix.Variation_Request{
 					Price:        Price,
 					Availability: Size.IsExit,
 				}
@@ -67,14 +68,14 @@ func (bx *BitrixUser) UpdateZara(ProductsDetail Product_Response) ([]Variation_R
 
 	// Алгоритм обхода по результатам bx.Product в соответствии с massimodutti.Toucher
 	// с целью созданию нового запросника для обновления данных в bitrix. Сложность o(n*n) - ужасная
-	variationReq := make([]Variation_Request, 0)
+	variationReq := make([]apibitrix.Variation_Request, 0)
 	// формирование слайза запроса на обновление данных со всеми входными характеристиками
 	for _, BxVal := range BxMap {
 		variationReq = append(variationReq, BxVal)
 		// fmt.Printf("%+v\n", BxVal)
 	}
 
-	bx.log.Info(fmt.Sprintf("Zara: В товаре %s(%s) на обвновление идут %d товара",
+	bx.BX.Log.Info(fmt.Sprintf("Zara: В товаре %s(%s) на обвновление идут %d товара",
 		ProductsDetail.Products[0].ID, Link, len(variationReq)))
 	return variationReq, nil
 }

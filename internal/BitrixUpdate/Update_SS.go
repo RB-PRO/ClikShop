@@ -4,12 +4,13 @@ import (
 	"fmt"
 
 	sneaksup "github.com/RB-PRO/SanctionedClothing/pkg/SneaSup"
+	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
 
 // const URL string = "https://www.sneaksup.com"
 
-func (bx *BitrixUser) UpdateSS(ProductsDetail Product_Response) (variationReq []Variation_Request, Err error) {
+func (bx *bitrixUpdator) UpdateSS(ProductsDetail apibitrix.Product_Response) (variationReq []apibitrix.Variation_Request, Err error) {
 
 	// Получить мапу ссылок
 	ColorsItem, ErrAavailability := sneaksup.Aavailability(ProductsDetail.Products[0].Link)
@@ -22,10 +23,10 @@ func (bx *BitrixUser) UpdateSS(ProductsDetail Product_Response) (variationReq []
 
 	// Мапа вариаций, котоыре лежат в битиксе, пара значений размер+цвет обозначают каждую вариацию
 	// Правда вмето size по факту у меня 10 символов SKU с HM
-	BxMap := make(map[key]Variation_Request)
+	BxMap := make(map[key]apibitrix.Variation_Request)
 	for _, Prod := range ProductsDetail.Products[0].Colors {
 		BxMap[key{size: bases.Name2Slug(Prod.Size), color: bases.Name2Slug(Prod.ColorEng)}] =
-			Variation_Request{
+			apibitrix.Variation_Request{
 				ID:    Prod.ID,
 				Price: Prod.Price,
 			}
@@ -33,12 +34,12 @@ func (bx *BitrixUser) UpdateSS(ProductsDetail Product_Response) (variationReq []
 	// 	fmt.Println("BxMap", BxMap)
 
 	// Теперь донорская мапа с данными по товарами со специфичной структурой в качестве ключа
-	DonMap := make(map[key]Variation_Request)
+	DonMap := make(map[key]apibitrix.Variation_Request)
 	for _, Item := range ColorsItem {
 		for _, Size := range Item.Size {
-			Price := bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*Item.Price*bx.MapCoast["H&M"].Walrus +
-				float64(bx.MapCoast["ss"].Delivery))
-			DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug(Size.Val)}] = Variation_Request{
+			Price := bases.EditDecadense((bx.BX.CB.Data.Valute.Try.Value/10)*Item.Price*bx.BX.MapCoast["H&M"].Walrus +
+				float64(bx.BX.MapCoast["ss"].Delivery))
+			DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug(Size.Val)}] = apibitrix.Variation_Request{
 				Price:        Price,
 				Availability: Size.IsExit,
 			}
@@ -56,7 +57,7 @@ func (bx *BitrixUser) UpdateSS(ProductsDetail Product_Response) (variationReq []
 
 	// Алгоритм обхода по результатам bx.Product в соответствии с massimodutti.Toucher
 	// с целью созданию нового запросника для обновления данных в bitrix. Сложность o(n*n) - ужасная
-	variationReq = make([]Variation_Request, 0)
+	variationReq = make([]apibitrix.Variation_Request, 0)
 	// формирование слайза запроса на обновление данных со всеми входными характеристиками
 	for _, BxVal := range BxMap {
 		variationReq = append(variationReq, BxVal)

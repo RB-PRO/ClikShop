@@ -1,4 +1,4 @@
-package bitrixupdate
+package apibitrix
 
 import (
 	"bytes"
@@ -9,7 +9,7 @@ import (
 )
 
 // Стуктура запроса метода getProduct
-type Product_Request struct {
+type product_Request struct {
 	ProductsID []string `json:"products_id"`
 }
 
@@ -33,7 +33,7 @@ type Product_Response struct {
 func (user *BitrixUser) Product(Values []string) (ProdResp Product_Response, Err error) {
 
 	// Преобразуем структуру в массив байтов
-	bodyBytesReq, errMarshal := json.Marshal(Product_Request{ProductsID: Values})
+	bodyBytesReq, errMarshal := json.Marshal(product_Request{ProductsID: Values})
 	if errMarshal != nil {
 		return Product_Response{}, fmt.Errorf("bitrix: Product: Не смог запаковать структуру в массив байтов: %w", errMarshal)
 	}

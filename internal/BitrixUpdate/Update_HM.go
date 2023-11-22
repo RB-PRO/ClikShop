@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	hm "github.com/RB-PRO/SanctionedClothing/pkg/hm"
 )
@@ -15,7 +16,7 @@ type key struct {
 }
 
 // Обновить цены и наличие по ОДНОМУ товару
-func (bx *BitrixUser) UpdateHandM(ProductsDetail Product_Response) ([]Variation_Request, error) {
+func (bx *bitrixUpdator) UpdateHandM(ProductsDetail apibitrix.Product_Response) ([]apibitrix.Variation_Request, error) {
 
 	// Запрос данных по наличию товаров на HM
 	SKUhm := ProductsDetail.Products[0].Link
@@ -47,13 +48,13 @@ func (bx *BitrixUser) UpdateHandM(ProductsDetail Product_Response) ([]Variation_
 
 	// Мапа вариаций, котоыре лежат в битиксе, пара значений размер+цвет обозначают каждую вариацию
 	// Правда вмето size по факту у меня 10 символов SKU с HM
-	BxMap := make(map[key]Variation_Request)
+	BxMap := make(map[key]apibitrix.Variation_Request)
 	for _, Prod := range ProductsDetail.Products[0].Colors {
 		SKU := Prod.Link
 		SKU = strings.ReplaceAll(SKU, "https://www2.hm.com/tr_tr/productpage.", "")
 		SKU = strings.ReplaceAll(SKU, ".html", "")
 		BxMap[key{size: Prod.Size, color: SKU[:10]}] =
-			Variation_Request{
+			apibitrix.Variation_Request{
 				ID: Prod.ID,
 			}
 	}
@@ -77,13 +78,13 @@ func (bx *BitrixUser) UpdateHandM(ProductsDetail Product_Response) ([]Variation_
 
 	// Алгоритм обхода по результатам bx.Product в соответствии с massimodutti.Toucher
 	// с целью созданию нового запросника для обновления данных в bitrix. Сложность o(n*n) - ужасная
-	variationReq := make([]Variation_Request, 0)
+	variationReq := make([]apibitrix.Variation_Request, 0)
 	for BxKey, BxVal := range BxMap {
 		if hmVal, ok := MapAvalibs[BxKey]; ok {
 			// fmt.Println(BxKey.color, "PRICE", (bx.cb.Data.Valute.Try.Value / 10), PriceMap[BxKey.color], bx.MapCoast["H&M"].Walrus)
-			Price := bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*PriceMap[BxKey.color]*bx.MapCoast["H&M"].Walrus +
-				float64(bx.MapCoast["H&M"].Delivery))
-			variationReq = append(variationReq, Variation_Request{
+			Price := bases.EditDecadense((bx.BX.CB.Data.Valute.Try.Value/10)*PriceMap[BxKey.color]*bx.BX.MapCoast["H&M"].Walrus +
+				float64(bx.BX.MapCoast["H&M"].Delivery))
+			variationReq = append(variationReq, apibitrix.Variation_Request{
 				ID:           BxVal.ID,
 				Availability: hmVal,
 				Price:        Price,
@@ -94,16 +95,16 @@ func (bx *BitrixUser) UpdateHandM(ProductsDetail Product_Response) ([]Variation_
 
 	// Теперь готовим обновление по товарам, котоыре недоступны
 	for BxKey, BxVal := range BxMap {
-		Price := bases.EditDecadense((bx.cb.Data.Valute.Try.Value/10)*PriceMap[BxKey.color]*bx.MapCoast["H&M"].Walrus +
-			float64(bx.MapCoast["H&M"].Delivery))
-		variationReq = append(variationReq, Variation_Request{
+		Price := bases.EditDecadense((bx.BX.CB.Data.Valute.Try.Value/10)*PriceMap[BxKey.color]*bx.BX.MapCoast["H&M"].Walrus +
+			float64(bx.BX.MapCoast["H&M"].Delivery))
+		variationReq = append(variationReq, apibitrix.Variation_Request{
 			ID:           BxVal.ID,
 			Availability: false,
 			Price:        Price,
 		})
 	}
 
-	bx.log.Info(fmt.Sprintf("HM: В товаре %s  на обвновление идут %d товара",
+	bx.BX.Log.Info(fmt.Sprintf("HM: В товаре %s  на обвновление идут %d товара",
 		ProductsDetail.Products[0].ID, len(variationReq)))
 	return variationReq, nil
 }

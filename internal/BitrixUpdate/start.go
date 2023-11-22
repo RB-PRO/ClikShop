@@ -5,13 +5,18 @@ import (
 	"strings"
 
 	notification "github.com/RB-PRO/SanctionedClothing/pkg/Notification"
+	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
 	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
 )
+
+type bitrixUpdator struct {
+	BX *apibitrix.BitrixUser
+}
 
 func Start() {
 
 	// Приложение Битрикс
-	bx := NewBitrixUser()
+	bx := bitrixUpdator{apibitrix.NewBitrixUser()}
 	Nots, ErrNotification := notification.NewNotification("notification.json")
 	if ErrNotification != nil {
 		panic(ErrNotification)
@@ -20,35 +25,35 @@ func Start() {
 	if ErrorCB != nil {
 		panic(ErrorCB)
 	}
-	bx.cb = cb
-	bx.Nots = Nots
+	bx.BX.CB = cb
+	bx.BX.Nots = Nots
 
-	bx.Nots.Sends(fmt.Sprintf("Курс: 1₤ = %.2f₽", cb.Data.Valute.Try.Value/10))
+	bx.BX.Nots.Sends(fmt.Sprintf("Курс: 1₤ = %.2f₽", cb.Data.Valute.Try.Value/10))
 
 	// Загружаем цены
-	_, ErrCoasts := bx.Coasts()
+	_, ErrCoasts := bx.BX.Coasts()
 	if ErrCoasts != nil {
 		panic(ErrCoasts)
 	}
 
 	// Получаем списки товаров
-	ProductsID, ErrProducts := bx.Products()
+	ProductsID, ErrProducts := bx.BX.Products()
 	if ErrProducts != nil {
 		panic(ErrProducts)
 	}
-	bx.Nots.Sends(fmt.Sprintf("В Bitrix всего %d товаров.", len(ProductsID)))
+	bx.BX.Nots.Sends(fmt.Sprintf("В Bitrix всего %d товаров.", len(ProductsID)))
 
 	// Цикл по всем товарам
 	for iProductID, ProductID := range ProductsID {
 
 		if (iProductID+1)%100 == 0 {
-			bx.Nots.Sends(fmt.Sprintf("Обработка товаров: (%d/%d)", iProductID+1, len(ProductsID)))
+			bx.BX.Nots.Sends(fmt.Sprintf("Обработка товаров: (%d/%d)", iProductID+1, len(ProductsID)))
 		}
 
 		// Обновляем данные по товару
 		ErrUpdateProduct := bx.UpdateProduct(ProductID)
 		if ErrUpdateProduct != nil {
-			bx.log.Warn(fmt.Sprintf("Цикл: UpdateProduct %s: %s", ProductID, ErrUpdateProduct))
+			bx.BX.Log.Warn(fmt.Sprintf("Цикл: UpdateProduct %s: %s", ProductID, ErrUpdateProduct))
 		}
 
 		// break
