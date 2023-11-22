@@ -1,7 +1,7 @@
 package main
 
 import (
-	bitrixupdate "github.com/RB-PRO/SanctionedClothing/internal/BitrixUpdate"
+	actualizer "github.com/RB-PRO/SanctionedClothing/internal/BitrixActualizer"
 )
 
 func main() {
@@ -49,5 +49,6 @@ func main() {
 	// settings.UpSizesEditProduct()
 	// settings.EditIsExitHM()
 
-	bitrixupdate.Start()
+	// bitrixupdate.Start()
+	actualizer.Start()
 }
