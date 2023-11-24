@@ -1,0 +1,76 @@
+package actualizer
+
+import (
+	"fmt"
+	"strconv"
+
+	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
+	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/cheggaaa/pb"
+)
+
+func (bx *bitrixActualizer) md() {
+
+	folder := "md/"
+	MakeDir(folder)
+
+	// Получить все категории
+	categ, ErrCateg := massimodutti.Category()
+	if ErrCateg != nil {
+		panic(ErrCateg)
+	}
+
+	// Сформировать Слайс категорий из входного результа ответа по всем категориям с сайта
+	categs := massimodutti.CategoryBasesForming(categ)
+
+	// Цикл по всем товарам
+	// Формируем слайсы с ID товаров и их категории
+	var index int = 1
+	for icateg, CategoryForSKU := range categs {
+
+		// Получаем спимок ID товаров
+		prods, ErrSKUs := massimodutti.SKUs(CategoryForSKU.ID)
+		if ErrSKUs != nil {
+			panic(ErrSKUs)
+		}
+
+		// Формируем подслайсы для каждой категории
+		sku_slice := prods.ProductIds
+		// sku_slice := make([]int, 0, len(prods.ProductIds))
+		// for _, idSKU := range prods.ProductIds {
+		// 	sku_slice = append(sku_slice, idSKU)
+		// }
+
+		// Получаем данные по артикулам(id)
+		line, ErrLines := massimodutti.Lines(sku_slice)
+		if ErrLines != nil {
+			panic(ErrLines)
+		}
+
+		// Создаём внутренний слайс товаров
+		Products := massimodutti.Line2Product2(line, CategoryForSKU.Cat)
+
+		BarProducts := pb.StartNew(len(Products))
+		BarProducts.Prefix(fmt.Sprintf("[%d/%d]", icateg+1, len(categs)))
+		for i := range Products {
+
+			ID, _ := strconv.Atoi(Products[i].Article)
+			touch, ErrToucher := massimodutti.Toucher(ID)
+			if ErrToucher != nil {
+				fmt.Println(Products)
+			}
+			Products[i] = massimodutti.Touch2Product2(Products[i], touch)
+
+			// Добавить все размеры в товар из всех вариаций товара
+			Products[i].Size = bases.EditProdSize(Products[i])
+
+			Products[i].Img = bases.EditIMG(Products[i])
+
+			BarProducts.Increment()
+		}
+		bases.Variety2{Product: Products}.SaveJson(fmt.Sprintf("%smd_%d_%d",
+			folder, index, CategoryForSKU.ID))
+		BarProducts.Finish()
+		index++
+	}
+}

@@ -1,6 +1,8 @@
 package apibitrix
 
 import (
+	"fmt"
+
 	notification "github.com/RB-PRO/SanctionedClothing/pkg/Notification"
 	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
 	"github.com/RB-PRO/SanctionedClothing/pkg/gol"
@@ -25,6 +27,10 @@ type BitrixUser struct {
 }
 
 // Создать клиента для работы с данными битрикс
-func NewBitrixUser() *BitrixUser {
-	return &BitrixUser{Log: gol.NewGol()}
+func NewBitrixUser() (*BitrixUser, error) {
+	glog, ErrNewLogs := gol.NewGol("logs/")
+	if ErrNewLogs != nil {
+		return nil, fmt.Errorf("gol.NewGol: %v", ErrNewLogs)
+	}
+	return &BitrixUser{Log: glog}, nil
 }

@@ -28,19 +28,19 @@ type JsonStartFile struct {
 func NewNotification(FileName string) (*Notification, error) {
 	Config, ErrorDataLoad := LoadConfig(FileName)
 	if ErrorDataLoad != nil {
-		return nil, fmt.Errorf("notify: NewNotification: LoadConfig: %w", ErrorDataLoad)
+		return nil, fmt.Errorf("LoadConfig: %w", ErrorDataLoad)
 	}
 
 	// Create a telegram service. Ignoring error for demo simplicity.
 	telegramService, ErrorServece := telegram.New(Config.Token)
 	if ErrorServece != nil {
-		return nil, fmt.Errorf("notify: NewNotification: telegram.New: %w", ErrorServece)
+		return nil, fmt.Errorf("telegram.New: %w", ErrorServece)
 	}
 
 	// Переводить ChatID из string в int64
 	ChatID_int, ErrParseInt := strconv.ParseInt(Config.ChatID, 10, 64)
 	if ErrParseInt != nil {
-		return nil, fmt.Errorf("notify: NewNotification: trconv.ParseInt: %w", ErrParseInt)
+		return nil, fmt.Errorf("trconv.ParseInt: %w", ErrParseInt)
 	}
 
 	// Добавить ID,куда будут посылаться уведомления
@@ -58,7 +58,7 @@ func NewNotification(FileName string) (*Notification, error) {
 		Config.Name+": "+"Начинаю работу",
 	)
 	if ErrorTelegramSend != nil {
-		return nil, fmt.Errorf("notify: NewNotification: Send: %w", ErrorTelegramSend)
+		return nil, fmt.Errorf("notify.Send: %w", ErrorTelegramSend)
 	}
 
 	return &Notification{TG: telegramService, subject: Config.Subject, name: Config.Name}, nil

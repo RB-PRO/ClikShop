@@ -14,7 +14,7 @@ import (
 )
 
 func Parsing() {
-	glog := gol.NewGol()
+	glog, _ := gol.NewGol("logs/")
 
 	// Нало работы с центральным банком
 	cb, ErrorCB := cbbank.New() // Получить курс валюты

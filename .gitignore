@@ -13,3 +13,7 @@ tmp/*
 *.log
 *.json
 LV
+/hm/
+/zara/
+/md/
+/ss/

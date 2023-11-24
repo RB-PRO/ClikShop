@@ -21,7 +21,11 @@ func TestUpdates(t *testing.T) {
 	ProductID := "140542"
 	// Приложение Битрикс
 	// bx := NewBitrixUser()
-	bx := bitrixUpdator{apibitrix.NewBitrixUser()}
+	BitrixUser, ErrBX := apibitrix.NewBitrixUser()
+	if ErrBX != nil {
+		panic(ErrBX)
+	}
+	bx := bitrixUpdator{BitrixUser}
 	Nots, ErrNotification := notification.NewNotification("../../notification.json")
 	if ErrNotification != nil {
 		panic(ErrNotification)

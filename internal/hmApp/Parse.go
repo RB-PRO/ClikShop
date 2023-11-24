@@ -14,7 +14,7 @@ import (
 
 func Parse() {
 
-	gol := gol.NewGol()
+	gol, _ := gol.NewGol("logs/")
 
 	// Создать оьбъект переводчика
 	Adding, ErrNewTranslate := wcprod.NewTranslate()

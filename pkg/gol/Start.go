@@ -2,6 +2,7 @@
 package gol
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -14,8 +15,11 @@ type Gol struct {
 }
 
 // Создать объект логгирования
-func NewGol() *Gol {
-	FileName := "logs/" + time.Now().Format("2006-01-02_15-04") + ".log"
+func NewGol(ZeroDirection string) (*Gol, error) {
+	if _, err := os.Stat(ZeroDirection); os.IsNotExist(err) {
+		return nil, fmt.Errorf("folder '%s' does not exist", ZeroDirection)
+	}
+	FileName := ZeroDirection + time.Now().Format("2006-01-02_15-04") + ".log"
 	flags := log.LstdFlags | log.Lshortfile
 	FileInfo, _ := os.OpenFile(FileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	FileWarinig, _ := os.OpenFile(FileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
@@ -29,7 +33,7 @@ func NewGol() *Gol {
 		logInfo:    LogInfo,
 		logWarning: LogWarning,
 		logError:   LogError,
-	}
+	}, nil
 }
 
 // Логировать состояние
