@@ -2,6 +2,7 @@ package actualizer
 
 // Полуть мапу всех артикулов товаров из магазина в Bitrix
 func (bx *bitrixActualizer) MapSKU() (map[string]bool, error) {
+
 	// Получаем список ID всех товаров
 	skus, ErrProducts := bx.BX.SKUs()
 	if ErrProducts != nil {

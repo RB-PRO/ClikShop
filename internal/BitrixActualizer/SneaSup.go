@@ -9,9 +9,8 @@ import (
 	"github.com/cheggaaa/pb"
 )
 
-func (bx *bitrixActualizer) ss() {
+func (bx *bitrixActualizer) ss(folder string) {
 
-	folder := "ss/"
 	MakeDir(folder)
 
 	SneakSupCategory := sneasup.Category()

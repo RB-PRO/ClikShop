@@ -2,75 +2,104 @@ package actualizer
 
 import (
 	"fmt"
-	"strconv"
+	"log"
 
-	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
+	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
 	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 	"github.com/cheggaaa/pb"
 )
 
-func (bx *bitrixActualizer) zara() {
+func (bx *bitrixActualizer) zara(folder string) {
 
-	folder := "zara/"
 	MakeDir(folder)
 
-	// Получить все категории
-	categ, ErrCateg := massimodutti.Category()
-	if ErrCateg != nil {
-		panic(ErrCateg)
-	}
+	// Категории
+	CatArr, _ := zaratr.CatCycle2() // Получить все категории
+	log.Println("Всего", len(CatArr.Items), "категорий")
 
-	// Сформировать Слайс категорий из входного результа ответа
-	// по всем категориям с сайта
-	categs := massimodutti.CategoryBasesForming(categ)
-
-	// Цикл по всем товарам
-	// Формируем слайсы с ID товаров и их категории
-	var index int = 1
-	for icateg, CategoryForSKU := range categs {
-
-		// Получаем спимок ID товаров
-		prods, ErrSKUs := massimodutti.SKUs(CategoryForSKU.ID)
-		if ErrSKUs != nil {
-			panic(ErrSKUs)
+	// Все товары
+	allID := make(map[string]bool)
+	var index int
+	for i, cat := range CatArr.Items {
+		// if i < 129 {
+		// 	continue
+		// }
+		line, ErrorLine := zaratr.LoadLine(fmt.Sprintf("%v", cat.RedirectCategoryID))
+		if ErrorLine != nil {
+			fmt.Println(ErrorLine)
+			bx.GLOG.Err(fmt.Sprintf("Парсера ZARA: i=%d, Неудачная загрузка по ссылке: https://www.zara.com/tr/en/category/%d/products Ошибка: %v",
+				i, cat.RedirectCategoryID, ErrorLine))
 		}
+		// bar.Increment()
 
-		// Получаем данные по артикулам(id)
-		line, ErrLines := massimodutti.Lines(prods.ProductIds)
-		if ErrLines != nil {
-			panic(ErrLines)
-		}
-
-		// Создаём внутренний слайс товаров
-		Products := massimodutti.Line2Product2(line, CategoryForSKU.Cat)
-
-		BarProducts := pb.StartNew(len(Products))
-		BarProducts.Prefix(fmt.Sprintf("[%d/%d]", icateg+1, len(categs)))
-		for i := range Products {
-			// Парсинг всех подпродуктов
-			AddingProduct := Products[i]
-
-			ID, _ := strconv.Atoi(AddingProduct.Article)
-			touch, ErrToucher := massimodutti.Toucher(ID)
-			if ErrToucher != nil {
-				fmt.Println(Products)
+		ProductsLine := make([]zaratr.CommercialComponents, 0)
+		for _, ProductGroups := range line.ProductGroups {
+			for _, Elements := range ProductGroups.Elements {
+				for _, CommercialComponents := range Elements.CommercialComponents {
+					// if cout >= 10 { // Максимум 10 товаров в категории
+					// 	break
+					// }
+					CommercialComponents.Cat = cat.Cat
+					CommercialComponents.Gender = cat.Gender
+					ProductsLine = append(ProductsLine, CommercialComponents)
+				}
 			}
-			AddingProduct = massimodutti.Touch2Product2(AddingProduct, touch)
-
-			// Добавить все размеры в товар из всех вариаций товара
-			AddingProduct.Size = bases.EditProdSize(AddingProduct)
-
-			AddingProduct.Img = bases.EditIMG(AddingProduct)
-
-			Products[i] = AddingProduct
-
-			BarProducts.Increment()
 		}
-		BarProducts.Finish()
 
-		bases.Variety2{Product: Products}.SaveJson(fmt.Sprintf("%szara_%d_%d",
-			folder, index, CategoryForSKU.ID))
+		ProductsLine = RemoveDuplicateProductsLine(ProductsLine)
+
+		// Парсим товары
+		var Variety bases.Variety2
+
+		if len(ProductsLine) == 0 {
+			bx.GLOG.Warn(fmt.Sprintf("Парсера ZARA: i=%d, длина Line = 0", i))
+			continue
+		}
+
+		// Переведённая категория
+		FileName := ProductsLine[0].Cat[len(ProductsLine[0].Cat)-1].Slug
+		ProdTranslateCat := ProductsLine[0].Cat
+
+		barProduct := pb.StartNew(len(ProductsLine))
+		barProduct.Prefix(fmt.Sprintf("[%d/%d]", i+1, len(CatArr.Items)))
+		for _, prod := range ProductsLine {
+			if _, valueok := allID[prod.Reference]; !valueok {
+				allID[prod.Reference] = true
+			} else {
+				bx.GLOG.Warn("Парсера ZARA: Дубль:", fmt.Sprintf(zaratr.TouchURL, prod.Seo.Keyword+"-p"+prod.Seo.SeoProductID))
+				continue
+			}
+
+			bx.GLOG.Info("Парсера ZARA: LoadTouch:", fmt.Sprintf(zaratr.TouchURL, prod.Seo.Keyword+"-p"+prod.Seo.SeoProductID))
+			touch, _ := zaratr.LoadTouch(prod.Seo.Keyword + "-p" + prod.Seo.SeoProductID) // Выполняем запрос
+			Prod2 := zaratr.Touch2Product2(touch)                                         // АПереводим в структуру Product2
+			Prod2.Cat = ProdTranslateCat                                                  //prod.Cat // Обновляем категории
+			Prod2.GenderLabel = prod.Gender                                               // Обнволяем гендер
+
+			// Редактируем товар
+			Prod2.Size = bases.EditProdSize(Prod2)
+			Prod2.Img = bases.EditIMG(Prod2)
+
+			Variety.Product = append(Variety.Product, Prod2)
+			barProduct.Increment()
+		}
+
+		Variety.SaveJson(fmt.Sprintf("%s/zara_%d_%v",
+			folder, index, FileName))
+		barProduct.Finish()
 		index++
 	}
+}
 
+// Удалить дубликаты в товарах ProductsLine
+func RemoveDuplicateProductsLine(ProductsLine []zaratr.CommercialComponents) []zaratr.CommercialComponents {
+	allKeys := make(map[string]bool)
+	list := []zaratr.CommercialComponents{}
+	for _, item := range ProductsLine {
+		if _, value := allKeys[item.ID.String()]; !value {
+			allKeys[item.ID.String()] = true
+			list = append(list, item)
+		}
+	}
+	return list
 }

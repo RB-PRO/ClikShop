@@ -11,9 +11,8 @@ import (
 // Парсинг данных и сохранение их в файлы
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
-func (bx *bitrixActualizer) hm() {
+func (bx *bitrixActualizer) hm(folder string) {
 
-	folder := "hm/"
 	MakeDir(folder)
 
 	// Получить слайс категорий
@@ -72,8 +71,8 @@ func (bx *bitrixActualizer) hm() {
 			AddingProduct, ErrorParseProduct = hm.VariableProduct2(AddingProduct)
 			if ErrorParseProduct != nil {
 				bx.GLOG.Err("VariableProduct2:", ErrorParseProduct)
-				// continue
-				panic(ErrorParseProduct)
+				continue
+				// panic(ErrorParseProduct)
 			}
 
 			// Данные по рамерам
@@ -81,8 +80,8 @@ func (bx *bitrixActualizer) hm() {
 			AddingProduct, ErrAvailabilityProduct = hm.AvailabilityProduct(AddingProduct)
 			if ErrAvailabilityProduct != nil {
 				bx.GLOG.Err("AvailabilityProduct:", ErrAvailabilityProduct)
-				// continue
-				panic(ErrAvailabilityProduct)
+				continue
+				// panic(ErrAvailabilityProduct)
 			}
 
 			// Описание товара
@@ -90,8 +89,8 @@ func (bx *bitrixActualizer) hm() {
 			AddingProduct, ErrVariableDescription2 = hm.VariableDescription2(AddingProduct)
 			if ErrVariableDescription2 != nil {
 				bx.GLOG.Err("VariableDescription2:", ErrVariableDescription2)
-				// continue
-				panic(ErrVariableDescription2)
+				continue
+				// panic(ErrVariableDescription2)
 			}
 
 			// Добавить все размеры в товар из всех вариаций товара
@@ -104,8 +103,8 @@ func (bx *bitrixActualizer) hm() {
 			BarProducts.Increment()
 			count++
 		}
-		// bases.Variety2{Product: SubSlice}.SaveXlsxCsvs(fmt.Sprintf("tmp/HM_SubSlice_%d_%d-%d", cout, SubSlice_i, SubSlice_i+size))
-		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("%shm_%d_%s", folder, icateg, categ.Cat[len(categ.Cat)-1].Slug))
+		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("%shm_%d_%s",
+			folder, icateg, categ.Cat[len(categ.Cat)-1].Slug))
 		BarProducts.Finish()
 	}
 }

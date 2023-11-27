@@ -7,24 +7,50 @@ import (
 	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
 	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
 	"github.com/RB-PRO/SanctionedClothing/pkg/gol"
+	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
+	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
 )
 
 type bitrixActualizer struct {
 	BX   *apibitrix.BitrixUser
+	SKU  map[string]bool
 	GLOG *gol.Gol
+	TR   *transrb.Translate
 }
 
 // Создать актуализатор
 func NewActualizer() (*bitrixActualizer, error) {
+
+	// Битрикс-пользователь
 	bx, ErrNewBitrixUser := apibitrix.NewBitrixUser()
 	if ErrNewBitrixUser != nil {
 		return nil, fmt.Errorf("apibitrix.NewBitrixUser: %v", ErrNewBitrixUser)
 	}
+
+	// Логгер
 	glog, ErrNewLogs := gol.NewGol("logs/")
 	if ErrNewLogs != nil {
 		return nil, fmt.Errorf("gol.NewGol: %v", ErrNewLogs)
 	}
-	return &bitrixActualizer{BX: bx, GLOG: glog}, nil
+
+	// Создать оьбъект переводчика
+	// tr, ErrNewTr := wcprod.NewTranslate()
+	// if ErrNewTr != nil {
+	// 	return nil, fmt.Errorf("wcprod.NewTranslate: %v", ErrNewTr)
+	// }
+
+	// Переводчик
+	ConfigRBFileName := "config_rb.json" // Загрузка конфига
+	ConfigRB, ErrOpenConfigRB := wcprod.LoadConfig(ConfigRBFileName)
+	if ErrOpenConfigRB != nil {
+		return nil, fmt.Errorf("wcprod.LoadConfig: New: Read config file '%s' error: %v", ConfigRBFileName, ErrOpenConfigRB.Error())
+	}
+	tr, ErrTranslate := transrb.New(ConfigRB.FolderID, ConfigRB.OAuthToken)
+	if ErrTranslate != nil {
+		return nil, fmt.Errorf("transrb.New: %v", ErrTranslate)
+	}
+
+	return &bitrixActualizer{BX: bx, GLOG: glog, TR: tr}, nil
 }
 
 func Start() {
@@ -57,33 +83,33 @@ func Start() {
 	if ErrSKU != nil {
 		panic(ErrSKU)
 	}
+	bx.SKU = sku
 	bx.BX.Nots.Sends(fmt.Sprintf("Получил %d артикулов из Bitrix", len(sku)))
 
-	bx.md()
-	bx.zara()
-	bx.hm()
-	bx.ss()
+	// FolderFiles := []string{"zara", "md", "hm", "ss"}
+
+	// bx.zara()
+	// bx.md()
+	// bx.hm()
+	// bx.ss()
+
+	FolderZara := "zara"
+	bx.zara(FolderZara) // Парсинг
+
+	ErrSub := bx.Sub(FolderZara)
+	if ErrSub != nil {
+		bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", FolderZara, ErrSub))
+		return
+	}
+	ErrTr := bx.Trans(FolderZara)
+	if ErrTr != nil {
+		bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", FolderZara, ErrTr))
+		return
+	}
+	ErrPush := bx.Push(FolderZara)
+	if ErrPush != nil {
+		bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", FolderZara, ErrPush))
+		return
+	}
+
 }
-
-// func SaveJson(filename string, data []string) error {
-// 	f, ErrCreateFile := os.Create(filename + ".json")
-// 	if ErrCreateFile != nil {
-// 		return ErrCreateFile
-// 	}
-// 	// as_json, ErrMarshalIndent := json.MarshalIndent(variety, "", "\t")
-// 	as_json, ErrMarshalIndent := MarshalMy(data)
-// 	if ErrMarshalIndent != nil {
-// 		return ErrMarshalIndent
-// 	}
-// 	f.Write(as_json)
-// 	f.Close()
-// 	return nil
-// }
-
-// func MarshalMy(i interface{}) ([]byte, error) {
-// 	buffer := &bytes.Buffer{}
-// 	encoder := json.NewEncoder(buffer)
-// 	encoder.SetEscapeHTML(false)
-// 	err := encoder.Encode(i)
-// 	return bytes.TrimRight(buffer.Bytes(), "\n"), err
-// }

@@ -1,6 +1,12 @@
 package actualizer
 
-import "os"
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+
+	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+)
 
 // Создать папку
 // а если она уже создана, то удалить её нахуй и пересоздать
@@ -10,4 +16,33 @@ func MakeDir(Path string) error {
 		return ErrMkdirAll
 	}
 	return nil
+}
+
+// Получить все файлы из папки
+func FolderFiles(Folder string) (files []string, Err error) {
+	entries, Err := os.ReadDir(Folder)
+	if Err != nil {
+		return nil, fmt.Errorf("os.ReadDir: %v", Err)
+	}
+	for _, e := range entries {
+		files = append(files, e.Name())
+	}
+	return files, nil
+}
+
+func ProdFile(folder, filename string) (Variety bases.Variety2, Err error) {
+
+	// Считать файл
+	data, Err := os.ReadFile(folder + filename)
+	if Err != nil {
+		return bases.Variety2{}, fmt.Errorf("os.ReadFile: %v", Err)
+	}
+
+	// Распарсить
+	Err = json.Unmarshal(data, &Variety)
+	if Err != nil {
+		return bases.Variety2{}, fmt.Errorf("os.ReadFile: %v", Err)
+	}
+
+	return Variety, nil
 }

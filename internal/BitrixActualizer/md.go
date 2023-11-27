@@ -9,9 +9,8 @@ import (
 	"github.com/cheggaaa/pb"
 )
 
-func (bx *bitrixActualizer) md() {
+func (bx *bitrixActualizer) md(folder string) {
 
-	folder := "md/"
 	MakeDir(folder)
 
 	// Получить все категории
@@ -34,15 +33,8 @@ func (bx *bitrixActualizer) md() {
 			panic(ErrSKUs)
 		}
 
-		// Формируем подслайсы для каждой категории
-		sku_slice := prods.ProductIds
-		// sku_slice := make([]int, 0, len(prods.ProductIds))
-		// for _, idSKU := range prods.ProductIds {
-		// 	sku_slice = append(sku_slice, idSKU)
-		// }
-
 		// Получаем данные по артикулам(id)
-		line, ErrLines := massimodutti.Lines(sku_slice)
+		line, ErrLines := massimodutti.Lines(prods.ProductIds)
 		if ErrLines != nil {
 			panic(ErrLines)
 		}

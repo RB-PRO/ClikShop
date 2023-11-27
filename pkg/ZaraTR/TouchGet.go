@@ -16,7 +16,7 @@ func LoadTouch(id string) (tou Touch, ErrorLine error) {
 	// Делаем запрос на получение категорий
 	url := fmt.Sprintf(TouchURL, id)
 	// url = URL + "/tr/en/running-trainers-with-chunky-soles-p12341120.html?ajax=true&bm-verify=AAQAAAAI_____5lwzlu22VtQaoh-9PiUIhyOgcPo7q7uLb9PJnFXoQHFkGw6azaqj3INCtml-ncQeHVuacOgEzL_lQD66tShwJ1bFmVhHlhO_yF5UW6CJQs8SNLQnr3veBGv5uja4HD9xTnSjnCrZWKCqV9kxqY2m9knCEVeFs99iGTMb85zlsY-mQUnnbqOurvcWrU6EYJ1cAc2CbRAp5ZwpMusWOxQgzo8GAGI5n91e-bLbtsaeMWKg0fYV8q9v7NGYW_hg8el_0Pp0XFonCncRls84_pdM3sE_hjPYptE3bTGDnJHGPc3XM6NSMk7O7jaWeMUPPo"
-	fmt.Println("->>>>>>>>>>", url)
+	// fmt.Println("->>>>>>>>>>", url)
 	client := &http.Client{
 		Timeout: time.Second * 10,
 	}
