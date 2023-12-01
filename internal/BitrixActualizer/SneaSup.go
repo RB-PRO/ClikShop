@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	sneasup "github.com/RB-PRO/SanctionedClothing/pkg/SneaSup"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	sneasup "github.com/RB-PRO/ClikShop/pkg/SneaSup"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 	"github.com/cheggaaa/pb"
 )
 

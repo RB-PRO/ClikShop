@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 // Получить ID всех товаров

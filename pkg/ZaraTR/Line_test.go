@@ -3,7 +3,7 @@ package zaratr_test
 import (
 	"testing"
 
-	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
+	zaratr "github.com/RB-PRO/ClikShop/pkg/ZaraTR"
 )
 
 func TestLoadLine(t *testing.T) {

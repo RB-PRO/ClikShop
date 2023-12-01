@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 	"github.com/gocolly/colly"
 )
 

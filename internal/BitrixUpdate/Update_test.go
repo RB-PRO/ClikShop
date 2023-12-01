@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	notification "github.com/RB-PRO/SanctionedClothing/pkg/Notification"
-	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
+	notification "github.com/RB-PRO/ClikShop/pkg/Notification"
+	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
 )
 
 // Печать запросника

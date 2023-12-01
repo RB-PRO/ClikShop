@@ -5,11 +5,11 @@ import (
 	"log"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 )
 
-// go test -timeout 90s -run ^TestAddProduct$ github.com/RB-PRO/SanctionedClothing/pkg/wcprod
+// go test -timeout 90s -run ^TestAddProduct$ github.com/RB-PRO/ClikShop/pkg/wcprod
 func TestAddProduct(t *testing.T) {
 	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {
@@ -93,7 +93,7 @@ func varietBasesVariety2() bases.Variety2 {
 	}
 }
 
-// go test -v -run ^TestAddProduct_2$ github.com/RB-PRO/SanctionedClothing/pkg/wcprod
+// go test -v -run ^TestAddProduct_2$ github.com/RB-PRO/ClikShop/pkg/wcprod
 func TestAddProduct_2(t *testing.T) {
 	Adding, errorInitWcAdd := wcprod.New() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {

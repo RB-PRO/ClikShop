@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/pm6"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/pm6"
 )
 
 func TestAllPages(t *testing.T) {

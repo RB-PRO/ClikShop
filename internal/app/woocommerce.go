@@ -3,7 +3,7 @@ package app
 import (
 	"log"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
+	"github.com/RB-PRO/ClikShop/pkg/woocommerce"
 )
 
 func RunWoocommerce() {

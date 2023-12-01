@@ -8,8 +8,8 @@ package actualizer
 import (
 	"fmt"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/transrb"
 	"github.com/cheggaaa/pb"
 )
 

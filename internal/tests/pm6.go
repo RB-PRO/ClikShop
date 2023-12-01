@@ -3,8 +3,8 @@ package tests
 import (
 	"fmt"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/pm6"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/pm6"
 )
 
 func Run_pm6() {

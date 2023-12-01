@@ -5,14 +5,14 @@ import (
 	"log"
 	"testing"
 
-	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	zaratr "github.com/RB-PRO/ClikShop/pkg/ZaraTR"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 )
 
 // Тестовая загрузка единичного товара
-// go test -v -run ^TestSingleAddProduct$ github.com/RB-PRO/SanctionedClothing/internal/ZaraApp
+// go test -v -run ^TestSingleAddProduct$ github.com/RB-PRO/ClikShop/internal/ZaraApp
 func TestSingleAddProduct(t *testing.T) {
 
 	// Нало работы с центральным банком
@@ -108,7 +108,7 @@ func TestSingleAddProduct(t *testing.T) {
 }
 
 // go clean -testcache
-// go test -v -run ^TestSingleAddProductLink$ github.com/RB-PRO/SanctionedClothing/internal/ZaraApp
+// go test -v -run ^TestSingleAddProductLink$ github.com/RB-PRO/ClikShop/internal/ZaraApp
 func TestSingleAddProductLink(t *testing.T) {
 
 	// Нало работы с центральным банком

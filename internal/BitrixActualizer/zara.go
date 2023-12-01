@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	zaratr "github.com/RB-PRO/ClikShop/pkg/ZaraTR"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 	"github.com/cheggaaa/pb"
 )
 

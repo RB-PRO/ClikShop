@@ -1,7 +1,7 @@
 package main
 
 import (
-	actualizer "github.com/RB-PRO/SanctionedClothing/internal/BitrixActualizer"
+	actualizer "github.com/RB-PRO/ClikShop/internal/BitrixActualizer"
 )
 
 func main() {

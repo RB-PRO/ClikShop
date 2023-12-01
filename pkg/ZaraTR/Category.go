@@ -3,7 +3,7 @@ package zaratr
 import (
 	"strings"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 type CategoryArray struct {

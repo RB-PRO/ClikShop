@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 func TestRequest(t *testing.T) { // Комплексное тестирование всех методов Bitrix

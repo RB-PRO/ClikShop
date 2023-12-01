@@ -3,7 +3,7 @@ package woocommerce
 import (
 	"errors"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 func (user *User) AddCat2(plc *Categorys, cat []bases.Cat) (NewAddParentId int, errorAdd error) {

@@ -1,6 +1,6 @@
 package zaratr
 
-import "github.com/RB-PRO/SanctionedClothing/pkg/bases"
+import "github.com/RB-PRO/ClikShop/pkg/bases"
 
 // Ссылка на все категории, [пример].
 //

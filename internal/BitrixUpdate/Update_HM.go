@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	hm "github.com/RB-PRO/SanctionedClothing/pkg/hm"
+	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	hm "github.com/RB-PRO/ClikShop/pkg/hm"
 )
 
 // Ключ для хэш-мапы для определения каждой вариации

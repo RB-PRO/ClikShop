@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
 )
 
 func TestUSD(t *testing.T) {

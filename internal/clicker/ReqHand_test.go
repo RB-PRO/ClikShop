@@ -3,10 +3,10 @@ package clicker
 import (
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 )
 
-// go test -v -run ^TestHands$ github.com/RB-PRO/SanctionedClothing/internal/Clicker
+// go test -v -run ^TestHands$ github.com/RB-PRO/ClikShop/internal/Clicker
 func TestHands(t *testing.T) {
 	Adding, errorInitWcAdd := wcprod.New2() // Создаём экземпляр загрузчика данных
 	if errorInitWcAdd != nil {

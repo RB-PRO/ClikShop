@@ -3,7 +3,7 @@ package zaratr
 import (
 	"time"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 // Ссылка на товар, [пример].

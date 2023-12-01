@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
-	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	massimodutti "github.com/RB-PRO/ClikShop/pkg/MassimoDutti"
+	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 // Обновить цены и наличие по ОДНОМУ товару

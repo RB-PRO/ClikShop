@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/usmall"
-	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/usmall"
+	"github.com/RB-PRO/ClikShop/pkg/woocommerce"
 )
 
 func TparseANDadd() {

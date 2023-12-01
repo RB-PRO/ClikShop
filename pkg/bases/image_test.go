@@ -3,7 +3,7 @@ package bases_test
 import (
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 func TestWebp2Jpg(t *testing.T) {

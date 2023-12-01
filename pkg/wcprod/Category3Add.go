@@ -3,7 +3,7 @@ package wcprod
 import (
 	"errors"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
+	"github.com/RB-PRO/ClikShop/pkg/woocommerce"
 )
 
 // ## Добавить категорию в дерево категорий.

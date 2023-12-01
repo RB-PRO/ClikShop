@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 // Ссылка на категорию, [пример].

@@ -5,11 +5,11 @@ import (
 	"log"
 	"strconv"
 
-	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	massimodutti "github.com/RB-PRO/ClikShop/pkg/MassimoDutti"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"github.com/RB-PRO/ClikShop/pkg/transrb"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 )
 

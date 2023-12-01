@@ -3,7 +3,7 @@ package woocommerce_test
 import (
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
+	"github.com/RB-PRO/ClikShop/pkg/woocommerce"
 )
 
 func NewTestNode() *woocommerce.Node {

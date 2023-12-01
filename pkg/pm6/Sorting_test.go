@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 func TestSortingProducts(t *testing.T) {

@@ -1,8 +1,8 @@
 package wcprod
 
 import (
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/woocommerce"
 )
 
 // Добавть категорию товара на WC из массива категорий

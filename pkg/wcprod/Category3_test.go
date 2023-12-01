@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
-	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
+	"github.com/RB-PRO/ClikShop/pkg/woocommerce"
 )
 
 func TestFormMapCat3(t *testing.T) {

@@ -3,9 +3,9 @@ package bitrixupdate
 import (
 	"fmt"
 
-	sneaksup "github.com/RB-PRO/SanctionedClothing/pkg/SneaSup"
-	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	sneaksup "github.com/RB-PRO/ClikShop/pkg/SneaSup"
+	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 // const URL string = "https://www.sneaksup.com"

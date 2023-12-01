@@ -1,10 +1,10 @@
-module github.com/RB-PRO/SanctionedClothing
+module github.com/RB-PRO/ClikShop
 
 go 1.20
 
 replace github.com/hiscaler/woocommerce-go => ./pkg/woocommerce-go
 
-// C:\Users\roman\Desktop\go\SanctionedClothing\pkg\woocommerce-go
+// C:\Users\roman\Desktop\go\ClikShop\pkg\woocommerce-go
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
+	zaratr "github.com/RB-PRO/ClikShop/pkg/ZaraTR"
 )
 
 func TestLoadTouch(t *testing.T) {

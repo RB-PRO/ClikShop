@@ -12,9 +12,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/imgbb"
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
-	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
+	"github.com/RB-PRO/ClikShop/pkg/imgbb"
+	"github.com/RB-PRO/ClikShop/pkg/transrb"
+	"github.com/RB-PRO/ClikShop/pkg/woocommerce"
 	wc "github.com/hiscaler/woocommerce-go"
 	config "github.com/hiscaler/woocommerce-go/config"
 	"github.com/hiscaler/woocommerce-go/entity"

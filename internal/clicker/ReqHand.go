@@ -1,7 +1,7 @@
 package clicker
 
 import (
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 	wc "github.com/hiscaler/woocommerce-go"
 	"github.com/hiscaler/woocommerce-go/entity"
 )

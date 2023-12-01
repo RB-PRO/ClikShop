@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 func (tr *Translate) TranslateProduct2(prod bases.Product2) (bases.Product2, error) {

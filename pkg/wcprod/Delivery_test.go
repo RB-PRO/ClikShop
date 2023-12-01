@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 )
 
 func TestXlsxDelivery(t *testing.T) {

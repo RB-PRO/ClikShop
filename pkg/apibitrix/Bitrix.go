@@ -3,9 +3,9 @@ package apibitrix
 import (
 	"fmt"
 
-	notification "github.com/RB-PRO/SanctionedClothing/pkg/Notification"
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/gol"
+	notification "github.com/RB-PRO/ClikShop/pkg/Notification"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"github.com/RB-PRO/ClikShop/pkg/gol"
 )
 
 const bitrixURL string = "https://clikshop.ru/parser/api/%s/index.php"

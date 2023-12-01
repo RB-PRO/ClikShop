@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 )
 

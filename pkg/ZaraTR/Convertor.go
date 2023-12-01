@@ -1,7 +1,7 @@
 package zaratr
 
 import (
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 const URL string = "https://www.zara.com"

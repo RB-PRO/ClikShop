@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/hm"
+	"github.com/RB-PRO/ClikShop/pkg/hm"
 )
 
 // https://www2.hm.com/tr_tr/kadin/urune-gore-satin-al/ust/_jcr_content/main/productlisting.display.json?page-size=1

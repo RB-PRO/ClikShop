@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/pm6"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
-	//"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"github.com/RB-PRO/ClikShop/pkg/pm6"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
+	//"github.com/RB-PRO/ClikShop/pkg/wcprod"
 )
 
 // Функция, которая занимается вызовом функций парсинга и загрузки товаров

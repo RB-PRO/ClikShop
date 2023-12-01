@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 	wc "github.com/hiscaler/woocommerce-go"
 	"github.com/hiscaler/woocommerce-go/entity"
 )

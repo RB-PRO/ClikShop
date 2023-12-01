@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/imgbb"
+	"github.com/RB-PRO/ClikShop/pkg/imgbb"
 )
 
 // Загрузить файл на сервис imgbb

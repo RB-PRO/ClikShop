@@ -9,7 +9,7 @@ import (
 	"github.com/cheggaaa/pb"
 	"github.com/gocolly/colly"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 // Структура массива товаров

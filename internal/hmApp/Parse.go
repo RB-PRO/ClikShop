@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/gol"
-	"github.com/RB-PRO/SanctionedClothing/pkg/hm"
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/gol"
+	"github.com/RB-PRO/ClikShop/pkg/hm"
+	"github.com/RB-PRO/ClikShop/pkg/transrb"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 )
 

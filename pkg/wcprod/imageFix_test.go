@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 	"github.com/imagekit-developer/imagekit-go/api/uploader"
 )
 
@@ -17,12 +17,12 @@ func TestUploadFile(t *testing.T) {
 		t.Error(errorInitWcAdd)
 	}
 
-	// link, err := Adding.UploadFile(`D:\Desktop\Work\program\go\src\github.com\RB-PRO\SanctionedClothing\pkg\wcprod\test.jpg`)
+	// link, err := Adding.UploadFile(`D:\Desktop\Work\program\go\src\github.com\RB-PRO\ClikShop\pkg\wcprod\test.jpg`)
 	// if err != nil {
 	// 	t.Error(err)
 	// }
 
-	// FilePathJpg := `D:\Desktop\Work\program\go\src\github.com\RB-PRO\SanctionedClothing\pkg\wcprod\test.jpg`
+	// FilePathJpg := `D:\Desktop\Work\program\go\src\github.com\RB-PRO\ClikShop\pkg\wcprod\test.jpg`
 
 	base64, err := wcprod.PicToBase64("test.jpg")
 	if err != nil {

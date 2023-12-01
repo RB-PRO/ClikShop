@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	lv "github.com/RB-PRO/SanctionedClothing/pkg/LouisVuitton"
+	lv "github.com/RB-PRO/ClikShop/pkg/LouisVuitton"
 	"github.com/cheggaaa/pb"
 )
 

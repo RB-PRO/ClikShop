@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 // Тест, который парсит страницы каталога

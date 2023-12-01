@@ -5,17 +5,17 @@ import (
 	"strings"
 	"testing"
 
-	hmapp "github.com/RB-PRO/SanctionedClothing/internal/hmApp"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/hm"
-	"github.com/RB-PRO/SanctionedClothing/pkg/imgbb"
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	hmapp "github.com/RB-PRO/ClikShop/internal/hmApp"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"github.com/RB-PRO/ClikShop/pkg/hm"
+	"github.com/RB-PRO/ClikShop/pkg/imgbb"
+	"github.com/RB-PRO/ClikShop/pkg/transrb"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 	ikurl "github.com/imagekit-developer/imagekit-go/url"
 )
 
-// go test -v -run ^TestParseAddProduct$ github.com/RB-PRO/SanctionedClothing/internal/hmApp
+// go test -v -run ^TestParseAddProduct$ github.com/RB-PRO/ClikShop/internal/hmApp
 func TestParseAddProduct(t *testing.T) {
 	// Нало работы с центральным банком
 	cb, ErrorCB := cbbank.New() // Получить курс валюты
@@ -155,7 +155,7 @@ func TestParseAddProduct(t *testing.T) {
 
 //
 
-// go test -v -run ^TestParseAddProductAllCategorys$ github.com/RB-PRO/SanctionedClothing/internal/hmApp
+// go test -v -run ^TestParseAddProductAllCategorys$ github.com/RB-PRO/ClikShop/internal/hmApp
 func TestParseAddProductAllCategorys(t *testing.T) {
 	// Нало работы с центральным банком
 	cb, ErrorCB := cbbank.New() // Получить курс валюты

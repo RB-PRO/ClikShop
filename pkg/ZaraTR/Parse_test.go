@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 func TestCatCycle(t *testing.T) {
@@ -18,7 +18,7 @@ func TestCatCycle(t *testing.T) {
 
 }
 func TestParsing(t *testing.T) {
-	// go test -timeout 12000s -run ^TestParsing$ github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR
+	// go test -timeout 12000s -run ^TestParsing$ github.com/RB-PRO/ClikShop/pkg/ZaraTR
 	Parsing()
 }
 func TestParseTouch2Product2(t *testing.T) {

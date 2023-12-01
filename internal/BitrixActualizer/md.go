@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	massimodutti "github.com/RB-PRO/SanctionedClothing/pkg/MassimoDutti"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	massimodutti "github.com/RB-PRO/ClikShop/pkg/MassimoDutti"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 	"github.com/cheggaaa/pb"
 )
 

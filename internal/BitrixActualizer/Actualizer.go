@@ -3,12 +3,12 @@ package actualizer
 import (
 	"fmt"
 
-	notification "github.com/RB-PRO/SanctionedClothing/pkg/Notification"
-	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/gol"
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	notification "github.com/RB-PRO/ClikShop/pkg/Notification"
+	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"github.com/RB-PRO/ClikShop/pkg/gol"
+	"github.com/RB-PRO/ClikShop/pkg/transrb"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 )
 
 type bitrixActualizer struct {

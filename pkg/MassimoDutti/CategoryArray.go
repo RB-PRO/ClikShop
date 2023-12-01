@@ -1,7 +1,7 @@
 package massimodutti
 
 import (
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 // Структура категорий, которая исползуется для обозначения всех товаров по его древу категорий

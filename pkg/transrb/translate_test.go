@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
+	"github.com/RB-PRO/ClikShop/pkg/transrb"
 )
 
 func TestTrans(t *testing.T) {

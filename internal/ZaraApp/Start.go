@@ -3,10 +3,10 @@ package zaraapp
 import (
 	"log"
 
-	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	zaratr "github.com/RB-PRO/ClikShop/pkg/ZaraTR"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 )
 

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	zaratr "github.com/RB-PRO/SanctionedClothing/pkg/ZaraTR"
-	"github.com/RB-PRO/SanctionedClothing/pkg/apibitrix"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
+	zaratr "github.com/RB-PRO/ClikShop/pkg/ZaraTR"
+	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
 // Обновить цены и наличие по ОДНОМУ товару

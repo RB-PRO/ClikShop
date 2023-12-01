@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	sneasup "github.com/RB-PRO/SanctionedClothing/pkg/SneaSup"
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/cbbank"
-	"github.com/RB-PRO/SanctionedClothing/pkg/transrb"
-	"github.com/RB-PRO/SanctionedClothing/pkg/wcprod"
+	sneasup "github.com/RB-PRO/ClikShop/pkg/SneaSup"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"github.com/RB-PRO/ClikShop/pkg/transrb"
+	"github.com/RB-PRO/ClikShop/pkg/wcprod"
 	"github.com/cheggaaa/pb"
 )
 

@@ -8,15 +8,15 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
-	"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
+	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"github.com/RB-PRO/ClikShop/pkg/woocommerce"
 	gt "github.com/bas24/googletranslatefree"
 	wc "github.com/hiscaler/woocommerce-go"
 	config "github.com/hiscaler/woocommerce-go/config"
 	"github.com/hiscaler/woocommerce-go/entity"
 	//"honnef.co/go/tools/config"
 	//"honnef.co/go/tools/config"
-	//"github.com/RB-PRO/SanctionedClothing/pkg/woocommerce"
+	//"github.com/RB-PRO/ClikShop/pkg/woocommerce"
 	//config "github.com/hiscaler/woocommerce-go/config"
 )
 
