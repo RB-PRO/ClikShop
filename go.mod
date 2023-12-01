@@ -10,6 +10,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/bas24/googletranslatefree v0.0.0-20220326200502-05ed9e639439
 	github.com/cheggaaa/pb v1.0.29
+	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/gocolly/colly v1.2.0
 	github.com/hiscaler/woocommerce-go v1.0.3
 	github.com/imagekit-developer/imagekit-go v0.0.0-20221027035115-2e643255882a

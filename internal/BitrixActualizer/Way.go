@@ -43,8 +43,8 @@ func (bx *bitrixActualizer) Sub(Folder string) error {
 		// Сохраняем вычитанные товары в файл
 		VarietySub.SaveJson2(fmt.Sprintf("%s%s", folderSub+"/", file))
 	}
-	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nВ бренде %s всего спарсили %d товаров, а после вычитания осталось %d",
-		Folder, ProductCoutOrig, ProductCoutSub))
+	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nВ бренде %s всего спарсили %d товаров, а после вычитания осталось %d, это %.3f%%",
+		Folder, ProductCoutOrig, ProductCoutSub, 100.0*float64(ProductCoutSub)/float64(ProductCoutOrig)))
 	return nil
 }
 
@@ -76,6 +76,13 @@ func (bx *bitrixActualizer) Trans(Folder string) error {
 		barProduct := pb.StartNew(len(Variety.Product))
 		barProduct.Prefix(fmt.Sprintf("Перевод [%d/%d]", ifile+1, len(files)))
 		for i := range Variety.Product {
+			var ErrCoast error
+			Variety.Product[i], ErrCoast = bx.Coast(Variety.Product[i])
+			if ErrCoast != nil {
+				bx.GLOG.Err(fmt.Sprintf("[%d/%d]: %s: Товар '%s' %v",
+					ifile, len(files), file, Variety.Product[i].Name, ErrCoast))
+				continue
+			}
 			// Перевести товар
 			TranslateProd, ErrorTranstate := bx.TR.TranslateProduct2(Variety.Product[i])
 			if ErrorTranstate != nil {
@@ -85,6 +92,7 @@ func (bx *bitrixActualizer) Trans(Folder string) error {
 				Variety.Product[i] = TranslateProd
 			}
 			barProduct.Increment()
+
 		}
 		barProduct.Finish()
 
@@ -98,11 +106,85 @@ func (bx *bitrixActualizer) Trans(Folder string) error {
 	return nil
 }
 
+// Редактирование цены для товара
+func (bx *bitrixActualizer) Coast(prod bases.Product2) (bases.Product2, error) {
+	if cm, ok := bx.BX.MapCoast[prod.Manufacturer]; ok {
+		for i := range prod.Item {
+			prod.Item[i].Price = bases.EditDecadense(cm.Walrus*prod.Item[i].Price + float64(cm.Delivery))
+		}
+	} else {
+		return prod, fmt.Errorf("для производителя '%s' не найдены конфигурации цены, все цены: '%+v'",
+			prod.Manufacturer, bx.BX.MapCoast)
+	}
+	return prod, nil
+}
+
+// Полуть мапу всех артикулов товаров из магазина в Bitrix
+func (bx *bitrixActualizer) subtraction(a bases.Variety2) (deductible bases.Variety2) {
+	for i := range a.Product {
+		if _, ok := bx.SKU[a.Product[i].Article]; !ok {
+			deductible.Product = append(deductible.Product, a.Product[i])
+		}
+	}
+	return deductible
+}
+
+////////////////////////////////
+
+// Удалить дубликаты
+//
+// Передаём путь к папке с файлами с товарами и эта функция обработает все товары из папки,
+// удалив дубли и сохранит новые товары в новой папке `*_sub`
+func (bx *bitrixActualizer) DeleteRepeated(Folder string) error {
+	folderSub := Folder + "_tr"
+	folderDr := Folder + "_dr"
+	MakeDir(folderDr + "/") // Создаём папку вычитания
+
+	// Получаем файлы из папки источника со спарсенными товарами
+	files, ErrFolderFiles := FolderFiles(folderSub + "/")
+	if ErrFolderFiles != nil {
+		return fmt.Errorf("FolderFiles: %v", ErrFolderFiles)
+	}
+
+	var IgnoredProducts, TotalProducts int
+	sku := make(map[string]bool)
+	for _, file := range files {
+		// Читаем файл с товарами
+		Variety, ErrProdFile := ProdFile(folderSub+"/", file)
+		if ErrProdFile != nil {
+			bx.GLOG.Warn(fmt.Sprintf("%s%s: Не удалось прочитать файл: %v",
+				Folder, file, ErrProdFile))
+			continue
+		}
+
+		var SavedVar bases.Variety2
+
+		// Обработка товаров
+		for i := range Variety.Product {
+			if _, ok := sku[Variety.Product[i].Article]; ok { // Если был уже такой SKU
+				bx.GLOG.Warn(fmt.Sprintf("DeleteRepeated: %s: Товар %s с артикулом %s уже был, поэтому его игнорирую",
+					file, Variety.Product[i].Name, Variety.Product[i].Article))
+				IgnoredProducts++
+			} else { // Если такого SKU не было
+				SavedVar.Product = append(SavedVar.Product, Variety.Product[i])
+				sku[Variety.Product[i].Article] = true
+			}
+			TotalProducts++
+		}
+
+		// Сохраняем вычитанные товары в файл
+		SavedVar.SaveJson2(folderDr + "/" + file)
+	}
+	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nУдаление дублей в папке '%s': Убрал %d товаров из %d, это %.3f%%",
+		folderDr, IgnoredProducts, TotalProducts, 100.0*float64(IgnoredProducts)/float64(TotalProducts)))
+	return nil
+}
+
 // Загрузка товаров в Bitrix
 //
 // Эта функция загрузит все товары из папки и создат `*_err` папку для ошибочных товаров
 func (bx *bitrixActualizer) Push(Folder string) error {
-	FolderProds := Folder + "_tr"
+	FolderProds := Folder + "_dr"
 	FolderErr := Folder + "_err"
 	MakeDir(FolderErr + "/") // Создаём папку вычитания
 	ProductPushDone, ProductPushFalse, ProductPushAll := 0, 0, 0
@@ -111,7 +193,10 @@ func (bx *bitrixActualizer) Push(Folder string) error {
 	if ErrFolderFiles != nil {
 		return fmt.Errorf("FolderFiles: %v", ErrFolderFiles)
 	}
-	for ifile, file := range files {
+	sku := make(map[string]bool)
+	// for ifile, file := range files {
+	for ifile := 0; ifile < len(files); ifile++ {
+		file := files[ifile]
 		var ErrProduct bases.Variety2
 		// Читаем файл с товарами
 		VarietyOrig, ErrProdFile := ProdFile(FolderProds+"/", file)
@@ -124,34 +209,30 @@ func (bx *bitrixActualizer) Push(Folder string) error {
 		barProduct := pb.StartNew(len(VarietyOrig.Product))
 		barProduct.Prefix(fmt.Sprintf("Публикация [%d/%d]", ifile+1, len(files)))
 		for i := range VarietyOrig.Product {
-			ID, ErrAddProd := bx.BX.AddProduct(VarietyOrig.Product[i])
-			if ErrAddProd != nil {
-				bx.BX.Log.Err(fmt.Sprintf("Ошибка при загрузке товара %s, Ошибка: %v",
-					VarietyOrig.Product[i].Name, ErrAddProd))
-				ErrProduct.Product = append(ErrProduct.Product, VarietyOrig.Product[i])
-				ProductPushFalse++
-			} else {
-				bx.BX.Log.Info(fmt.Sprintf("Загрузил товар %s, bx - https://213.226.124.16/bitrix/admin/iblock_element_edit.php?IBLOCK_ID=15&type=aspro_lite_catalog&lang=ru&ID=%d&find_section_section=0&WF=Y , donor - %s",
-					VarietyOrig.Product[i].Name, ID, VarietyOrig.Product[i].Link))
-				ProductPushDone++
+			if _, ok := sku[VarietyOrig.Product[i].Article]; !ok {
+				ID, ErrAddProd := bx.BX.AddProduct(VarietyOrig.Product[i])
+				if ErrAddProd != nil {
+					bx.BX.Log.Err(fmt.Sprintf("Ошибка при загрузке товара %s, Ошибка: %v",
+						VarietyOrig.Product[i].Name, ErrAddProd))
+					ErrProduct.Product = append(ErrProduct.Product, VarietyOrig.Product[i])
+					ProductPushFalse++
+				} else {
+					bx.BX.Log.Info(fmt.Sprintf("Загрузил товар %s, bx - https://213.226.124.16/bitrix/admin/iblock_element_edit.php?IBLOCK_ID=15&type=aspro_lite_catalog&lang=ru&ID=%d&find_section_section=0&WF=Y , donor - %s",
+						VarietyOrig.Product[i].Name, ID, VarietyOrig.Product[i].Link))
+					ProductPushDone++
+				}
+				sku[VarietyOrig.Product[i].Article] = true
+				ProductPushAll++
+			} else { // Товар такой товар уже возникал при загрузке
+				bx.BX.Log.Err(fmt.Sprintf("Товар '%s' с артикулом %s уже был при загрузке. Файл %s",
+					VarietyOrig.Product[i].Name, VarietyOrig.Product[i].Article, file))
 			}
-			ProductPushAll++
 			barProduct.Increment()
 		}
 		barProduct.Finish()
 		ErrProduct.SaveJson2(FolderErr + "/" + file)
 	}
-	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nТоваров для загрузки в бренде %s - %d\nУспешно загружено %d из %d(%.2f) товаров",
-		Folder, ProductPushAll, ProductPushDone, ProductPushAll, float64(ProductPushDone/ProductPushAll)))
+	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nТоваров для загрузки в бренде %s - %d\nУспешно загружено %d из %d(%.3f) товаров",
+		Folder, ProductPushAll, ProductPushDone, ProductPushAll, 100.0*float64(ProductPushDone)/float64(ProductPushAll)))
 	return nil
-}
-
-// Полуть мапу всех артикулов товаров из магазина в Bitrix
-func (bx *bitrixActualizer) subtraction(a bases.Variety2) (deductible bases.Variety2) {
-	for i := range a.Product {
-		if _, ok := bx.SKU[a.Product[i].Article]; !ok {
-			deductible.Product = append(deductible.Product, a.Product[i])
-		}
-	}
-	return deductible
 }

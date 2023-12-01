@@ -87,5 +87,5 @@ func (tr *Translate) TranslateProduct2(prod bases.Product2) (bases.Product2, err
 	// }
 	// prod.Specifications = NewSpec
 
-	return prod, nil
+	return TranslateProduct, nil
 }

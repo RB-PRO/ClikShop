@@ -3,6 +3,8 @@ package apibitrix
 import (
 	"fmt"
 	"testing"
+
+	"github.com/RB-PRO/SanctionedClothing/pkg/bases"
 )
 
 func TestRequest(t *testing.T) { // Комплексное тестирование всех методов Bitrix
@@ -97,6 +99,15 @@ func TestRequest(t *testing.T) { // Комплексное тестирован�
 func TestCoasts(t *testing.T) {
 	bx, _ := NewBitrixUser()
 	Coasts, ErrCoasts := bx.Coasts()
+	if ErrCoasts != nil {
+		t.Error(ErrCoasts)
+	}
+	fmt.Println(Coasts)
+}
+
+func TestAdd(t *testing.T) {
+	bx, _ := NewBitrixUser()
+	Coasts, ErrCoasts := bx.AddProduct(bases.Product2{Article: ""})
 	if ErrCoasts != nil {
 		t.Error(ErrCoasts)
 	}

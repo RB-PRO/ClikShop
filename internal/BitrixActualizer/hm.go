@@ -24,9 +24,9 @@ func (bx *bitrixActualizer) hm(folder string) {
 
 	var count int
 	for icateg, categ := range Categorys {
-		if icateg < 28 {
-			continue
-		}
+		// if icateg < 28 {
+		// 	continue
+		// }
 
 		// Получить ссылку на все товары json
 		LineUrl, ErrLineUrl := hm.LineUrl2(categ.Link)
@@ -103,7 +103,7 @@ func (bx *bitrixActualizer) hm(folder string) {
 			BarProducts.Increment()
 			count++
 		}
-		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("%shm_%d_%s",
+		bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("%s/hm_%d_%s",
 			folder, icateg, categ.Cat[len(categ.Cat)-1].Slug))
 		BarProducts.Finish()
 	}

@@ -43,6 +43,8 @@ func CatCycle2() (*CategoryArray, error) {
 					CatsCategory2.Name == "ACCESSORIES | JEWELRY" ||
 					CatsCategory2.Name == "BAGS" ||
 					CatsCategory2.Name == "+ Info" ||
+					CatsCategory2.Name == "-" ||
+					CatsCategory2.Name == "__" ||
 					strings.ToLower(CatsCategory2.Name) == "see all" ||
 					strings.ToLower(CatsCategory2.Name) == "view all" ||
 					strings.Contains(strings.ToLower(CatsCategory2.Name), "accessories") ||
@@ -53,6 +55,7 @@ func CatCycle2() (*CategoryArray, error) {
 					strings.Contains(CatsCategory2.Name, "DIVIDER_MENU") {
 					continue
 				}
+				// fmt.Printf("'%+v'\n", CatsCategory2.Name)
 				// if CatsCategory2.Name == "SALE" || CatsCategory2.Name == "NEW COLLECTION" { //
 				newslise := make([]bases.Cat, 2, 5)
 				copy(newslise, CatBasesHome1)
@@ -67,6 +70,7 @@ func CatCycle2() (*CategoryArray, error) {
 						CatsCategory3.Name == "BEAUTY" ||
 						CatsCategory3.Name == "ACCESSORIES | JEWELRY" ||
 						CatsCategory3.Name == "BAGS" ||
+						CatsCategory3.Name == "-" ||
 						strings.ToLower(CatsCategory3.Name) == "see all" ||
 						strings.ToLower(CatsCategory3.Name) == "view all" ||
 						strings.Contains(strings.ToLower(CatsCategory3.Name), "accessories") ||
@@ -77,6 +81,7 @@ func CatCycle2() (*CategoryArray, error) {
 						strings.Contains(CatsCategory2.Name, "DIVIDER_MENU") {
 						continue
 					}
+					// fmt.Printf("'%+v'\n", CatsCategory3.Name)
 
 					// if strings.Contains(CatsCategory3.Name, "JEANS") ||
 					// 	strings.Contains(CatsCategory3.Name, "T-SHIRTS") ||
@@ -127,6 +132,7 @@ func CatCycle2() (*CategoryArray, error) {
 								strings.Contains(CatsCategory2.Name, "DIVIDER_MENU") {
 								continue
 							}
+							// fmt.Printf("'%+v'\n", CatsCategory4.Name)
 							// if strings.Contains(CatsCategory4.Name, "JEANS") ||
 							// 	strings.Contains(CatsCategory4.Name, "T-SHIRTS") ||
 							// 	strings.Contains(CatsCategory4.Name, "SHIRTS") ||

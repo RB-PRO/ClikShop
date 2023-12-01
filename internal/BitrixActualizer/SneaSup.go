@@ -52,7 +52,7 @@ func (bx *bitrixActualizer) ss(folder string) {
 		BarProducts.Finish()
 
 		// Сохранить в файл
-		bases.Variety2{Product: Products}.SaveJson(fmt.Sprintf("%sss_%d_%s",
+		bases.Variety2{Product: Products}.SaveJson(fmt.Sprintf("%s/ss_%d_%s",
 			folder, iCategory, Namecategory))
 
 	}

@@ -60,7 +60,7 @@ func (bx *bitrixActualizer) md(folder string) {
 
 			BarProducts.Increment()
 		}
-		bases.Variety2{Product: Products}.SaveJson(fmt.Sprintf("%smd_%d_%d",
+		bases.Variety2{Product: Products}.SaveJson(fmt.Sprintf("%s/md_%d_%d",
 			folder, index, CategoryForSKU.ID))
 		BarProducts.Finish()
 		index++

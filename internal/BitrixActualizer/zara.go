@@ -63,6 +63,7 @@ func (bx *bitrixActualizer) zara(folder string) {
 		barProduct := pb.StartNew(len(ProductsLine))
 		barProduct.Prefix(fmt.Sprintf("[%d/%d]", i+1, len(CatArr.Items)))
 		for _, prod := range ProductsLine {
+			barProduct.Increment()
 			if _, valueok := allID[prod.Reference]; !valueok {
 				allID[prod.Reference] = true
 			} else {
@@ -71,6 +72,10 @@ func (bx *bitrixActualizer) zara(folder string) {
 			}
 
 			bx.GLOG.Info("Парсера ZARA: LoadTouch:", fmt.Sprintf(zaratr.TouchURL, prod.Seo.Keyword+"-p"+prod.Seo.SeoProductID))
+
+			if prod.Name == "LOOK" || prod.Name == "" {
+				continue
+			}
 			touch, _ := zaratr.LoadTouch(prod.Seo.Keyword + "-p" + prod.Seo.SeoProductID) // Выполняем запрос
 			Prod2 := zaratr.Touch2Product2(touch)                                         // АПереводим в структуру Product2
 			Prod2.Cat = ProdTranslateCat                                                  //prod.Cat // Обновляем категории
@@ -81,7 +86,6 @@ func (bx *bitrixActualizer) zara(folder string) {
 			Prod2.Img = bases.EditIMG(Prod2)
 
 			Variety.Product = append(Variety.Product, Prod2)
-			barProduct.Increment()
 		}
 
 		Variety.SaveJson(fmt.Sprintf("%s/zara_%d_%v",

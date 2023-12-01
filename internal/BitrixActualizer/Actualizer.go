@@ -21,23 +21,24 @@ type bitrixActualizer struct {
 // Создать актуализатор
 func NewActualizer() (*bitrixActualizer, error) {
 
-	// Битрикс-пользователь
-	bx, ErrNewBitrixUser := apibitrix.NewBitrixUser()
-	if ErrNewBitrixUser != nil {
-		return nil, fmt.Errorf("apibitrix.NewBitrixUser: %v", ErrNewBitrixUser)
-	}
-
 	// Логгер
 	glog, ErrNewLogs := gol.NewGol("logs/")
 	if ErrNewLogs != nil {
 		return nil, fmt.Errorf("gol.NewGol: %v", ErrNewLogs)
 	}
 
-	// Создать оьбъект переводчика
-	// tr, ErrNewTr := wcprod.NewTranslate()
-	// if ErrNewTr != nil {
-	// 	return nil, fmt.Errorf("wcprod.NewTranslate: %v", ErrNewTr)
-	// }
+	// Битрикс-пользователь
+	bx, ErrNewBitrixUser := apibitrix.NewBitrixUser()
+	if ErrNewBitrixUser != nil {
+		return nil, fmt.Errorf("apibitrix.NewBitrixUser: %v", ErrNewBitrixUser)
+	}
+
+	// Подгружаем цены для формирования адекватной цены на товары
+	_, ErrCoasts := bx.Coasts()
+	if ErrCoasts != nil {
+		panic(ErrCoasts)
+	}
+	glog.Info(fmt.Sprintf("Ценовая политика %v", bx.MapCoast))
 
 	// Переводчик
 	ConfigRBFileName := "config_rb.json" // Загрузка конфига
@@ -69,8 +70,8 @@ func Start() {
 	}
 	bx.BX.CB = cb
 	bx.BX.Nots = Nots
-
 	bx.BX.Nots.Sends(fmt.Sprintf("Курс: 1₤ = %.2f₽", cb.Data.Valute.Try.Value/10))
+	bx.BX.Nots.Sends(fmt.Sprintf("Ценовая политика %v", bx.BX.MapCoast))
 
 	// Загружаем цены
 	_, ErrCoasts := bx.BX.Coasts()
@@ -93,23 +94,44 @@ func Start() {
 	// bx.hm()
 	// bx.ss()
 
-	FolderZara := "zara"
-	bx.zara(FolderZara) // Парсинг
+	// FolderZara := "zara"
+	// // bx.zara(FolderZara) // Парсинг
+	// // ErrSub := bx.Sub(FolderZara)
+	// // if ErrSub != nil {
+	// // 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", FolderZara, ErrSub))
+	// // 	return
+	// // }
+	// // ErrTr := bx.Trans(FolderZara)
+	// // if ErrTr != nil {
+	// // 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", FolderZara, ErrTr))
+	// // 	return
+	// // }
+	// ErrPush := bx.Push(FolderZara)
+	// if ErrPush != nil {
+	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", FolderZara, ErrPush))
+	// 	return
+	// }
 
-	ErrSub := bx.Sub(FolderZara)
-	if ErrSub != nil {
-		bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", FolderZara, ErrSub))
+	Folder := "md"
+	// bx.md(Folder) // Парсинг
+	// ErrSub := bx.Sub(Folder)
+	// if ErrSub != nil {
+	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", Folder, ErrSub))
+	// 	return
+	// }
+	// ErrTr := bx.Trans(Folder)
+	// if ErrTr != nil {
+	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
+	// 	return
+	// }
+	ErrDR := bx.DeleteRepeated(Folder)
+	if ErrDR != nil {
+		bx.GLOG.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", Folder, ErrDR))
 		return
 	}
-	ErrTr := bx.Trans(FolderZara)
-	if ErrTr != nil {
-		bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", FolderZara, ErrTr))
-		return
-	}
-	ErrPush := bx.Push(FolderZara)
+	ErrPush := bx.Push(Folder)
 	if ErrPush != nil {
-		bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", FolderZara, ErrPush))
+		bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", Folder, ErrPush))
 		return
 	}
-
 }
