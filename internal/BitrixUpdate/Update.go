@@ -58,8 +58,11 @@ func (bx *bitrixUpdator) UpdateProduct(ProductID string) error {
 		// for i := range variationReq {
 		// 	fmt.Printf("%d. %+v\n", i, variationReq[i])
 		// }
+		bx.BX.Log.Info(fmt.Sprintf("Для товара с ID %s https://213.226.124.16/bitrix/admin/iblock_element_edit.php?IBLOCK_ID=15&type=aspro_lite_catalog&lang=ru&ID=%s&find_section_section=0&WF=Y, с ссылкой на донора %s была подготовлена структура на обновление: %+v",
+			ProductID, ProductID, Link, variationReq))
 		_, ErrVariation := bx.BX.Variation(variationReq)
 		if ErrVariation != nil {
+			bx.BX.Log.Err(fmt.Errorf("bitrix: Variation: %w", ErrVariation))
 			return fmt.Errorf("bitrix: Variation: %w", ErrVariation)
 		}
 	}

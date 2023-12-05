@@ -30,7 +30,7 @@ build-linux-to-windows:
 build-car:
 	export GOARCH=amd64
 	export GOOS=linux
-	export CGO_ENABLED=0 //
+	export CGO_ENABLED=0
 	go env GOOS GOARCH
 	go build cmd/main/main.go
 	scp main Delivery.xlsx config_rb.json config_wp.json root@194.87.107.129:go/ClikShop/

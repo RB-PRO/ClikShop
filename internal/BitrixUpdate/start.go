@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	notification "github.com/RB-PRO/ClikShop/pkg/Notification"
 	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
 	"github.com/RB-PRO/ClikShop/pkg/cbbank"
 	tg "github.com/RB-PRO/ClikShop/pkg/tginformer"
@@ -23,10 +22,10 @@ func Start() {
 		panic(ErrBX)
 	}
 	bx := bitrixUpdator{BitrixUser}
-	Nots, ErrNotification := notification.NewNotification("notification_updator.json")
-	if ErrNotification != nil {
-		panic(ErrNotification)
-	}
+	// Nots, ErrNotification := notification.NewNotification("notification_updator.json")
+	// if ErrNotification != nil {
+	// 	panic(ErrNotification)
+	// }
 	tg, ErrTG := tg.NewTelegram("sender.json")
 	if ErrTG != nil {
 		panic(ErrTG)
@@ -40,7 +39,7 @@ func Start() {
 			panic(ErrorCB)
 		}
 		bx.BX.CB = cb
-		bx.BX.Nots = Nots
+		// bx.BX.Nots = Nots
 		// bx.BX.Nots.Sends(fmt.Sprintf("#updator\nКурс: 1₤ = %.2f₽", cb.Data.Valute.Try.Value/10))
 		tg.Message(fmt.Sprintf("#updator\nКурс: 1₤ = %.2f₽", cb.Data.Valute.Try.Value/10))
 
@@ -62,17 +61,13 @@ func Start() {
 			panic(err)
 		}
 
-		var goodUpdate int
 		// Цикл по всем товарам
+		var goodUpdate int
 		for iProductID, ProductID := range ProductsID {
-
-			// if (iProductID+1)%100 == 0 {
-			// 	bx.BX.Nots.Sends(fmt.Sprintf("Обработка товаров: (%d/%d)", iProductID+1, len(ProductsID)))
-			// }
 
 			if (iProductID+1)%10 == 0 {
 				tgUpdate.Update(fmt.Sprintf("#updator\nОбновил %d товаров из %d, это %.2f%%\nНачал в %s",
-					iProductID, len(ProductsID), float64(iProductID+1)/float64(len(ProductsID)), TimeStart.Format("15:04 02.01.2006")))
+					iProductID+1, len(ProductsID), 100.0*float64(iProductID+1)/float64(len(ProductsID)), TimeStart.Format("15:04 02.01.2006")))
 			}
 
 			// Обновляем данные по товару
@@ -83,14 +78,13 @@ func Start() {
 				goodUpdate++
 			}
 
-			// break
 		}
 
 		// bx.BX.Nots.Sends(fmt.Sprintf("#updator\nПрошёл цикл обновлятора по %d товарам", len(ProductsID)))
 		// tgUpdate.Update(fmt.Sprintf("#updator\nПрошёл цикл обновлятора по %d товарам", len(ProductsID)))
 
 		tgUpdate.Update(fmt.Sprintf("#updator\nУспешно обновлено %d товаров из %d, это %.2f%%\nНачал в %s\nЗакончил в %s\nЭто - %s",
-			goodUpdate, len(ProductsID), float64(goodUpdate)/float64(len(ProductsID)), TimeStart.Format("15:04 02.01.2006"), time.Now().Format("15:04 02.01.2006"), time.Now().Sub(TimeStart)))
+			goodUpdate, len(ProductsID), 100.0*float64(goodUpdate)/float64(len(ProductsID)), TimeStart.Format("15:04 02.01.2006"), time.Now().Format("15:04 02.01.2006"), time.Since(TimeStart).String()))
 
 	}
 }

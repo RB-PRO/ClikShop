@@ -18,7 +18,7 @@ func PrintnVariationReq(variationReq []apibitrix.Variation_Request) {
 }
 
 func TestUpdates(t *testing.T) {
-	ProductID := "140542"
+	ProductID := "190149"
 	// Приложение Битрикс
 	// bx := NewBitrixUser()
 	BitrixUser, ErrBX := apibitrix.NewBitrixUser()
