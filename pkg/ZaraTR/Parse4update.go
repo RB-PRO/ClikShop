@@ -23,6 +23,7 @@ func LoadFantomTouch(id string) (Product bases.Product2, Err error) {
 	url := "https://www.zara.com/tr/en/running-trainers-with-chunky-soles-p12341120.html?ajax=true"
 	// url := "https://www.zara.com/tr/en/running-trainers-with-chunky-soles-p12341120.html?ajax=true"
 	url = fmt.Sprintf("https://www.zara.com/tr/en/%s.html?ajax=true", id)
+	// fmt.Println(url)
 	// Create an HTTP client with a timeout
 	client := &http.Client{Timeout: time.Second * 10}
 

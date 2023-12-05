@@ -1,6 +1,9 @@
 package tg
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestSends(t *testing.T) {
 	tg, ErrTG := NewTelegram("..\\..\\sender.json")
@@ -29,4 +32,24 @@ func TestSends(t *testing.T) {
 	if ErrMessage != nil {
 		t.Error(ErrMessage)
 	}
+}
+
+func TestUpdate(t *testing.T) {
+	tg, ErrTG := NewTelegram("..\\..\\sender.json")
+	if ErrTG != nil {
+		t.Error(ErrTG)
+	}
+
+	upd, err := tg.NewUpdMsg("START")
+	if err != nil {
+		t.Error(err)
+	}
+
+	time.Sleep(time.Second)
+	upd.Update("1")
+	time.Sleep(time.Second)
+	upd.Update("2")
+	time.Sleep(time.Second)
+	upd.Update("3")
+
 }

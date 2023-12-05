@@ -12,7 +12,7 @@ import (
 const TouchURL string = "https://www.zara.com/tr/en/%v.html?ajax=true"
 
 type Touch struct {
-	Location string `json:"location"` // Новая ссылка на товар
+	Location string `json:"location,omitempty"` // Новая ссылка на товар
 
 	// массив категорий
 	Cat []bases.Cat `json:"-"`

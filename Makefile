@@ -41,3 +41,7 @@ build-carW:
 	go env GOOS GOARCH
 	go build -o main.exe cmd/main/main.go
 	scp main Delivery.xlsx config_rb.json config_wp.json root@194.87.107.129:go/ClikShop/
+
+
+pushBaraki:
+	scp main notification_updator.json sender.json root@185.154.192.111:updator/

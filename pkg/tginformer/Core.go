@@ -7,7 +7,7 @@ import (
 )
 
 type Telegram struct {
-	TG     *tgbotapi.BotAPI
+	*tgbotapi.BotAPI
 	config config
 }
 
@@ -32,5 +32,5 @@ func NewTelegram(ConfigFileName string) (TG *Telegram, Err error) {
 	}
 	// bot.Debug = true
 
-	return &Telegram{TG: bot, config: cf}, nil
+	return &Telegram{BotAPI: bot, config: cf}, nil
 }

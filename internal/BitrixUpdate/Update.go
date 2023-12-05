@@ -55,9 +55,9 @@ func (bx *bitrixUpdator) UpdateProduct(ProductID string) error {
 	// Запрос на обновление даннных
 	// fmt.Println("len(variationReq)", len(variationReq))
 	if len(variationReq) != 0 {
-		for i := range variationReq {
-			fmt.Printf("%d. %+v\n", i, variationReq[i])
-		}
+		// for i := range variationReq {
+		// 	fmt.Printf("%d. %+v\n", i, variationReq[i])
+		// }
 		_, ErrVariation := bx.BX.Variation(variationReq)
 		if ErrVariation != nil {
 			return fmt.Errorf("bitrix: Variation: %w", ErrVariation)

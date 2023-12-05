@@ -182,7 +182,7 @@ type Line struct {
 					XmediaLocations []struct {
 						Locations []struct {
 							MediaLocations []string `json:"mediaLocations"`
-							Location       int      `json:"location"`
+							Location       string   `json:"location"`
 						} `json:"locations"`
 						Set int `json:"set"`
 					} `json:"xmediaLocations"`

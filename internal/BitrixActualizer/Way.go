@@ -7,6 +7,7 @@ package actualizer
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/RB-PRO/ClikShop/pkg/bases"
 	"github.com/RB-PRO/ClikShop/pkg/transrb"
@@ -43,100 +44,17 @@ func (bx *bitrixActualizer) Sub(Folder string) error {
 		// Сохраняем вычитанные товары в файл
 		VarietySub.SaveJson2(fmt.Sprintf("%s%s", folderSub+"/", file))
 	}
-	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nВ бренде %s всего спарсили %d товаров, а после вычитания осталось %d, это %.3f%%",
+	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nВ бренде %s всего спарсили %d товаров, а после вычитания осталось %d, это %.2f%%",
 		Folder, ProductCoutOrig, ProductCoutSub, 100.0*float64(ProductCoutSub)/float64(ProductCoutOrig)))
 	return nil
 }
-
-// Перевод товаров
-//
-// Передаём путь к папке с файлами с товарами и эта функция обработает все товары из папки,
-// удалив дубли и сохранит новые товары в новой папке `*_sub`
-func (bx *bitrixActualizer) Trans(Folder string) error {
-	ProductTranslating := 0
-	folderSub := Folder + "_sub"
-	folderTr := Folder + "_tr"
-	MakeDir(folderTr + "/") // Создаём папку вычитания
-
-	// Получаем файлы из папки источника со спарсенными товарами
-	files, ErrFolderFiles := FolderFiles(folderSub + "/")
-	if ErrFolderFiles != nil {
-		return fmt.Errorf("FolderFiles: %v", ErrFolderFiles)
-	}
-	for ifile, file := range files {
-		// Читаем файл с товарами
-		Variety, ErrProdFile := ProdFile(folderSub+"/", file)
-		if ErrProdFile != nil {
-			bx.GLOG.Warn(fmt.Sprintf("%s%s: Не удалось прочитать файл: %v",
-				Folder, file, ErrProdFile))
-			continue
-		}
-
-		// Перевод товаров
-		barProduct := pb.StartNew(len(Variety.Product))
-		barProduct.Prefix(fmt.Sprintf("Перевод [%d/%d]", ifile+1, len(files)))
-		for i := range Variety.Product {
-			var ErrCoast error
-			Variety.Product[i], ErrCoast = bx.Coast(Variety.Product[i])
-			if ErrCoast != nil {
-				bx.GLOG.Err(fmt.Sprintf("[%d/%d]: %s: Товар '%s' %v",
-					ifile, len(files), file, Variety.Product[i].Name, ErrCoast))
-				continue
-			}
-			// Перевести товар
-			TranslateProd, ErrorTranstate := bx.TR.TranslateProduct2(Variety.Product[i])
-			if ErrorTranstate != nil {
-				bx.TR, _ = transrb.New(bx.TR.FolderID, bx.TR.OAuthToken)
-				Variety.Product[i], _ = bx.TR.TranslateProduct2(Variety.Product[i])
-			} else {
-				Variety.Product[i] = TranslateProd
-			}
-			barProduct.Increment()
-
-		}
-		barProduct.Finish()
-
-		ProductTranslating += len(Variety.Product)
-
-		// Сохраняем вычитанные товары в файл
-		Variety.SaveJson2(folderTr + "/" + file)
-	}
-	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nВ бренде %s перевели %d товара(ов)",
-		Folder, ProductTranslating))
-	return nil
-}
-
-// Редактирование цены для товара
-func (bx *bitrixActualizer) Coast(prod bases.Product2) (bases.Product2, error) {
-	if cm, ok := bx.BX.MapCoast[prod.Manufacturer]; ok {
-		for i := range prod.Item {
-			prod.Item[i].Price = bases.EditDecadense(cm.Walrus*prod.Item[i].Price + float64(cm.Delivery))
-		}
-	} else {
-		return prod, fmt.Errorf("для производителя '%s' не найдены конфигурации цены, все цены: '%+v'",
-			prod.Manufacturer, bx.BX.MapCoast)
-	}
-	return prod, nil
-}
-
-// Полуть мапу всех артикулов товаров из магазина в Bitrix
-func (bx *bitrixActualizer) subtraction(a bases.Variety2) (deductible bases.Variety2) {
-	for i := range a.Product {
-		if _, ok := bx.SKU[a.Product[i].Article]; !ok {
-			deductible.Product = append(deductible.Product, a.Product[i])
-		}
-	}
-	return deductible
-}
-
-////////////////////////////////
 
 // Удалить дубликаты
 //
 // Передаём путь к папке с файлами с товарами и эта функция обработает все товары из папки,
 // удалив дубли и сохранит новые товары в новой папке `*_sub`
 func (bx *bitrixActualizer) DeleteRepeated(Folder string) error {
-	folderSub := Folder + "_tr"
+	folderSub := Folder + "_sub"
 	folderDr := Folder + "_dr"
 	MakeDir(folderDr + "/") // Создаём папку вычитания
 
@@ -175,16 +93,114 @@ func (bx *bitrixActualizer) DeleteRepeated(Folder string) error {
 		// Сохраняем вычитанные товары в файл
 		SavedVar.SaveJson2(folderDr + "/" + file)
 	}
-	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nУдаление дублей в папке '%s': Убрал %d товаров из %d, это %.3f%%",
+	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nУдаление дублей в папке '%s': Убрал %d товаров из %d, это %.2f%%",
 		folderDr, IgnoredProducts, TotalProducts, 100.0*float64(IgnoredProducts)/float64(TotalProducts)))
 	return nil
 }
+
+// Перевод товаров
+//
+// Передаём путь к папке с файлами с товарами и эта функция обработает все товары из папки,
+// удалив дубли и сохранит новые товары в новой папке `*_sub`
+func (bx *bitrixActualizer) Trans(Folder string) error {
+	ProductTranslating := 0
+	folderSub := Folder + "_dr"
+	folderTr := Folder + "_tr"
+	MakeDir(folderTr + "/") // Создаём папку вычитания
+
+	// Получаем файлы из папки источника со спарсенными товарами
+	files, ErrFolderFiles := FolderFiles(folderSub + "/")
+	if ErrFolderFiles != nil {
+		return fmt.Errorf("FolderFiles: %v", ErrFolderFiles)
+	}
+	for ifile, file := range files {
+		// Читаем файл с товарами
+		Variety, ErrProdFile := ProdFile(folderSub+"/", file)
+		if ErrProdFile != nil {
+			bx.GLOG.Warn(fmt.Sprintf("%s%s: Не удалось прочитать файл: %v",
+				Folder, file, ErrProdFile))
+			continue
+		}
+
+		// Перевод товаров
+		barProduct := pb.StartNew(len(Variety.Product))
+		barProduct.Prefix(fmt.Sprintf("Перевод [%d/%d]", ifile+1, len(files)))
+		for i := range Variety.Product {
+			Name := Variety.Product[i].Name
+
+			var ErrCoast error
+			Variety.Product[i], ErrCoast = bx.Coast(Variety.Product[i])
+			if ErrCoast != nil {
+				bx.GLOG.Err(fmt.Sprintf("[%d/%d]: %s: Товар '%s' %v",
+					ifile, len(files), file, Variety.Product[i].Name, ErrCoast))
+				continue
+			}
+			// Перевести товар
+			TranslateProd, ErrorTranstate := bx.TR.TranslateProduct2(Variety.Product[i])
+			if ErrorTranstate != nil {
+				bx.TR, _ = transrb.New(bx.TR.FolderID, bx.TR.OAuthToken)
+				Variety.Product[i], _ = bx.TR.TranslateProduct2(Variety.Product[i])
+			} else {
+				Variety.Product[i] = TranslateProd
+			}
+
+			// Проверка того, что этот товар из СС(не связано с рейх-канцелярией)
+			if strings.Contains(Variety.Product[i].Link, "sneaksup.com") {
+				Variety.Product[i].Name = Name
+			}
+
+			barProduct.Increment()
+
+		}
+		barProduct.Finish()
+
+		ProductTranslating += len(Variety.Product)
+
+		// Сохраняем вычитанные товары в файл
+		Variety.SaveJson2(folderTr + "/" + file)
+	}
+	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nВ бренде %s перевели %d товара(ов)",
+		Folder, ProductTranslating))
+	return nil
+}
+
+// Редактирование цены для товара
+func (bx *bitrixActualizer) Coast(prod bases.Product2) (bases.Product2, error) {
+	var Walrus float64
+	var Delivery int
+	if cm, ok := bx.BX.MapCoast[prod.Manufacturer]; ok {
+		Walrus = cm.Walrus
+		Delivery = cm.Delivery
+	} else {
+		cm = bx.BX.MapCoast["ss"]
+		Walrus = cm.Walrus
+		Delivery = cm.Delivery
+		// return prod, fmt.Errorf("для производителя '%s' не найдены конфигурации цены, все цены: '%+v'",
+		// 	prod.Manufacturer, bx.BX.MapCoast)
+	}
+	for i := range prod.Item {
+		prod.Item[i].Price = bases.EditDecadense(Walrus*prod.Item[i].Price + float64(Delivery))
+	}
+	return prod, nil
+}
+
+// Полуть мапу всех артикулов товаров из магазина в Bitrix
+func (bx *bitrixActualizer) subtraction(a bases.Variety2) (deductible bases.Variety2) {
+	for i := range a.Product {
+		if _, ok := bx.SKU[a.Product[i].Article]; !ok {
+			deductible.Product = append(deductible.Product, a.Product[i])
+		}
+	}
+	return deductible
+}
+
+////////////////////////////////
 
 // Загрузка товаров в Bitrix
 //
 // Эта функция загрузит все товары из папки и создат `*_err` папку для ошибочных товаров
 func (bx *bitrixActualizer) Push(Folder string) error {
-	FolderProds := Folder + "_dr"
+	FolderProds := Folder + "_tr"
 	FolderErr := Folder + "_err"
 	MakeDir(FolderErr + "/") // Создаём папку вычитания
 	ProductPushDone, ProductPushFalse, ProductPushAll := 0, 0, 0
@@ -232,7 +248,7 @@ func (bx *bitrixActualizer) Push(Folder string) error {
 		barProduct.Finish()
 		ErrProduct.SaveJson2(FolderErr + "/" + file)
 	}
-	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nТоваров для загрузки в бренде %s - %d\nУспешно загружено %d из %d(%.3f) товаров",
+	bx.BX.Nots.Sends(fmt.Sprintf("#actualizer\nТоваров для загрузки в бренде %s - %d\nУспешно загружено %d из %d(%.2f%%) товаров",
 		Folder, ProductPushAll, ProductPushDone, ProductPushAll, 100.0*float64(ProductPushDone)/float64(ProductPushAll)))
 	return nil
 }

@@ -10,7 +10,7 @@ import (
 // Отправить сообщение
 func (tg *Telegram) Message(data string) error {
 	msg := tgbotapi.NewMessage(tg.config.ChatID, data)
-	_, err := tg.TG.Send(msg)
+	_, err := tg.Send(msg)
 	return err
 }
 
@@ -47,7 +47,7 @@ func (tg *Telegram) MessagePhoto(data string, images []string) error {
 		}
 		// Все фотографии для отправки в ообщении
 		mediaGroup := tgbotapi.NewMediaGroup(tg.config.ChatID, SubSlice)
-		_, ErrSend := tg.TG.Send(mediaGroup)
+		_, ErrSend := tg.Send(mediaGroup)
 		if ErrSend != nil {
 			fmt.Printf("send: %v\n", ErrSend)
 			// return fmt.Errorf("send: %v", ErrSend)

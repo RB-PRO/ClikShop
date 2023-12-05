@@ -17,7 +17,7 @@ func (bx *bitrixUpdator) UpdateSS(ProductsDetail apibitrix.Product_Response) (va
 	if ErrAavailability != nil {
 		return nil, fmt.Errorf("sneaksup.Aavailability: %v", ErrAavailability)
 	}
-	fmt.Println(ColorsItem)
+	// fmt.Println(ColorsItem)
 
 	// Решение задачи сличения данных из битрикса и из донора
 

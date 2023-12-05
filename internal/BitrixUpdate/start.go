@@ -3,10 +3,12 @@ package bitrixupdate
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	notification "github.com/RB-PRO/ClikShop/pkg/Notification"
 	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
 	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	tg "github.com/RB-PRO/ClikShop/pkg/tginformer"
 )
 
 type bitrixUpdator struct {
@@ -21,46 +23,75 @@ func Start() {
 		panic(ErrBX)
 	}
 	bx := bitrixUpdator{BitrixUser}
-	Nots, ErrNotification := notification.NewNotification("notification.json")
+	Nots, ErrNotification := notification.NewNotification("notification_updator.json")
 	if ErrNotification != nil {
 		panic(ErrNotification)
 	}
-	cb, ErrorCB := cbbank.New() // Цены ЦБ для получение актуального курса
-	if ErrorCB != nil {
-		panic(ErrorCB)
-	}
-	bx.BX.CB = cb
-	bx.BX.Nots = Nots
-
-	bx.BX.Nots.Sends(fmt.Sprintf("Курс: 1₤ = %.2f₽", cb.Data.Valute.Try.Value/10))
-
-	// Загружаем цены
-	_, ErrCoasts := bx.BX.Coasts()
-	if ErrCoasts != nil {
-		panic(ErrCoasts)
+	tg, ErrTG := tg.NewTelegram("sender.json")
+	if ErrTG != nil {
+		panic(ErrTG)
 	}
 
-	// Получаем списки товаров
-	ProductsID, ErrProducts := bx.BX.Products()
-	if ErrProducts != nil {
-		panic(ErrProducts)
-	}
-	bx.BX.Nots.Sends(fmt.Sprintf("В Bitrix всего %d товаров.", len(ProductsID)))
+	for {
+		TimeStart := time.Now()
 
-	// Цикл по всем товарам
-	for iProductID, ProductID := range ProductsID {
+		cb, ErrorCB := cbbank.New() // Цены ЦБ для получение актуального курса
+		if ErrorCB != nil {
+			panic(ErrorCB)
+		}
+		bx.BX.CB = cb
+		bx.BX.Nots = Nots
+		// bx.BX.Nots.Sends(fmt.Sprintf("#updator\nКурс: 1₤ = %.2f₽", cb.Data.Valute.Try.Value/10))
+		tg.Message(fmt.Sprintf("#updator\nКурс: 1₤ = %.2f₽", cb.Data.Valute.Try.Value/10))
 
-		if (iProductID+1)%100 == 0 {
-			bx.BX.Nots.Sends(fmt.Sprintf("Обработка товаров: (%d/%d)", iProductID+1, len(ProductsID)))
+		// Загружаем цены
+		_, ErrCoasts := bx.BX.Coasts()
+		if ErrCoasts != nil {
+			panic(ErrCoasts)
 		}
 
-		// Обновляем данные по товару
-		ErrUpdateProduct := bx.UpdateProduct(ProductID)
-		if ErrUpdateProduct != nil {
-			bx.BX.Log.Warn(fmt.Sprintf("Цикл: UpdateProduct %s: %s", ProductID, ErrUpdateProduct))
+		// Получаем списки товаров
+		ProductsID, ErrProducts := bx.BX.Products()
+		if ErrProducts != nil {
+			panic(ErrProducts)
+		}
+		// bx.BX.Nots.Sends(fmt.Sprintf("В Bitrix всего %d товаров.", len(ProductsID)))
+
+		tgUpdate, err := tg.NewUpdMsg("Начинаю обновлять товары!\nВремя: " + TimeStart.Format("15:04 02.01.2006"))
+		if err != nil {
+			panic(err)
 		}
 
-		// break
+		var goodUpdate int
+		// Цикл по всем товарам
+		for iProductID, ProductID := range ProductsID {
+
+			// if (iProductID+1)%100 == 0 {
+			// 	bx.BX.Nots.Sends(fmt.Sprintf("Обработка товаров: (%d/%d)", iProductID+1, len(ProductsID)))
+			// }
+
+			if (iProductID+1)%10 == 0 {
+				tgUpdate.Update(fmt.Sprintf("#updator\nОбновил %d товаров из %d, это %.2f%%\nНачал в %s",
+					iProductID, len(ProductsID), float64(iProductID+1)/float64(len(ProductsID)), TimeStart.Format("15:04 02.01.2006")))
+			}
+
+			// Обновляем данные по товару
+			ErrUpdateProduct := bx.UpdateProduct(ProductID)
+			if ErrUpdateProduct != nil {
+				bx.BX.Log.Warn(fmt.Sprintf("Цикл: UpdateProduct %s: %s", ProductID, ErrUpdateProduct))
+			} else {
+				goodUpdate++
+			}
+
+			// break
+		}
+
+		// bx.BX.Nots.Sends(fmt.Sprintf("#updator\nПрошёл цикл обновлятора по %d товарам", len(ProductsID)))
+		// tgUpdate.Update(fmt.Sprintf("#updator\nПрошёл цикл обновлятора по %d товарам", len(ProductsID)))
+
+		tgUpdate.Update(fmt.Sprintf("#updator\nУспешно обновлено %d товаров из %d, это %.2f%%\nНачал в %s\nЗакончил в %s\nЭто - %s",
+			goodUpdate, len(ProductsID), float64(goodUpdate)/float64(len(ProductsID)), TimeStart.Format("15:04 02.01.2006"), time.Now().Format("15:04 02.01.2006"), time.Now().Sub(TimeStart)))
+
 	}
 }
 

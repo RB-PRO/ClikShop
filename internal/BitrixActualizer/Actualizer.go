@@ -94,39 +94,21 @@ func Start() {
 	// bx.hm()
 	// bx.ss()
 
-	// FolderZara := "zara"
-	// // bx.zara(FolderZara) // Парсинг
-	// // ErrSub := bx.Sub(FolderZara)
-	// // if ErrSub != nil {
-	// // 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", FolderZara, ErrSub))
-	// // 	return
-	// // }
-	// // ErrTr := bx.Trans(FolderZara)
-	// // if ErrTr != nil {
-	// // 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", FolderZara, ErrTr))
-	// // 	return
-	// // }
-	// ErrPush := bx.Push(FolderZara)
-	// if ErrPush != nil {
-	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", FolderZara, ErrPush))
-	// 	return
-	// }
-
-	Folder := "md"
-	// bx.md(Folder) // Парсинг
+	Folder := "ss"
+	// bx.ss(Folder) // Парсинг
 	// ErrSub := bx.Sub(Folder)
 	// if ErrSub != nil {
 	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", Folder, ErrSub))
 	// 	return
 	// }
-	// ErrTr := bx.Trans(Folder)
-	// if ErrTr != nil {
-	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
-	// 	return
-	// }
 	ErrDR := bx.DeleteRepeated(Folder)
 	if ErrDR != nil {
 		bx.GLOG.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", Folder, ErrDR))
+		return
+	}
+	ErrTr := bx.Trans(Folder)
+	if ErrTr != nil {
+		bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
 		return
 	}
 	ErrPush := bx.Push(Folder)

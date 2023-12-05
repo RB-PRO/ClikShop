@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
@@ -28,7 +29,8 @@ func (user *BitrixUser) AddProduct(prod bases.Product2) (response int, Err error
 	req.Header.Add("Cookie", "BITRIX_SM_GUEST_ID=5009; BITRIX_SM_LAST_VISIT=07.08.2023%2001%3A19%3A12; BITRIX_SM_SALE_UID=1524ac0f1701198a7380ac70768d3606; PHPSESSID=kbNuDok3oE8R6fJ7dExSGO8fbympRahj")
 
 	// Выполняем запрос
-	resp, errDo := http.DefaultClient.Do(req)
+	client := http.Client{Timeout: 60 * time.Second}
+	resp, errDo := client.Do(req)
 	if errDo != nil {
 		return 0, fmt.Errorf("bitrix: AddProducts: Не смог выполнить запрос: %w", errDo)
 	}
