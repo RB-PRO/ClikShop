@@ -8,7 +8,7 @@ import (
 )
 
 // Обновить цены и наличие по ОДНОМУ товару
-func (bx *bitrixUpdator) UpdateProduct(ProductID string) error {
+func (bx *BitrixUpdator) UpdateProduct(ProductID string) error {
 
 	// Получить подробнее о товаре
 	ProductsDetail, ErrProduct := bx.BX.Product([]string{ProductID})

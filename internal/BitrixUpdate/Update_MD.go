@@ -11,7 +11,7 @@ import (
 )
 
 // Обновить цены и наличие по ОДНОМУ товару
-func (bx *bitrixUpdator) UpdateMassimoDutti(ProductsDetail apibitrix.Product_Response) ([]apibitrix.Variation_Request, error) {
+func (bx *BitrixUpdator) UpdateMassimoDutti(ProductsDetail apibitrix.Product_Response) ([]apibitrix.Variation_Request, error) {
 
 	Link := ProductsDetail.Products[0].Link // Основная ссылка на товар
 	// fmt.Println(Link)

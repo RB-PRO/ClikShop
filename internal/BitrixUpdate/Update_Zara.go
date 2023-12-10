@@ -10,7 +10,7 @@ import (
 )
 
 // Обновить цены и наличие по ОДНОМУ товару
-func (bx *bitrixUpdator) UpdateZara(ProductsDetail apibitrix.Product_Response) ([]apibitrix.Variation_Request, error) {
+func (bx *BitrixUpdator) UpdateZara(ProductsDetail apibitrix.Product_Response) ([]apibitrix.Variation_Request, error) {
 
 	// Ссылки на все вариации в подтоваре
 	Link := ProductsDetail.Products[0].Link

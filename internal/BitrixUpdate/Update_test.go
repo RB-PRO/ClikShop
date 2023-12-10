@@ -25,7 +25,7 @@ func TestUpdates(t *testing.T) {
 	if ErrBX != nil {
 		panic(ErrBX)
 	}
-	bx := bitrixUpdator{BitrixUser}
+	bx := BitrixUpdator{BX: BitrixUser}
 	Nots, ErrNotification := notification.NewNotification("../../notification.json")
 	if ErrNotification != nil {
 		panic(ErrNotification)

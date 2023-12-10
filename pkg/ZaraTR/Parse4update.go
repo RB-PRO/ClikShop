@@ -68,7 +68,7 @@ func LoadFantomTouch(id string) (Product bases.Product2, Err error) {
 	// Get the "location" data
 	location, ok := responseData["location"].(string)
 	if !ok {
-		fmt.Println("error: 'location' field not found or not a string")
+		// fmt.Println("error: 'location' field not found or not a string")
 		location = url
 		// return bases.Product2{}, fmt.Errorf("error: 'location' field not found or not a string")
 	}

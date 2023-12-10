@@ -16,7 +16,7 @@ type key struct {
 }
 
 // Обновить цены и наличие по ОДНОМУ товару
-func (bx *bitrixUpdator) UpdateHandM(ProductsDetail apibitrix.Product_Response) ([]apibitrix.Variation_Request, error) {
+func (bx *BitrixUpdator) UpdateHandM(ProductsDetail apibitrix.Product_Response) ([]apibitrix.Variation_Request, error) {
 
 	// Запрос данных по наличию товаров на HM
 	SKUhm := ProductsDetail.Products[0].Link

@@ -10,7 +10,7 @@ import (
 
 // const URL string = "https://www.sneaksup.com"
 
-func (bx *bitrixUpdator) UpdateSS(ProductsDetail apibitrix.Product_Response) (variationReq []apibitrix.Variation_Request, Err error) {
+func (bx *BitrixUpdator) UpdateSS(ProductsDetail apibitrix.Product_Response) (variationReq []apibitrix.Variation_Request, Err error) {
 
 	// Получить мапу ссылок
 	ColorsItem, ErrAavailability := sneaksup.Aavailability(ProductsDetail.Products[0].Link)
