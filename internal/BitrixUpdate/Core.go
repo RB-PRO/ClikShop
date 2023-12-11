@@ -3,6 +3,8 @@ package bitrixupdate
 import (
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -13,11 +15,26 @@ import (
 )
 
 type BitrixUpdator struct {
-	BX *apibitrix.BitrixUser
-	TG *tg.Telegram
+	BX            *apibitrix.BitrixUser
+	TG            *tg.Telegram
+	ActiveWorkers int // Количество активных воркеров
 }
 
 func NewBitrixUpdator() (*BitrixUpdator, error) {
+
+	// Проверка того, что есть аргумент к-ва воркеров
+	if len(os.Args) != 2 {
+		return nil, fmt.Errorf("please choose arguments of count workers")
+	}
+
+	// Получение к-ва воркеров
+	var ActiveWorkers int
+	if ArgVal, ErrAtoi := strconv.Atoi(os.Args[1]); ErrAtoi != nil {
+		return nil, fmt.Errorf("strconv.Atoi: %v", ErrAtoi)
+	} else {
+		ActiveWorkers = ArgVal
+	}
+
 	// Приложение Битрикс
 	BitrixUser, ErrBX := apibitrix.NewBitrixUser()
 	if ErrBX != nil {
@@ -30,7 +47,7 @@ func NewBitrixUpdator() (*BitrixUpdator, error) {
 	if ErrTG != nil {
 		return nil, fmt.Errorf("tg.NewTelegram: %s: %v", fileTG, ErrTG)
 	}
-	return &BitrixUpdator{BX: BitrixUser, TG: tg}, nil
+	return &BitrixUpdator{BX: BitrixUser, TG: tg, ActiveWorkers: ActiveWorkers}, nil
 }
 
 func Start() {
