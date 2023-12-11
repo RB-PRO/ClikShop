@@ -28,9 +28,9 @@ build-linux-to-windows:
 	export GOARCH=amd64 export GOOS=windows go build cmd/main/main.go 
 
 build-car:
-	export GOARCH=amd64
-	export GOOS=linux
-	export CGO_ENABLED=0
+	set GOARCH=amd64
+	set GOOS=linux
+	set CGO_ENABLED=0
 	go env GOOS GOARCH
 	go build cmd/main/main.go
 	scp main Delivery.xlsx config_rb.json config_wp.json root@194.87.107.129:go/ClikShop/
@@ -45,3 +45,6 @@ build-carW:
 
 pushBaraki:
 	scp main notification_updator.json sender.json root@185.154.192.111:updator/
+
+pushTrudeks:
+	scp main notification_updator.json sender.json root@193.124.117.19:go/clikshopupd/

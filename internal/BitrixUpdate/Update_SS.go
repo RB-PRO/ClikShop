@@ -17,6 +17,7 @@ func (bx *BitrixUpdator) UpdateSS(ProductsDetail apibitrix.Product_Response) (va
 	if ErrAavailability != nil {
 		return nil, fmt.Errorf("sneaksup.Aavailability: %v", ErrAavailability)
 	}
+	// fmt.Println(ProductsDetail)
 	// fmt.Println(ColorsItem)
 
 	// Решение задачи сличения данных из битрикса и из донора
@@ -25,7 +26,7 @@ func (bx *BitrixUpdator) UpdateSS(ProductsDetail apibitrix.Product_Response) (va
 	// Правда вмето size по факту у меня 10 символов SKU с HM
 	BxMap := make(map[key]apibitrix.Variation_Request)
 	for _, Prod := range ProductsDetail.Products[0].Colors {
-		BxMap[key{size: bases.Name2Slug(Prod.Size), color: bases.Name2Slug(Prod.ColorEng)}] =
+		BxMap[key{size: naaktstring(bases.Name2Slug(Prod.Size)), color: bases.Name2Slug(Prod.ColorEng)}] =
 			apibitrix.Variation_Request{
 				ID:    Prod.ID,
 				Price: Prod.Price,
@@ -39,7 +40,7 @@ func (bx *BitrixUpdator) UpdateSS(ProductsDetail apibitrix.Product_Response) (va
 		for _, Size := range Item.Size {
 			Price := bases.EditDecadense((bx.BX.CB.Data.Valute.Try.Value/10)*Item.Price*bx.BX.MapCoast["H&M"].Walrus +
 				float64(bx.BX.MapCoast["ss"].Delivery))
-			DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug(Size.Val)}] = apibitrix.Variation_Request{
+			DonMap[key{color: (bases.Name2Slug(Item.ColorEng)), size: naaktstring(bases.Name2Slug(Size.Val))}] = apibitrix.Variation_Request{
 				Price:        Price,
 				Availability: Size.IsExit,
 			}

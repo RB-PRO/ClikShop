@@ -18,7 +18,7 @@ func PrintnVariationReq(variationReq []apibitrix.Variation_Request) {
 }
 
 func TestUpdates(t *testing.T) {
-	ProductID := "190149"
+	ProductID := "418899"
 	// Приложение Битрикс
 	// bx := NewBitrixUser()
 	BitrixUser, ErrBX := apibitrix.NewBitrixUser()
@@ -46,4 +46,11 @@ func TestUpdates(t *testing.T) {
 	if ErrUpdateProduct != nil {
 		t.Error("bitrix: UpdateProduct", ProductID, ":", ErrUpdateProduct)
 	}
+}
+
+func TestREject(t *testing.T) {
+	fmt.Println(naaktstring("123"))
+	fmt.Println(naaktstring("123ыфв -ф 2131ё--"))
+	fmt.Println(naaktstring("123asd"))
+	fmt.Println(naaktstring("123asdzxc"))
 }
