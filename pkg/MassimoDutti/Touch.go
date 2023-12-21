@@ -160,7 +160,11 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 			// Формирование слайса размеров
 			var sizes []bases.Size
 			for _, ValSize := range colorSet.Sizes {
-				sizes = append(sizes, bases.Size{Val: ValSize.Name, IsExit: ValSize.IsBuyable})
+				AddSize := bases.Size{Val: ValSize.Name, IsExit: ValSize.IsBuyable}
+				if ValSize.VisibilityValue != "SHOW" {
+					AddSize.IsExit = false
+				}
+				sizes = append(sizes, AddSize)
 			}
 
 			// // Картинки
@@ -203,7 +207,11 @@ func Touch2Product2(Product bases.Product2, touch Touch) bases.Product2 {
 			// Формирование слайса размеров
 			var sizes []bases.Size
 			for _, ValSize := range colorSet.Sizes {
-				sizes = append(sizes, bases.Size{Val: ValSize.Name, IsExit: ValSize.IsBuyable})
+				AddSize := bases.Size{Val: ValSize.Name, IsExit: ValSize.IsBuyable}
+				if ValSize.VisibilityValue != "SHOW" {
+					AddSize.IsExit = false
+				}
+				sizes = append(sizes, AddSize)
 			}
 
 			// // Картинки

@@ -113,3 +113,19 @@ func TestAdd(t *testing.T) {
 	}
 	fmt.Println(Coasts)
 }
+
+func TestUpdateSize(t *testing.T) {
+	bx, _ := NewBitrixUser()
+
+	req := []VariationSize_Request{
+		{
+			ID:   "418084",
+			Size: "XL",
+		},
+	}
+
+	ErrProducts := bx.UpdateSizeVariation(req)
+	if ErrProducts != nil {
+		t.Error(ErrProducts)
+	}
+}

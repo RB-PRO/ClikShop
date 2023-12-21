@@ -47,6 +47,7 @@ func main() {
 	// settings.UpSizesEditProduct()
 	// settings.EditIsExitHM()
 
+	// settings.EDITSIZES()
 	bitrixupdate.Start()
 	// actualizer.Start()
 }

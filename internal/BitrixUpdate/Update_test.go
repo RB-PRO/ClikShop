@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	notification "github.com/RB-PRO/ClikShop/pkg/Notification"
 	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
 	"github.com/RB-PRO/ClikShop/pkg/cbbank"
 )
@@ -16,9 +15,16 @@ func PrintnVariationReq(variationReq []apibitrix.Variation_Request) {
 		fmt.Printf("%+v\n", variationReq[i])
 	}
 }
+func TestREject(t *testing.T) {
+	fmt.Println(naaktstring("123"))
+	fmt.Println(naaktstring("123ыфв -ф 2131ё--"))
+	fmt.Println(naaktstring("123asd"))
+	fmt.Println(naaktstring("123asdzxc"))
+}
 
 func TestUpdates(t *testing.T) {
-	ProductID := "418899"
+	// https://www2.hm.com/tr_tr/productpage.1115995001.html
+	ProductID := "295207"
 	// Приложение Битрикс
 	// bx := NewBitrixUser()
 	BitrixUser, ErrBX := apibitrix.NewBitrixUser()
@@ -26,16 +32,12 @@ func TestUpdates(t *testing.T) {
 		panic(ErrBX)
 	}
 	bx := BitrixUpdator{BX: BitrixUser}
-	Nots, ErrNotification := notification.NewNotification("../../notification.json")
-	if ErrNotification != nil {
-		panic(ErrNotification)
-	}
+
 	cb, ErrorCB := cbbank.New() // Цены ЦБ для получение актуального курса
 	if ErrorCB != nil {
 		panic(ErrorCB)
 	}
 	bx.BX.CB = cb
-	bx.BX.Nots = Nots
 	fmt.Printf("Курс: 1₤ = %.2f₽\n", cb.Data.Valute.Try.Value/10)
 	_, ErrCoasts := bx.BX.Coasts() // Загружаем цены
 	if ErrCoasts != nil {
@@ -46,11 +48,4 @@ func TestUpdates(t *testing.T) {
 	if ErrUpdateProduct != nil {
 		t.Error("bitrix: UpdateProduct", ProductID, ":", ErrUpdateProduct)
 	}
-}
-
-func TestREject(t *testing.T) {
-	fmt.Println(naaktstring("123"))
-	fmt.Println(naaktstring("123ыфв -ф 2131ё--"))
-	fmt.Println(naaktstring("123asd"))
-	fmt.Println(naaktstring("123asdzxc"))
 }
