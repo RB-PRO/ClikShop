@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 // Спарсить страницы товаров
-func Pages(ShopID string, page int) (ProductGroupIDs []int, Err error) {
+func Pages(ShopID string) (ProductGroupIDs []int, Err error) {
 
 	// Количество страниц в товаре
 	var CoutPages int = 1
@@ -22,12 +23,16 @@ func Pages(ShopID string, page int) (ProductGroupIDs []int, Err error) {
 			return nil, fmt.Errorf("parsePage: %v", ErrPage)
 		}
 		CoutPages = RoundUp(pg.Result.TotalCount, 24)
+		fmt.Printf("iPage: %d, pg.Result.TotalCount %d, CoutPages %d\n", iPage, pg.Result.TotalCount, CoutPages)
 
 		// Сохраняем ссылки на группы товаров
 		for _, Product := range pg.Result.Products {
 			ProductGroupIDs = append(ProductGroupIDs, Product.ProductGroupID)
 		}
 
+		time.Sleep(time.Millisecond * 100)
+
+		// break
 	}
 
 	return ProductGroupIDs, Err
@@ -38,11 +43,11 @@ const page_URL string = "https://public.trendyol.com/discovery-web-searchgw-serv
 // https://public.trendyol.com/discovery-web-searchgw-service/v2/api/infinite-scroll/sr?mid=106871&os=1&pi=2
 func ParsePage(ShopID string, page int) (pg PageStruct, Err error) {
 	url := fmt.Sprintf(page_URL, ShopID, page) // Рабочая ссылка для парсинга
-	// fmt.Println("Lines:", url)
+	fmt.Println("Lines:", url)
 	client := &http.Client{}
 	req, ErrNewRequest := http.NewRequest(http.MethodGet, url, nil)
 	if ErrNewRequest != nil {
-		return PageStruct{}, ErrNewRequest
+		return PageStruct{}, fmt.Errorf("http.NewRequest: %v", ErrNewRequest)
 	}
 
 	req.Header.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.4.603 Yowser/2.5 Safari/537.36")
@@ -50,20 +55,20 @@ func ParsePage(ShopID string, page int) (pg PageStruct, Err error) {
 	// Выполнить запорос
 	Response, ErrDo := client.Do(req)
 	if ErrDo != nil {
-		return PageStruct{}, ErrDo
+		return PageStruct{}, fmt.Errorf("client.Do: %v", ErrDo)
 	}
 	defer Response.Body.Close()
 
 	// Получить массив []byte из ответа
 	BodyPage, ErrorReadAll := io.ReadAll(Response.Body)
 	if ErrorReadAll != nil {
-		return PageStruct{}, ErrorReadAll
+		return PageStruct{}, fmt.Errorf("io.ReadAll: %v", ErrorReadAll)
 	}
 
 	// Распарсить полученный json в структуру
 	ErrorUnmarshal := json.Unmarshal(BodyPage, &pg)
 	if ErrorUnmarshal != nil {
-		return PageStruct{}, ErrorUnmarshal
+		return PageStruct{}, fmt.Errorf("json.Unmarshal: %v", ErrorUnmarshal)
 	}
 
 	return pg, nil

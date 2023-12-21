@@ -127,42 +127,42 @@ type ProductStruct struct {
 			} `json:"deliveryInformation"`
 			CargoRemainingDays int  `json:"cargoRemainingDays"`
 			IsBlacklist        bool `json:"isBlacklist"`
-			Merchant0          struct {
-				IsSearchableMerchant            bool   `json:"isSearchableMerchant"`
-				Stickers                        []any  `json:"stickers"`
-				MerchantBadges                  []any  `json:"merchantBadges"`
-				MerchantMarkers                 []any  `json:"merchantMarkers"`
-				ID                              int    `json:"id"`
-				Name                            string `json:"name"`
-				OfficialName                    string `json:"officialName"`
-				CityName                        string `json:"cityName"`
-				CentralRegistrationSystemNumber string `json:"centralRegistrationSystemNumber"`
-				RegisteredEmailAddress          string `json:"registeredEmailAddress"`
-				TaxNumber                       string `json:"taxNumber"`
-				SellerScore                     int    `json:"sellerScore"`
-				SellerScoreColor                string `json:"sellerScoreColor"`
-				DeliveryProviderName            string `json:"deliveryProviderName"`
-				CorporateInvoiceApplicable      bool   `json:"corporateInvoiceApplicable"`
-				LocationBasedSales              bool   `json:"locationBasedSales"`
-			} `json:"merchant,omitempty"`
-			Merchant1 struct {
-				IsSearchableMerchant            bool    `json:"isSearchableMerchant"`
-				Stickers                        []any   `json:"stickers"`
-				MerchantBadges                  []any   `json:"merchantBadges"`
-				MerchantMarkers                 []any   `json:"merchantMarkers"`
-				ID                              int     `json:"id"`
-				Name                            string  `json:"name"`
-				OfficialName                    string  `json:"officialName"`
-				CityName                        string  `json:"cityName"`
-				CentralRegistrationSystemNumber string  `json:"centralRegistrationSystemNumber"`
-				RegisteredEmailAddress          string  `json:"registeredEmailAddress"`
-				TaxNumber                       string  `json:"taxNumber"`
-				SellerScore                     float64 `json:"sellerScore"`
-				SellerScoreColor                string  `json:"sellerScoreColor"`
-				DeliveryProviderName            string  `json:"deliveryProviderName"`
-				CorporateInvoiceApplicable      bool    `json:"corporateInvoiceApplicable"`
-				LocationBasedSales              bool    `json:"locationBasedSales"`
-			} `json:"merchant,omitempty"`
+			// Merchant0          struct {
+			// 	IsSearchableMerchant            bool   `json:"isSearchableMerchant"`
+			// 	Stickers                        []any  `json:"stickers"`
+			// 	MerchantBadges                  []any  `json:"merchantBadges"`
+			// 	MerchantMarkers                 []any  `json:"merchantMarkers"`
+			// 	ID                              int    `json:"id"`
+			// 	Name                            string `json:"name"`
+			// 	OfficialName                    string `json:"officialName"`
+			// 	CityName                        string `json:"cityName"`
+			// 	CentralRegistrationSystemNumber string `json:"centralRegistrationSystemNumber"`
+			// 	RegisteredEmailAddress          string `json:"registeredEmailAddress"`
+			// 	TaxNumber                       string `json:"taxNumber"`
+			// 	SellerScore                     int    `json:"sellerScore"`
+			// 	SellerScoreColor                string `json:"sellerScoreColor"`
+			// 	DeliveryProviderName            string `json:"deliveryProviderName"`
+			// 	CorporateInvoiceApplicable      bool   `json:"corporateInvoiceApplicable"`
+			// 	LocationBasedSales              bool   `json:"locationBasedSales"`
+			// } `json:"merchant,omitempty"`
+			// Merchant1 struct {
+			// 	IsSearchableMerchant            bool    `json:"isSearchableMerchant"`
+			// 	Stickers                        []any   `json:"stickers"`
+			// 	MerchantBadges                  []any   `json:"merchantBadges"`
+			// 	MerchantMarkers                 []any   `json:"merchantMarkers"`
+			// 	ID                              int     `json:"id"`
+			// 	Name                            string  `json:"name"`
+			// 	OfficialName                    string  `json:"officialName"`
+			// 	CityName                        string  `json:"cityName"`
+			// 	CentralRegistrationSystemNumber string  `json:"centralRegistrationSystemNumber"`
+			// 	RegisteredEmailAddress          string  `json:"registeredEmailAddress"`
+			// 	TaxNumber                       string  `json:"taxNumber"`
+			// 	SellerScore                     float64 `json:"sellerScore"`
+			// 	SellerScoreColor                string  `json:"sellerScoreColor"`
+			// 	DeliveryProviderName            string  `json:"deliveryProviderName"`
+			// 	CorporateInvoiceApplicable      bool    `json:"corporateInvoiceApplicable"`
+			// 	LocationBasedSales              bool    `json:"locationBasedSales"`
+			// } `json:"merchant,omitempty"`
 		} `json:"otherMerchants"`
 		Campaign struct {
 			ID                 int    `json:"id"`
@@ -365,7 +365,7 @@ type ProductStruct struct {
 				Barcode        string `json:"barcode"`
 				Quantity       int    `json:"quantity"`
 				Price          struct {
-					BuyingPrice              int     `json:"buyingPrice"`
+					// BuyingPrice              int     `json:"buyingPrice"`
 					SellingPrice             float64 `json:"sellingPrice"`
 					OriginalPrice            float64 `json:"originalPrice"`
 					ManipulatedOriginalPrice float64 `json:"manipulatedOriginalPrice"`
@@ -441,62 +441,62 @@ type ProductStruct struct {
 			SearchableTags []any `json:"searchableTags"`
 			FreeCargo      bool  `json:"freeCargo"`
 			IsWinner       bool  `json:"isWinner"`
-			Merchant0      struct {
-				ID                              int     `json:"id"`
-				Name                            string  `json:"name"`
-				OfficialName                    string  `json:"officialName"`
-				CityName                        string  `json:"cityName"`
-				CentralRegistrationSystemNumber string  `json:"centralRegistrationSystemNumber"`
-				RegisteredEmailAddress          string  `json:"registeredEmailAddress"`
-				TaxNumber                       string  `json:"taxNumber"`
-				SellerScore                     float64 `json:"sellerScore"`
-				SellerScoreColor                string  `json:"sellerScoreColor"`
-				DistrictName                    string  `json:"districtName"`
-				CountryName                     string  `json:"countryName"`
-				Address                         string  `json:"address"`
-				LogoURL                         string  `json:"logoUrl"`
-				Stickers                        []any   `json:"stickers"`
-				MerchantBadges                  []any   `json:"merchantBadges"`
-				CorporateInvoiceApplicable      bool    `json:"corporateInvoiceApplicable"`
-				Affiliate                       string  `json:"affiliate"`
-				MerchantMarkers                 []any   `json:"merchantMarkers"`
-				ComponentCodes                  []any   `json:"componentCodes"`
-				LocationBasedSales              bool    `json:"locationBasedSales"`
-				MpAgreedDTD                     bool    `json:"mpAgreedDTD"`
-				MpEstimatedPackageDTD           bool    `json:"mpEstimatedPackageDTD"`
-				AllMpEstimatedPackageDTD        bool    `json:"allMpEstimatedPackageDTD"`
-				BulkSalesLimit                  int     `json:"bulkSalesLimit"`
-				TexApplicable                   bool    `json:"texApplicable"`
-				DropShipmentSupplier            bool    `json:"dropShipmentSupplier"`
-			} `json:"merchant,omitempty"`
-			Merchant1 struct {
-				ID                              int    `json:"id"`
-				Name                            string `json:"name"`
-				OfficialName                    string `json:"officialName"`
-				CityName                        string `json:"cityName"`
-				CentralRegistrationSystemNumber string `json:"centralRegistrationSystemNumber"`
-				RegisteredEmailAddress          string `json:"registeredEmailAddress"`
-				TaxNumber                       string `json:"taxNumber"`
-				SellerScore                     int    `json:"sellerScore"`
-				SellerScoreColor                string `json:"sellerScoreColor"`
-				DistrictName                    string `json:"districtName"`
-				CountryName                     string `json:"countryName"`
-				Address                         string `json:"address"`
-				LogoURL                         string `json:"logoUrl"`
-				Stickers                        []any  `json:"stickers"`
-				MerchantBadges                  []any  `json:"merchantBadges"`
-				CorporateInvoiceApplicable      bool   `json:"corporateInvoiceApplicable"`
-				Affiliate                       string `json:"affiliate"`
-				MerchantMarkers                 []any  `json:"merchantMarkers"`
-				ComponentCodes                  []any  `json:"componentCodes"`
-				LocationBasedSales              bool   `json:"locationBasedSales"`
-				MpAgreedDTD                     bool   `json:"mpAgreedDTD"`
-				MpEstimatedPackageDTD           bool   `json:"mpEstimatedPackageDTD"`
-				AllMpEstimatedPackageDTD        bool   `json:"allMpEstimatedPackageDTD"`
-				BulkSalesLimit                  int    `json:"bulkSalesLimit"`
-				TexApplicable                   bool   `json:"texApplicable"`
-				DropShipmentSupplier            bool   `json:"dropShipmentSupplier"`
-			} `json:"merchant,omitempty"`
+			// Merchant0      struct {
+			// 	ID                              int     `json:"id"`
+			// 	Name                            string  `json:"name"`
+			// 	OfficialName                    string  `json:"officialName"`
+			// 	CityName                        string  `json:"cityName"`
+			// 	CentralRegistrationSystemNumber string  `json:"centralRegistrationSystemNumber"`
+			// 	RegisteredEmailAddress          string  `json:"registeredEmailAddress"`
+			// 	TaxNumber                       string  `json:"taxNumber"`
+			// 	SellerScore                     float64 `json:"sellerScore"`
+			// 	SellerScoreColor                string  `json:"sellerScoreColor"`
+			// 	DistrictName                    string  `json:"districtName"`
+			// 	CountryName                     string  `json:"countryName"`
+			// 	Address                         string  `json:"address"`
+			// 	LogoURL                         string  `json:"logoUrl"`
+			// 	Stickers                        []any   `json:"stickers"`
+			// 	MerchantBadges                  []any   `json:"merchantBadges"`
+			// 	CorporateInvoiceApplicable      bool    `json:"corporateInvoiceApplicable"`
+			// 	Affiliate                       string  `json:"affiliate"`
+			// 	MerchantMarkers                 []any   `json:"merchantMarkers"`
+			// 	ComponentCodes                  []any   `json:"componentCodes"`
+			// 	LocationBasedSales              bool    `json:"locationBasedSales"`
+			// 	MpAgreedDTD                     bool    `json:"mpAgreedDTD"`
+			// 	MpEstimatedPackageDTD           bool    `json:"mpEstimatedPackageDTD"`
+			// 	AllMpEstimatedPackageDTD        bool    `json:"allMpEstimatedPackageDTD"`
+			// 	BulkSalesLimit                  int     `json:"bulkSalesLimit"`
+			// 	TexApplicable                   bool    `json:"texApplicable"`
+			// 	DropShipmentSupplier            bool    `json:"dropShipmentSupplier"`
+			// } `json:"merchant,omitempty"`
+			// Merchant1 struct {
+			// 	ID                              int    `json:"id"`
+			// 	Name                            string `json:"name"`
+			// 	OfficialName                    string `json:"officialName"`
+			// 	CityName                        string `json:"cityName"`
+			// 	CentralRegistrationSystemNumber string `json:"centralRegistrationSystemNumber"`
+			// 	RegisteredEmailAddress          string `json:"registeredEmailAddress"`
+			// 	TaxNumber                       string `json:"taxNumber"`
+			// 	SellerScore                     int    `json:"sellerScore"`
+			// 	SellerScoreColor                string `json:"sellerScoreColor"`
+			// 	DistrictName                    string `json:"districtName"`
+			// 	CountryName                     string `json:"countryName"`
+			// 	Address                         string `json:"address"`
+			// 	LogoURL                         string `json:"logoUrl"`
+			// 	Stickers                        []any  `json:"stickers"`
+			// 	MerchantBadges                  []any  `json:"merchantBadges"`
+			// 	CorporateInvoiceApplicable      bool   `json:"corporateInvoiceApplicable"`
+			// 	Affiliate                       string `json:"affiliate"`
+			// 	MerchantMarkers                 []any  `json:"merchantMarkers"`
+			// 	ComponentCodes                  []any  `json:"componentCodes"`
+			// 	LocationBasedSales              bool   `json:"locationBasedSales"`
+			// 	MpAgreedDTD                     bool   `json:"mpAgreedDTD"`
+			// 	MpEstimatedPackageDTD           bool   `json:"mpEstimatedPackageDTD"`
+			// 	AllMpEstimatedPackageDTD        bool   `json:"allMpEstimatedPackageDTD"`
+			// 	BulkSalesLimit                  int    `json:"bulkSalesLimit"`
+			// 	TexApplicable                   bool   `json:"texApplicable"`
+			// 	DropShipmentSupplier            bool   `json:"dropShipmentSupplier"`
+			// } `json:"merchant,omitempty"`
 		} `json:"merchantListings"`
 		DeliveryInformation struct {
 			IsRushDelivery      bool   `json:"isRushDelivery"`
@@ -519,11 +519,11 @@ type ProductStruct struct {
 		IsDigitalGood     bool   `json:"isDigitalGood"`
 		IsRunningOut      bool   `json:"isRunningOut"`
 		ScheduledDelivery bool   `json:"scheduledDelivery"`
-		RatingScore       struct {
-			AverageRating     int `json:"averageRating"`
-			TotalRatingCount  int `json:"totalRatingCount"`
-			TotalCommentCount int `json:"totalCommentCount"`
-		} `json:"ratingScore"`
+		// RatingScore       struct {
+		// 	AverageRating     int `json:"averageRating"`
+		// 	TotalRatingCount  int `json:"totalRatingCount"`
+		// 	TotalCommentCount int `json:"totalCommentCount"`
+		// } `json:"ratingScore"`
 		ShowStarredAttributes    bool   `json:"showStarredAttributes"`
 		ReviewsURL               string `json:"reviewsUrl"`
 		QuestionsURL             string `json:"questionsUrl"`

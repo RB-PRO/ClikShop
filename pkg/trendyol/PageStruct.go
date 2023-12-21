@@ -15,11 +15,11 @@ type PageStruct struct {
 				ID   int    `json:"id"`
 				Name string `json:"name"`
 			} `json:"brand"`
-			Tax         int `json:"tax"`
-			RatingScore struct {
-				// AverageRating int `json:"averageRating"`
-				TotalCount int `json:"totalCount"`
-			} `json:"ratingScore,omitempty"`
+			Tax int `json:"tax"`
+			// RatingScore struct {
+			// 	// AverageRating int `json:"averageRating"`
+			// 	TotalCount int `json:"totalCount"`
+			// } `json:"ratingScore,omitempty"`
 			ShowSexualContent bool   `json:"showSexualContent"`
 			ProductGroupID    int    `json:"productGroupId"`
 			HasReviewPhoto    bool   `json:"hasReviewPhoto"`

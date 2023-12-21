@@ -1,6 +1,8 @@
 package main
 
-import bitrixupdate "github.com/RB-PRO/ClikShop/internal/BitrixUpdate"
+import (
+	patrendyol "github.com/RB-PRO/ClikShop/internal/pa-trendyol"
+)
 
 func main() {
 	//app.Run(os.Args[1])
@@ -48,6 +50,8 @@ func main() {
 	// settings.EditIsExitHM()
 
 	// settings.EDITSIZES()
-	bitrixupdate.Start()
+	// bitrixupdate.Start()
 	// actualizer.Start()
+
+	patrendyol.Parsing()
 }
