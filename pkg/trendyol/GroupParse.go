@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"regexp"
 	"strings"
 
 	"github.com/RB-PRO/ClikShop/pkg/bases"
@@ -48,14 +47,15 @@ func ParseGroup(ProductGroupID int) (pg GroupStruct, Err error) {
 }
 
 // Получить товар по его ID группы
-func Product(ProductGroupID int) (prod bases.Product2, Err error) {
-	pg, ErrGroup := ParseGroup(ProductGroupID)
+func Product(IDs Groupeng, ShopID int) (prod bases.Product2, Err error) {
+	pg, ErrGroup := ParseGroup(IDs.ProductGroupID)
 	if ErrGroup != nil {
 		return prod, fmt.Errorf("ParseGroup: %v", ErrGroup)
 	}
 
 	if len(pg.Result.SlicingAttributes) == 0 {
-		return productOwner(ProductGroupID)
+		fmt.Println("Ну тут одиночный товар. Запускаю второй алгоритм", IDs.ID)
+		return productOwner(IDs.ID, ShopID)
 
 		// url := fmt.Sprintf(group_URL, ProductGroupID)
 		// fmt.Println("Ну тут одиночный товар. Запускаю второй алгоритм")
@@ -63,17 +63,18 @@ func Product(ProductGroupID int) (prod bases.Product2, Err error) {
 	}
 
 	if len(pg.Result.SlicingAttributes[0].Attributes) == 0 {
-		url := fmt.Sprintf(group_URL, ProductGroupID)
-		return prod, fmt.Errorf("в товаре %d не найдены attributes товаров: %v", ProductGroupID, url)
+		url := fmt.Sprintf(group_URL, IDs.ProductGroupID)
+		return prod, fmt.Errorf("в товаре %d не найдены attributes товаров: %v", IDs.ProductGroupID, url)
 	}
 
 	// Производитель
 	prod.Manufacturer = pg.Result.SlicingAttributes[0].Brand.Name
 
 	// Ссылка на товар
-	prod.Link = fmt.Sprintf(group_URL, ProductGroupID)
+	prod.Link = fmt.Sprintf(group_URL, IDs.ProductGroupID)
 
-	for iDonProd, DonProd := range pg.Result.SlicingAttributes[0].Attributes {
+	var isfirst bool = true
+	for _, DonProd := range pg.Result.SlicingAttributes[0].Attributes {
 		var ProductID int
 		if len(DonProd.Contents) == 1 {
 			ProductID = DonProd.Contents[0].ID
@@ -84,20 +85,29 @@ func Product(ProductGroupID int) (prod bases.Product2, Err error) {
 		// Парсинг вариации
 		pd, ErrProd := ParseProduct(ProductID)
 		if ErrProd != nil {
-			return prod, fmt.Errorf("ParseProduct: %v", ErrProd)
+			return prod, fmt.Errorf("ParseProduct: product-group:  %v", ErrProd)
+		}
+
+		if len(pd.Result.MerchantListings) == 0 {
+			fmt.Printf("product-group: len(pd.Result.MerchantListings)=0: тут вообще лежит инфа о продавце: ProductID = %d\n", ProductID)
+			continue
+		}
+		if ShopID != pd.Result.MerchantListings[0].Merchant.ID {
+			// return prod, fmt.Errorf("group Merchant: Несовпадение ID продавца и ID категории. Это означает, что данную вариацию продаёт не оригинальный магазин.")
+			continue
 		}
 
 		// Тк инфа по товару лежит только в самой вариации,
 		// то будем брать инфу с первого товара
-		if iDonProd == 1 {
+		if isfirst {
 			prod.Name = DonProd.Contents[0].Name // Название товара
 
 			// Описание товара
-			for _, ds := range pd.Result.Description {
-				prod.Description.Eng = prod.Description.Eng + ds.Text + "\n"
-			}
-			re := regexp.MustCompile("[[^]]*]")
-			prod.Description.Eng = re.ReplaceAllString(prod.Description.Eng, "")
+			// for _, ds := range pd.Result.Description {
+			// 	prod.Description.Eng = prod.Description.Eng + ds.Text + "\n"
+			// }
+			// re := regexp.MustCompile("[[^]]*]")
+			// prod.Description.Eng = re.ReplaceAllString(prod.Description.Eng, "")
 
 			// Гендер товара
 			// fmt.Println("pd.Result.Gender.ID ", pd.Result.Gender.ID, pd.Result.Gender.Name)
@@ -126,7 +136,7 @@ func Product(ProductGroupID int) (prod bases.Product2, Err error) {
 					Slug: bases.Name2Slug(categ),
 				})
 			}
-
+			isfirst = false
 		}
 
 		// Фотографии вариации товаров
@@ -138,8 +148,8 @@ func Product(ProductGroupID int) (prod bases.Product2, Err error) {
 		// Вариации товаров
 		color := Touch2ColorItem(pd)
 		prod.Item = append(prod.Item, bases.ColorItem{
-			ColorEng:  DonProd.Name,
-			ColorCode: DonProd.BeautifiedName,
+			ColorEng:  extractColors(DonProd.Name),
+			ColorCode: extractColors(DonProd.BeautifiedName),
 			Size:      color.Size,
 			Price:     pd.Result.Price.OriginalPrice.Value,
 			// Link: URL + DonProd.Contents[0].URL,
@@ -151,8 +161,20 @@ func Product(ProductGroupID int) (prod bases.Product2, Err error) {
 	return prod, Err
 }
 
+// Преобразование цвета:
+//
+// Из '4TA-LACİVERT' сделать 'LACİVERT'
+func extractColors(str string) string {
+	strs := strings.Split(str, "-")
+	if len(strs) == 2 {
+		return strs[1]
+	} else {
+		return strs[0]
+	}
+}
+
 // Парсинг с ProductGroupID для обычного варианта
-func productOwner(ProductID int) (prod bases.Product2, Err error) {
+func productOwner(ProductID, ShopID int) (prod bases.Product2, Err error) {
 
 	// Парсинг вариации
 	pd, ErrProd := ParseProduct(ProductID)
@@ -160,14 +182,21 @@ func productOwner(ProductID int) (prod bases.Product2, Err error) {
 		return prod, fmt.Errorf("ParseProduct: %v", ErrProd)
 	}
 
+	if len(pd.Result.MerchantListings) == 0 {
+		return prod, fmt.Errorf("product-one: len(pd.Result.MerchantListings)=0: тут вообще лежит инфа о продавце: ProductID = %d", ProductID)
+	}
+	if ShopID != pd.Result.MerchantListings[0].Merchant.ID {
+		return prod, fmt.Errorf("product-one: single-Merchant: ParseProduct: Несовпадение ID продавца и ID категории. Это означает, что данную вариацию продаёт не оригинальный магазин")
+	}
+
 	prod.Name = pd.Result.Name // Название товара
 
 	// Описание товара
-	for _, ds := range pd.Result.Description {
-		prod.Description.Eng = prod.Description.Eng + ds.Text + "\n"
-	}
-	re := regexp.MustCompile("[[^]]*]")
-	prod.Description.Eng = re.ReplaceAllString(prod.Description.Eng, "")
+	// for _, ds := range pd.Result.Description {
+	// 	prod.Description.Eng = prod.Description.Eng + ds.Text + "\n"
+	// }
+	// re := regexp.MustCompile("[[^]]*]")
+	// prod.Description.Eng = re.ReplaceAllString(prod.Description.Eng, "")
 
 	// Гендер товара
 	// fmt.Println("pd.Result.Gender.ID ", pd.Result.Gender.ID, pd.Result.Gender.Name)
@@ -206,8 +235,10 @@ func productOwner(ProductID int) (prod bases.Product2, Err error) {
 	// Вариации товаров
 	color := Touch2ColorItem(pd)
 	prod.Item = append(prod.Item, bases.ColorItem{
-		ColorEng:  pd.Result.Color,
-		ColorCode: bases.Name2Slug(pd.Result.Color),
+		// ColorEng:  pd.Result.Color,
+		// ColorCode: bases.Name2Slug(pd.Result.Color),
+		ColorEng:  extractColors(pd.Result.Color),
+		ColorCode: bases.Name2Slug(extractColors(pd.Result.Color)),
 		Size:      color.Size,
 		Price:     pd.Result.Price.OriginalPrice.Value,
 		// Link: URL + DonProd.Contents[0].URL,

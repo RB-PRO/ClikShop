@@ -8,8 +8,14 @@ import (
 	"time"
 )
 
+// Структура которая содержит как группу товара, так и его ID
+type Groupeng struct {
+	ID             int
+	ProductGroupID int
+}
+
 // Спарсить страницы товаров
-func Pages(ShopID string) (ProductGroupIDs []int, Err error) {
+func Pages(ShopID int) (ProductGroupIDs []Groupeng, Err error) {
 
 	// Количество страниц в товаре
 	var CoutPages int = 1
@@ -27,21 +33,24 @@ func Pages(ShopID string) (ProductGroupIDs []int, Err error) {
 
 		// Сохраняем ссылки на группы товаров
 		for _, Product := range pg.Result.Products {
-			ProductGroupIDs = append(ProductGroupIDs, Product.ProductGroupID)
+			ProductGroupIDs = append(ProductGroupIDs, Groupeng{
+				ID:             Product.ID,
+				ProductGroupID: Product.ProductGroupID,
+			})
 		}
 
 		time.Sleep(time.Millisecond * 100)
 
-		// break
+		break
 	}
 
 	return ProductGroupIDs, Err
 }
 
-const page_URL string = "https://public.trendyol.com/discovery-web-searchgw-service/v2/api/infinite-scroll/sr?mid=%s&os=1&pi=%d"
+const page_URL string = "https://public.trendyol.com/discovery-web-searchgw-service/v2/api/infinite-scroll/sr?mid=%d&os=1&pi=%d"
 
-// https://public.trendyol.com/discovery-web-searchgw-service/v2/api/infinite-scroll/sr?mid=106871&os=1&pi=2
-func ParsePage(ShopID string, page int) (pg PageStruct, Err error) {
+// Пропарсить страницу товаров для получения списка ID групп
+func ParsePage(ShopID int, page int) (pg PageStruct, Err error) {
 	url := fmt.Sprintf(page_URL, ShopID, page) // Рабочая ссылка для парсинга
 	fmt.Println("Lines:", url)
 	client := &http.Client{}
