@@ -59,7 +59,7 @@ func (bx *BitrixUpdator) UpdateMassimoDutti(ProductsDetail apibitrix.Product_Res
 	DonMap := make(map[key]apibitrix.Variation_Request)
 	for _, Item := range Product.Item {
 		for _, Size := range Item.Size {
-			Price := bases.EditDecadense((bx.BX.CB.Data.Valute.Try.Value/10)*Item.Price*bx.BX.MapCoast["H&M"].Walrus +
+			Price := bases.EditDecadense((bx.BX.CB.Data.Valute.Try.Value/10)*Item.Price*bx.BX.MapCoast["Massimo Dutti"].Walrus +
 				float64(bx.BX.MapCoast["Massimo Dutti"].Delivery))
 			DonMap[key{color: bases.Name2Slug(Item.ColorEng), size: bases.Name2Slug(Size.Val)}] = apibitrix.Variation_Request{
 				Price:        Price,

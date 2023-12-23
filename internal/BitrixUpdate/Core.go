@@ -119,8 +119,8 @@ func (bx *BitrixUpdator) Wath() error {
 				var MicroGoodUpdate int
 				for iProdID, ProdID := range ProductsID {
 					if iProdID%100 == 0 || iProdID == len(ProductsID) {
-						tgUpdate.Update(fmt.Sprintf("%sОбновил %d товаров из %d, это %.2f%%\nПроцент успеха: %.2f%%\nНачал в %s",
-							Prefix, iProdID, len(ProductsID), 100.0*float64(iProdID)/float64(len(ProductsID)), 100.0*float64(MicroGoodUpdate)/float64(iProdID), TimeStart.Format("15:04 02.01.2006")))
+						tgUpdate.Update(fmt.Sprintf(" - Обновил %d товаров из %d, это %.2f%%\nПроцент успеха: %.2f%%\nНачал в %s",
+							iProdID, len(ProductsID), 100.0*float64(iProdID)/float64(len(ProductsID)), 100.0*float64(MicroGoodUpdate)/float64(iProdID), TimeStart.Format("15:04 02.01.2006")))
 					}
 
 					// Обновляем данные по товару

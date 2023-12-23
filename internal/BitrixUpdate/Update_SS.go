@@ -38,7 +38,7 @@ func (bx *BitrixUpdator) UpdateSS(ProductsDetail apibitrix.Product_Response) (va
 	DonMap := make(map[key]apibitrix.Variation_Request)
 	for _, Item := range ColorsItem {
 		for _, Size := range Item.Size {
-			Price := bases.EditDecadense((bx.BX.CB.Data.Valute.Try.Value/10)*Item.Price*bx.BX.MapCoast["H&M"].Walrus +
+			Price := bases.EditDecadense((bx.BX.CB.Data.Valute.Try.Value/10)*Item.Price*bx.BX.MapCoast["ss"].Walrus +
 				float64(bx.BX.MapCoast["ss"].Delivery))
 			DonMap[key{color: (bases.Name2Slug(Item.ColorEng)), size: naaktstring(bases.Name2Slug(Size.Val))}] = apibitrix.Variation_Request{
 				Price:        Price,

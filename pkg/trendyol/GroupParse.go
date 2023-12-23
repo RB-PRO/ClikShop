@@ -155,7 +155,7 @@ func Product(IDs Groupeng, ShopID int) (prod bases.Product2, Err error) {
 			Size:      color.Size,
 			Price:     pd.Result.Price.OriginalPrice.Value,
 			// Link: URL + DonProd.Contents[0].URL,
-			Link:  fmt.Sprintf(product_URL, DonProd.Contents[0].ID),
+			Link:  fmt.Sprintf(Product_URL, DonProd.Contents[0].ID),
 			Image: images,
 		})
 	}
@@ -249,7 +249,7 @@ func productOwner(ProductID, ShopID int) (prod bases.Product2, Err error) {
 		Size:      color.Size,
 		Price:     pd.Result.Price.OriginalPrice.Value,
 		// Link: URL + DonProd.Contents[0].URL,
-		Link:  fmt.Sprintf(product_URL, ProductID),
+		Link:  fmt.Sprintf(Product_URL, ProductID),
 		Image: images,
 	})
 

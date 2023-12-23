@@ -11,10 +11,10 @@ import (
 	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
 
-const product_URL string = "https://public.trendyol.com/discovery-web-productgw-service/api/productDetail/%d?storefrontId=1"
+const Product_URL string = "https://public.trendyol.com/discovery-web-productgw-service/api/productDetail/%d?storefrontId=1"
 
 func ParseProduct(ProductID int) (pg ProductStruct, Err error) {
-	url := fmt.Sprintf(product_URL, ProductID) // Рабочая ссылка для парсинга
+	url := fmt.Sprintf(Product_URL, ProductID) // Рабочая ссылка для парсинга
 	// fmt.Println("Lines:", url)
 	client := &http.Client{}
 	req, ErrNewRequest := http.NewRequest(http.MethodGet, url, nil)
@@ -71,6 +71,42 @@ func Touch2ColorItem(pg ProductStruct) (color bases.ColorItem) {
 			DataCode: strconv.Itoa(variant.ItemNumber),
 		})
 	}
+	color.ColorCode = extractColors(pg.Result.Color)
+	color.ColorCode = bases.Name2Slug(color.ColorCode)
+	color.ColorCode = strings.TrimSpace(color.ColorCode)
 	color.Price = MaxPrice
 	return color
+}
+
+type ColorPriceExit struct {
+	Size   string
+	Color  string
+	IsExit bool
+	Price  float64
+}
+
+// Перевести структуру товара сайта донора в слайс цветов
+func Touch2ColorPriceExit(pg ProductStruct) (varients []ColorPriceExit) {
+
+	varients = make([]ColorPriceExit, 0, len(pg.Result.AllVariants))
+	// Цикл по всем вариантам и формирование ценовой политике
+	for _, variant := range pg.Result.AllVariants {
+
+		SizeVal := variant.Value
+		SizeVal = strings.ReplaceAll(SizeVal, ",", ".")
+
+		color := extractColors(pg.Result.Color)
+		color = bases.Name2Slug(color)
+		color = strings.TrimSpace(color)
+
+		varients = append(varients, ColorPriceExit{
+			Size:   SizeVal,
+			IsExit: variant.InStock,
+			Color:  color,
+			Price:  variant.Price,
+		})
+
+	}
+
+	return varients
 }

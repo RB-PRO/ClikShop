@@ -48,6 +48,12 @@ func (bx *BitrixUpdator) UpdateProduct(ProductID string) error {
 			// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
 			return fmt.Errorf("update: SS: %w", ErrUpdate)
 		}
+	case strings.Contains(Link, "trendyol"):
+		variationReq, ErrUpdate = bx.UpdateTrandYol(ProductsDetail)
+		if ErrUpdate != nil {
+			// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
+			return fmt.Errorf("update: trendyol: %w", ErrUpdate)
+		}
 	default:
 		return fmt.Errorf("update: Не знаю, какую логику применить к товару %s", ProductsDetail.Products[0].ID)
 	}
