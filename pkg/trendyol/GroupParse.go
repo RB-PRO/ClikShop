@@ -70,7 +70,7 @@ func Product(IDs Groupeng, ShopID int) (prod bases.Product2, Err error) {
 
 	// Производитель
 	prod.Manufacturer = pg.Result.SlicingAttributes[0].Brand.BeautifiedName
-	appendfile(pg.Result.SlicingAttributes[0].Brand.BeautifiedName)
+	// appendfile(pg.Result.SlicingAttributes[0].Brand.BeautifiedName)
 
 	// Ссылка на товар
 	prod.Link = fmt.Sprintf(group_URL, IDs.ProductGroupID)
@@ -194,6 +194,8 @@ func productOwner(ProductID, ShopID int) (prod bases.Product2, Err error) {
 
 	prod.Name = pd.Result.Name // Название товара
 
+	prod.Link = fmt.Sprintf(Product_URL, ProductID)
+
 	// Описание товара
 	// for _, ds := range pd.Result.Description {
 	// 	prod.Description.Eng = prod.Description.Eng + ds.Text + "\n"
@@ -217,7 +219,7 @@ func productOwner(ProductID, ShopID int) (prod bases.Product2, Err error) {
 
 	// Бренд
 	prod.Manufacturer = pd.Result.Brand.BeautifiedName
-	appendfile(pd.Result.Brand.BeautifiedName)
+	// appendfile(pd.Result.Brand.BeautifiedName)
 
 	// Категория
 	CategsStrs := strings.Split(pd.Result.Category.Hierarchy, "/")

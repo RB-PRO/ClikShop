@@ -41,7 +41,7 @@ func Pages(ShopID int) (ProductGroupIDs []Groupeng, Err error) {
 
 		time.Sleep(time.Millisecond * 50)
 
-		break
+		// break
 	}
 
 	return ProductGroupIDs, Err

@@ -54,3 +54,31 @@ func DataFile(filename string) (string, error) {
 
 	return string(data[:n]), nil
 }
+
+func TestTrans2(t *testing.T) {
+
+	inputStr := "Downtown Kadın Siyah/bordo Ceket"
+	outputStr := "Downtown Women's Black/burgundy Jacket"
+
+	FolderID, _ := DataFile("..\\..\\FolderID")
+	OAuthToken, _ := DataFile("..\\..\\OAuthToken")
+
+	tr, err := transrb.New(FolderID, OAuthToken)
+	if err != nil {
+		t.Error(err)
+	}
+
+	answerTranslate, errorTranslate := tr.TransENG(inputStr)
+	if errorTranslate != nil {
+		t.Error(errorTranslate)
+	}
+	if len(answerTranslate) == 0 {
+		t.Error("Массив вывода равен нулю")
+	}
+	if outputStr != answerTranslate {
+		t.Errorf(`Неверный перевод.
+Получено:    "%v"
+Должно быть: "%v"`, answerTranslate, outputStr)
+	}
+
+}

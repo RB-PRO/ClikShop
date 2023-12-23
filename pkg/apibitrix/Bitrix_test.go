@@ -107,7 +107,20 @@ func TestCoasts(t *testing.T) {
 
 func TestAdd(t *testing.T) {
 	bx, _ := NewBitrixUser()
-	Coasts, ErrCoasts := bx.AddProduct(bases.Product2{Article: ""})
+	Coasts, ErrCoasts := bx.AddProduct(bases.Product2{
+		Name:         "test",
+		Article:      "1234567890",
+		GenderLabel:  "man",
+		Manufacturer: "crocs",
+		Img: []string{"https://cdn.dsmcdn.com/mnresize/1200/1800/ty1086/product/media/images/prod/SPM/PIM/20231213/10/834b9534-e5cf-3667-82ce-b52af1ca4ed5/1_org_zoom.jpg",
+			"https://cdn.dsmcdn.com/mnresize/1200/1800/ty1088/product/media/images/prod/SPM/PIM/20231213/10/0ee8874c-7274-34c9-821e-b3036e95b6ba/1_org_zoom.jpg"},
+		Item: []bases.ColorItem{{ColorCode: "beliy", ColorEng: "Beliy", ColorRus: "Белый", Price: 228.0,
+			Size: []bases.Size{{Val: "L", IsExit: true}},
+			Image: []string{"https://cdn.dsmcdn.com/mnresize/1200/1800/ty1086/product/media/images/prod/SPM/PIM/20231213/10/834b9534-e5cf-3667-82ce-b52af1ca4ed5/1_org_zoom.jpg",
+				"https://cdn.dsmcdn.com/mnresize/1200/1800/ty1088/product/media/images/prod/SPM/PIM/20231213/10/0ee8874c-7274-34c9-821e-b3036e95b6ba/1_org_zoom.jpg"},
+		}},
+	})
+
 	if ErrCoasts != nil {
 		t.Error(ErrCoasts)
 	}

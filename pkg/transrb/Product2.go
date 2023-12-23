@@ -31,7 +31,7 @@ func (tr *Translate) TranslateProduct2(prod bases.Product2) (bases.Product2, err
 		return TranslateProduct, ErorTranslate
 	}
 	if len(TranslateName) != 1 {
-		return bases.Product2{}, fmt.Errorf("len(Name) != 1")
+		return bases.Product2{}, fmt.Errorf("name: len(Name) != 1")
 	}
 	TranslateProduct.Name = TranslateName[0]
 
@@ -42,7 +42,7 @@ func (tr *Translate) TranslateProduct2(prod bases.Product2) (bases.Product2, err
 			return TranslateProduct, ErorTranslate
 		}
 		if len(TranslateFullName) != 1 {
-			return bases.Product2{}, fmt.Errorf("len(FullName) != 1")
+			return bases.Product2{}, fmt.Errorf("fullName: len(FullName) != 1")
 		}
 		TranslateProduct.FullName = TranslateFullName[0]
 	}
@@ -54,7 +54,7 @@ func (tr *Translate) TranslateProduct2(prod bases.Product2) (bases.Product2, err
 			return TranslateProduct, ErorTranslate
 		}
 		if len(TranslateDescription) != 1 {
-			return bases.Product2{}, fmt.Errorf("len(FullName) != 1")
+			return bases.Product2{}, fmt.Errorf("description: len(FullName) != 1")
 		}
 		TranslateProduct.Description.Rus = TranslateDescription[0]
 	}

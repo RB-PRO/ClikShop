@@ -8,6 +8,7 @@ package actualizer
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/RB-PRO/ClikShop/pkg/bases"
 	"github.com/RB-PRO/ClikShop/pkg/transrb"
@@ -139,6 +140,7 @@ func (bx *bitrixActualizer) Trans(Folder string) error {
 			// Перевести товар
 			TranslateProd, ErrorTranstate := bx.TR.TranslateProduct2(Variety.Product[i])
 			if ErrorTranstate != nil {
+				fmt.Println("\nErrorTranstate ", ErrorTranstate, "\n ")
 				bx.TR, _ = transrb.New(bx.TR.FolderID, bx.TR.OAuthToken)
 				Variety.Product[i], _ = bx.TR.TranslateProduct2(Variety.Product[i])
 			} else {
@@ -151,8 +153,11 @@ func (bx *bitrixActualizer) Trans(Folder string) error {
 			}
 
 			if strings.Contains(Variety.Product[i].Link, "trendyol") {
+				time.Sleep(time.Second)
 				transName, ErrorTranstate2 := bx.TR.TransENG(Name)
+				fmt.Println("transName", transName, "ErrorTranstate2", ErrorTranstate2, "\n ")
 				if ErrorTranstate2 != nil {
+					fmt.Println("\nErrorTranstate2 ", ErrorTranstate2, "\n ")
 					bx.TR, _ = transrb.New(bx.TR.FolderID, bx.TR.OAuthToken)
 					Variety.Product[i].Name, _ = bx.TR.TransENG(Name)
 				} else {

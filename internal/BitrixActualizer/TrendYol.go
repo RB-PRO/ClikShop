@@ -27,7 +27,7 @@ func (bx *bitrixActualizer) trendyol(folder string) error {
 		Product, ErrProduct := trendyol.Product(ProductGroupID, ShopID)
 		if ErrProduct != nil {
 			// panic(ErrProduct)
-			fmt.Println(ErrProduct)
+			// fmt.Println(ErrProduct)
 			continue
 		}
 
