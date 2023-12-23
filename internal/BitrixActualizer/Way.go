@@ -135,6 +135,7 @@ func (bx *bitrixActualizer) Trans(Folder string) error {
 					ifile, len(files), file, Variety.Product[i].Name, ErrCoast))
 				continue
 			}
+
 			// Перевести товар
 			TranslateProd, ErrorTranstate := bx.TR.TranslateProduct2(Variety.Product[i])
 			if ErrorTranstate != nil {
@@ -147,6 +148,17 @@ func (bx *bitrixActualizer) Trans(Folder string) error {
 			// Проверка того, что этот товар из СС(не связано с рейх-канцелярией)
 			if strings.Contains(Variety.Product[i].Link, "sneaksup.com") {
 				Variety.Product[i].Name = Name
+			}
+
+			if strings.Contains(Variety.Product[i].Link, "trendyol") {
+				transName, ErrorTranstate2 := bx.TR.TransENG(Name)
+				if ErrorTranstate2 != nil {
+					bx.TR, _ = transrb.New(bx.TR.FolderID, bx.TR.OAuthToken)
+					Variety.Product[i].Name, _ = bx.TR.TransENG(Name)
+				} else {
+					Variety.Product[i].Name = transName
+				}
+
 			}
 
 			barProduct.Increment()

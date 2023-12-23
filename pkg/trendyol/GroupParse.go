@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/RB-PRO/ClikShop/pkg/bases"
@@ -54,7 +55,7 @@ func Product(IDs Groupeng, ShopID int) (prod bases.Product2, Err error) {
 	}
 
 	if len(pg.Result.SlicingAttributes) == 0 {
-		fmt.Println("Ну тут одиночный товар. Запускаю второй алгоритм", IDs.ID)
+		// fmt.Println("Ну тут одиночный товар. Запускаю второй алгоритм", IDs.ID)
 		return productOwner(IDs.ID, ShopID)
 
 		// url := fmt.Sprintf(group_URL, ProductGroupID)
@@ -68,7 +69,8 @@ func Product(IDs Groupeng, ShopID int) (prod bases.Product2, Err error) {
 	}
 
 	// Производитель
-	prod.Manufacturer = pg.Result.SlicingAttributes[0].Brand.Name
+	prod.Manufacturer = pg.Result.SlicingAttributes[0].Brand.BeautifiedName
+	appendfile(pg.Result.SlicingAttributes[0].Brand.BeautifiedName)
 
 	// Ссылка на товар
 	prod.Link = fmt.Sprintf(group_URL, IDs.ProductGroupID)
@@ -89,7 +91,7 @@ func Product(IDs Groupeng, ShopID int) (prod bases.Product2, Err error) {
 		}
 
 		if len(pd.Result.MerchantListings) == 0 {
-			fmt.Printf("product-group: len(pd.Result.MerchantListings)=0: тут вообще лежит инфа о продавце: ProductID = %d\n", ProductID)
+			// fmt.Printf("product-group: len(pd.Result.MerchantListings)=0: тут вообще лежит инфа о продавце: ProductID = %d\n", ProductID)
 			continue
 		}
 		if ShopID != pd.Result.MerchantListings[0].Merchant.ID {
@@ -165,6 +167,7 @@ func Product(IDs Groupeng, ShopID int) (prod bases.Product2, Err error) {
 //
 // Из '4TA-LACİVERT' сделать 'LACİVERT'
 func extractColors(str string) string {
+	str = strings.ReplaceAll(str, "--", "-")
 	strs := strings.Split(str, "-")
 	if len(strs) == 2 {
 		return strs[1]
@@ -212,6 +215,10 @@ func productOwner(ProductID, ShopID int) (prod bases.Product2, Err error) {
 	//  Артикул
 	prod.Article = pd.Result.ProductCode
 
+	// Бренд
+	prod.Manufacturer = pd.Result.Brand.BeautifiedName
+	appendfile(pd.Result.Brand.BeautifiedName)
+
 	// Категория
 	CategsStrs := strings.Split(pd.Result.Category.Hierarchy, "/")
 	prod.Cat = make([]bases.Cat, 0, len(CategsStrs)+1)
@@ -247,4 +254,17 @@ func productOwner(ProductID, ShopID int) (prod bases.Product2, Err error) {
 	})
 
 	return prod, nil
+}
+
+func appendfile(data string) {
+	f, err := os.OpenFile("trendyol.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		panic(err)
+	}
+
+	defer f.Close()
+
+	if _, err = f.WriteString(data + "\n"); err != nil {
+		panic(err)
+	}
 }

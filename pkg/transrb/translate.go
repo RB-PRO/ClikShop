@@ -111,3 +111,64 @@ func (cli *Translate) Trans(InputStrs []string) ([]string, error) {
 
 	return OutPuts, nil
 }
+
+func (cli *Translate) TransENG(InputStrs string) (string, error) {
+	// Формируем запрос
+	type TransPost struct {
+		FolderID           string   `json:"folderId"`
+		Texts              []string `json:"texts"`
+		TargetLanguageCode string   `json:"targetLanguageCode"`
+	}
+	RawData := TransPost{
+		FolderID:           cli.FolderID,
+		Texts:              []string{InputStrs},
+		TargetLanguageCode: "en",
+	}
+
+	// Конвертация из структуры в буффер
+	var buf bytes.Buffer
+	err := json.NewEncoder(&buf).Encode(RawData)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Создаём запрос
+	client := &http.Client{}
+	r, _ := http.NewRequest(http.MethodPost, "https://translate.api.cloud.yandex.net/translate/v2/translate", &buf) // URL-encoded payload
+	r.Header.Add("Content-Type", "application/json")
+	r.Header.Add("Authorization", "Bearer "+cli.IAM)
+
+	// Выполняем запрос
+	resp, ErrorDo := client.Do(r)
+	if ErrorDo != nil {
+		return "", ErrorDo
+	}
+	defer resp.Body.Close()
+
+	// Вывод результатов
+	body, ErrReadAll := io.ReadAll(resp.Body) // response body is []byte
+	if ErrReadAll != nil {
+		return "", ErrReadAll
+	}
+
+	// fmt.Println(string(body))
+
+	// Распарсить ответ
+	var result Response
+	if ErrUnmarshal := json.Unmarshal(body, &result); ErrUnmarshal != nil { // Parse []byte to go struct pointer
+		return "", ErrUnmarshal
+	}
+
+	// Если есть сообщение об ошибке
+	if result.Message != "" {
+		return "", errors.New(result.Message)
+	}
+
+	// // ЗАписываем массив на вывод
+	// var OutPuts []string
+	// for _, val := range result.Translations {
+	// 	OutPuts = append(OutPuts, val.Text)
+	// }
+
+	return result.Translations[0].Text, nil
+}

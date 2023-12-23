@@ -1,7 +1,7 @@
 package main
 
 import (
-	patrendyol "github.com/RB-PRO/ClikShop/internal/pa-trendyol"
+	actualizer "github.com/RB-PRO/ClikShop/internal/BitrixActualizer"
 )
 
 func main() {
@@ -51,7 +51,7 @@ func main() {
 
 	// settings.EDITSIZES()
 	// bitrixupdate.Start()
-	// actualizer.Start()
+	actualizer.Start()
 
-	patrendyol.Parsing()
+	// patrendyol.Parsing()
 }

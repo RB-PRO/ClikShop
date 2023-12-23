@@ -199,10 +199,41 @@ func EditDecadense(coast float64) float64 {
 func EditIMG(prod Product2) (img []string) {
 	if len(prod.Img) == 0 {
 		for _, item := range prod.Item {
-			for _, image := range item.Image {
-				img = append(img, image)
-			}
+			img = append(img, item.Image...)
+			// for _, image := range item.Image {
+			// 	img = append(img, image)
+			// }
 		}
 	}
 	return img
+}
+
+// Обработать товар, где есть вариации с одинаковым цветом
+// Если цвета одинаковые, то добавляет в конце -1 -2 -3 и тд
+func EditDoubleColors(prod Product2) Product2 {
+
+	// Создаём мапу со слайсами вариаций товаров
+	mapColorItems := make(map[string][]ColorItem)
+	for _, ct := range prod.Item {
+		mapColorItems[ct.ColorCode] = append(mapColorItems[ct.ColorCode], ct)
+	}
+	if len(mapColorItems) == len(prod.Item) {
+		return prod
+	}
+
+	// формирование товаров
+	prod.Item = make([]ColorItem, 0, len(prod.Item))
+	for _, ct := range mapColorItems {
+		if len(ct) == 1 {
+			prod.Item = append(prod.Item, ct[0])
+			continue
+		}
+		for i, ct := range ct {
+			ct.ColorCode = fmt.Sprintf("%s-%d", ct.ColorCode, i+1)
+			ct.ColorEng = fmt.Sprintf("%s-%d", ct.ColorEng, i+1)
+			prod.Item = append(prod.Item, ct)
+		}
+	}
+
+	return prod
 }
