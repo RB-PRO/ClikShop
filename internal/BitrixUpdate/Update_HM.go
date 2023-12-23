@@ -3,6 +3,7 @@ package bitrixupdate
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
 	"github.com/RB-PRO/ClikShop/pkg/bases"
@@ -27,12 +28,14 @@ func (bx *BitrixUpdator) UpdateHandM(ProductsDetail apibitrix.Product_Response) 
 		return nil, fmt.Errorf("hm.Aavailability: Не получилось получить данные по артикулу %s из ссылки %s", SKUhm[:7], ProductsDetail.Products[0].Link)
 	}
 	// fmt.Println(Avalibs)
+	time.Sleep(500 * time.Millisecond)
 
 	AvalibMap, ErrAavailability2 := hm.AavailabilityMap(ProductsDetail.Products[0].Link)
 	if ErrAavailability2 != nil {
 		return nil, fmt.Errorf("hm.Aavailability2: %v: Не получилось получить данные по артикулу %s из ссылки %s",
 			ErrAavailability2, SKUhm[:7], ProductsDetail.Products[0].Link)
 	}
+	time.Sleep(500 * time.Millisecond)
 
 	// Формирование мапы наличия для каждой вариации
 	MapAvalibs := make(map[key]bool)
@@ -71,6 +74,7 @@ func (bx *BitrixUpdator) UpdateHandM(ProductsDetail apibitrix.Product_Response) 
 			if ErrVariablePrice2 != nil {
 				return nil, fmt.Errorf("hm.VariablePrice2: Не получилось получить данные цене по артикулу %s из ссылки https://www2.hm.com/tr_tr/productpage/_jcr_content/product.quickbuy.%s.html", SKUhm, SKUhm)
 			}
+			time.Sleep(500 * time.Millisecond)
 			PriceMap[SKU] = Price
 		}
 	}
