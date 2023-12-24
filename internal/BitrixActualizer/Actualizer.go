@@ -129,14 +129,14 @@ func Start() {
 		bx.GLOG.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", Folder, ErrDR))
 		return
 	}
-	ErrTr := bx.Trans(Folder)
-	if ErrTr != nil {
-		bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
-		return
-	}
-	ErrPush := bx.Push(Folder)
-	if ErrPush != nil {
-		bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", Folder, ErrPush))
-		return
-	}
+	// ErrTr := bx.Trans(Folder)
+	// if ErrTr != nil {
+	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
+	// 	return
+	// }
+	// ErrPush := bx.Push(Folder)
+	// if ErrPush != nil {
+	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", Folder, ErrPush))
+	// 	return
+	// }
 }

@@ -1,8 +1,6 @@
 package main
 
-import (
-	actualizer "github.com/RB-PRO/ClikShop/internal/BitrixActualizer"
-)
+import actualizer "github.com/RB-PRO/ClikShop/internal/BitrixActualizer"
 
 func main() {
 	//app.Run(os.Args[1])

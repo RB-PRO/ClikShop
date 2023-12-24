@@ -2,6 +2,7 @@ package actualizer
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/RB-PRO/ClikShop/pkg/bases"
@@ -11,23 +12,45 @@ import (
 
 func (bx *bitrixActualizer) trendyol(folder string) error {
 
+	ShopIDs := []int{
+		332585, // Levi's
+		107483, // Aktaş Sport AS
+		106871, // SneakSup
+		815951, // HUGO
+		804476, // BOSS
+		742918, // Victoria's secret
+	}
+	fmt.Println(ShopIDs)
+
+	for _, ShopID := range ShopIDs {
+		bx.trendyolOne(folder, ShopID)
+	}
+
+	return nil
+}
+
+func (bx *bitrixActualizer) trendyolOne(folder string, ShopID int) error {
+
 	MakeDir(folder)
 
-	ShopID := 106871 // SneakSup
+	fmt.Println("ShopID trendyolOne", ShopID)
 	ProductGroupIDs, ErrGroup := trendyol.Pages(ShopID)
 	if ErrGroup != nil {
 		return fmt.Errorf("trendyol.Pages: %v", ErrGroup)
 	}
 
+	fmt.Println(ProductGroupIDs)
+	fmt.Println("len(ProductGroupIDs)", len(ProductGroupIDs))
+
 	BarProducts := pb.StartNew(len(ProductGroupIDs))
-	BarProducts.Prefix("trendyol")
+	defer BarProducts.Finish()
+	BarProducts.Prefix(strconv.Itoa(ShopID))
 	var Products bases.Variety2
 	for _, ProductGroupID := range ProductGroupIDs {
-		// fmt.Println(iProductGroupID, len(ProductGroupIDs))
 		Product, ErrProduct := trendyol.Product(ProductGroupID, ShopID)
 		if ErrProduct != nil {
 			// panic(ErrProduct)
-			// fmt.Println(ErrProduct)
+			fmt.Println(ErrProduct)
 			continue
 		}
 
@@ -44,7 +67,7 @@ func (bx *bitrixActualizer) trendyol(folder string) error {
 		BarProducts.Increment()
 		time.Sleep(time.Millisecond * 200)
 	}
-	BarProducts.Finish()
+
 	Products.SaveJson(fmt.Sprintf("%s/trendyol_%d", folder, ShopID))
 
 	return nil

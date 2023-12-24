@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/RB-PRO/ClikShop/pkg/bases"
@@ -258,15 +257,15 @@ func productOwner(ProductID, ShopID int) (prod bases.Product2, Err error) {
 	return prod, nil
 }
 
-func appendfile(data string) {
-	f, err := os.OpenFile("trendyol.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	if err != nil {
-		panic(err)
-	}
+// func appendfile(data string) {
+// 	f, err := os.OpenFile("trendyol.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-	defer f.Close()
+// 	defer f.Close()
 
-	if _, err = f.WriteString(data + "\n"); err != nil {
-		panic(err)
-	}
-}
+// 	if _, err = f.WriteString(data + "\n"); err != nil {
+// 		panic(err)
+// 	}
+// }

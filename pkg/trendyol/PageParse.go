@@ -24,11 +24,14 @@ func Pages(ShopID int) (ProductGroupIDs []Groupeng, Err error) {
 	for iPage := 1; iPage <= CoutPages; iPage++ {
 
 		// Сбор информации о товарах на странице iPage
+
+		fmt.Println("ShopID Pages", ShopID)
 		pg, ErrPage := ParsePage(ShopID, iPage)
 		if Err != nil {
 			return nil, fmt.Errorf("parsePage: %v", ErrPage)
 		}
 		CoutPages = RoundUp(pg.Result.TotalCount, 24)
+		fmt.Println(pg.Result.TotalCount, 24, "-", CoutPages)
 		// fmt.Printf("iPage: %d, pg.Result.TotalCount %d, CoutPages %d\n", iPage, pg.Result.TotalCount, CoutPages)
 
 		// Сохраняем ссылки на группы товаров
@@ -39,7 +42,7 @@ func Pages(ShopID int) (ProductGroupIDs []Groupeng, Err error) {
 			})
 		}
 
-		time.Sleep(time.Millisecond * 50)
+		time.Sleep(time.Millisecond * 200)
 
 		// break
 	}
@@ -52,14 +55,13 @@ const page_URL string = "https://public.trendyol.com/discovery-web-searchgw-serv
 // Пропарсить страницу товаров для получения списка ID групп
 func ParsePage(ShopID int, page int) (pg PageStruct, Err error) {
 	url := fmt.Sprintf(page_URL, ShopID, page) // Рабочая ссылка для парсинга
-	// fmt.Println("Lines:", url)
-	client := &http.Client{}
+	fmt.Println("Lines:", url)
+	client := &http.Client{Timeout: time.Second * 60}
 	req, ErrNewRequest := http.NewRequest(http.MethodGet, url, nil)
 	if ErrNewRequest != nil {
 		return PageStruct{}, fmt.Errorf("http.NewRequest: %v", ErrNewRequest)
 	}
-
-	req.Header.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.4.603 Yowser/2.5 Safari/537.36")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 YaBrowser/23.11.0.0 Safari/537.36")
 
 	// Выполнить запорос
 	Response, ErrDo := client.Do(req)
@@ -75,8 +77,7 @@ func ParsePage(ShopID int, page int) (pg PageStruct, Err error) {
 	}
 
 	// Распарсить полученный json в структуру
-	ErrorUnmarshal := json.Unmarshal(BodyPage, &pg)
-	if ErrorUnmarshal != nil {
+	if ErrorUnmarshal := json.Unmarshal(BodyPage, &pg); ErrorUnmarshal != nil {
 		return PageStruct{}, fmt.Errorf("json.Unmarshal: %v", ErrorUnmarshal)
 	}
 
