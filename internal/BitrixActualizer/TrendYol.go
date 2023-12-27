@@ -81,7 +81,7 @@ func (bx *bitrixActualizer) trendyolOne(folder string, ShopID int) error {
 			Products.Product = append(Products.Product, Product)
 		}
 		BarProducts.Increment()
-		time.Sleep(time.Millisecond * 200)
+		time.Sleep(time.Millisecond * 50)
 	}
 
 	Products.SaveJson(fmt.Sprintf("%s/trendyol_%d", folder, ShopID))

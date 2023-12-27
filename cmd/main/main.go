@@ -1,6 +1,6 @@
 package main
 
-import actualizer "github.com/RB-PRO/ClikShop/internal/BitrixActualizer"
+import bitrixupdate "github.com/RB-PRO/ClikShop/internal/BitrixUpdate"
 
 func main() {
 	//app.Run(os.Args[1])
@@ -48,8 +48,10 @@ func main() {
 	// settings.EditIsExitHM()
 
 	// settings.EDITSIZES()
-	// bitrixupdate.Start()
-	actualizer.Start()
+	bitrixupdate.Start()
+	// actualizer.Start()
+
+	// settings.PrintSizes()
 
 	// patrendyol.Parsing()
 }

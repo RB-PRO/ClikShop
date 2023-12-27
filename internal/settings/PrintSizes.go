@@ -12,7 +12,7 @@ import (
 )
 
 func PrintSizes() {
-	FolderInput := "internal/settings/SS/"
+	FolderInput := "internal/settings/ty/"
 	// FolderOutput := "internal/settings/SS2/"
 
 	// // Создать оьбъект переводчика
@@ -35,10 +35,10 @@ func PrintSizes() {
 		}
 
 		// output file
-		filenameReplace := strings.ReplaceAll(file.Name(), ".json", "")
-		filenameReplaces := strings.Split(filenameReplace, "_")
-		filenameReplace = filenameReplaces[2]
-		filenameReplace = strings.ReplaceAll(filenameReplace, ".json", "")
+		// filenameReplace := strings.ReplaceAll(file.Name(), ".json", "")
+		// filenameReplaces := strings.Split(filenameReplace, "_")
+		// filenameReplace = filenameReplaces[2]
+		// filenameReplace = strings.ReplaceAll(filenameReplace, ".json", "")
 		// FilePatch := fmt.Sprintf(FolderOutput+"zara_%d_%s", i, filenameReplace)
 		// FilePatch = strings.ReplaceAll(FilePatch, ".json.json", ".json")
 		// fmt.Println(i, FilePatch)
@@ -72,6 +72,7 @@ func PrintSizes() {
 	}
 	for k := range mapingSize {
 		fmt.Println(k)
+		appendfile(k)
 	}
 }
 
@@ -144,5 +145,18 @@ func UpSizesEditProduct() {
 	}
 	for k := range mapingSize {
 		fmt.Println(k)
+	}
+}
+
+func appendfile(data string) {
+	f, err := os.OpenFile("tysizes.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		panic(err)
+	}
+
+	defer f.Close()
+
+	if _, err = f.WriteString(data + "\n"); err != nil {
+		panic(err)
 	}
 }

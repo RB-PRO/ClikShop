@@ -92,7 +92,8 @@ func (bx *BitrixUpdator) Wath() error {
 		var DoneUpdateProduct int
 		// chUpdate := make(chan int, 1)
 		var wg sync.WaitGroup
-		CoutMictoUpdator := 3 // количество микрообновляторов
+		CoutMictoUpdator := bx.ActiveWorkers // количество микрообновляторов
+		// CoutMictoUpdator = 3 // количество микрообновляторов
 		wg.Add(CoutMictoUpdator)
 
 		fmt.Println(len(ProductsID))
