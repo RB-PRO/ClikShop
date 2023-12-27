@@ -18,9 +18,9 @@ type ProductStruct struct {
 			Description string `json:"description"`
 			MediaUrls   []any  `json:"mediaUrls"`
 		} `json:"attributes"`
-		SelectedVasAttributes []any `json:"selectedVasAttributes"`
-		AlternativeVariants   []any `json:"alternativeVariants"`
-		Variants              []struct {
+		// SelectedVasAttributes []any `json:"selectedVasAttributes"`
+		// AlternativeVariants   []any `json:"alternativeVariants"`
+		Variants []struct {
 			AttributeID    int    `json:"attributeId"`
 			AttributeName  string `json:"attributeName"`
 			AttributeType  string `json:"attributeType"`
@@ -60,10 +60,10 @@ type ProductStruct struct {
 				UnitPrice     bool `json:"unitPrice"`
 				UnitPriceText bool `json:"unitPriceText"`
 			} `json:"unitInfo"`
-			RushDeliveryMerchantListingExist bool     `json:"rushDeliveryMerchantListingExist"`
-			LowerPriceMerchantListingExist   bool     `json:"lowerPriceMerchantListingExist"`
-			FastDeliveryOptions              []any    `json:"fastDeliveryOptions"`
-			GroupTagIds                      []string `json:"groupTagIds"`
+			RushDeliveryMerchantListingExist bool `json:"rushDeliveryMerchantListingExist"`
+			// LowerPriceMerchantListingExist   bool     `json:"lowerPriceMerchantListingExist"`
+			// FastDeliveryOptions              []any    `json:"fastDeliveryOptions"`
+			GroupTagIds []string `json:"groupTagIds"`
 		} `json:"variants"`
 		OtherMerchants []struct {
 			URL          string `json:"url"`
@@ -84,19 +84,19 @@ type ProductStruct struct {
 			IsBasketDiscount    bool   `json:"isBasketDiscount"`
 			HasStock            bool   `json:"hasStock"`
 			Price               struct {
-				ProfitMargin    int `json:"profitMargin"`
-				DiscountedPrice struct {
-					Text  string  `json:"text"`
-					Value float64 `json:"value"`
-				} `json:"discountedPrice"`
-				SellingPrice struct {
-					Text  string  `json:"text"`
-					Value float64 `json:"value"`
-				} `json:"sellingPrice"`
-				OriginalPrice struct {
-					Text  string  `json:"text"`
-					Value float64 `json:"value"`
-				} `json:"originalPrice"`
+				ProfitMargin int `json:"profitMargin"`
+				// DiscountedPrice struct {
+				// 	Text  string  `json:"text"`
+				// 	Value float64 `json:"value"`
+				// } `json:"discountedPrice"`
+				// SellingPrice struct {
+				// 	Text  string  `json:"text"`
+				// 	Value float64 `json:"value"`
+				// } `json:"sellingPrice"`
+				// OriginalPrice struct {
+				// 	Text  string  `json:"text"`
+				// 	Value float64 `json:"value"`
+				// } `json:"originalPrice"`
 				Currency string `json:"currency"`
 			} `json:"price"`
 			IsFreeCargo        bool `json:"isFreeCargo"`
@@ -208,15 +208,15 @@ type ProductStruct struct {
 			Barcode    string  `json:"barcode"`
 			Price      float64 `json:"price"`
 		} `json:"allVariants"`
-		OtherMerchantVariants                      []any  `json:"otherMerchantVariants"`
+		// OtherMerchantVariants                      []any  `json:"otherMerchantVariants"`
 		InstallmentBanner                          string `json:"installmentBanner"`
 		InstallmentText                            string `json:"installmentText"`
 		Token                                      string `json:"token"`
 		IsThereAnyCorporateInvoiceInOtherMerchants bool   `json:"isThereAnyCorporateInvoiceInOtherMerchants"`
-		AdvertProduct                              any    `json:"advertProduct"`
-		CategoryTopRankings                        any    `json:"categoryTopRankings"`
-		IsVasEnabled                               bool   `json:"isVasEnabled"`
-		OriginalCategory                           struct {
+		// AdvertProduct                              any    `json:"advertProduct"`
+		// CategoryTopRankings                        any    `json:"categoryTopRankings"`
+		IsVasEnabled     bool `json:"isVasEnabled"`
+		OriginalCategory struct {
 			ID             int    `json:"id"`
 			Name           string `json:"name"`
 			Hierarchy      string `json:"hierarchy"`
@@ -285,10 +285,10 @@ type ProductStruct struct {
 			Link                   string `json:"link"`
 		} `json:"promotions"`
 		Merchant struct {
-			IsSearchableMerchant            bool   `json:"isSearchableMerchant"`
-			Stickers                        []any  `json:"stickers"`
-			MerchantBadges                  []any  `json:"merchantBadges"`
-			MerchantMarkers                 []any  `json:"merchantMarkers"`
+			IsSearchableMerchant bool `json:"isSearchableMerchant"`
+			// Stickers                        []any  `json:"stickers"`
+			// MerchantBadges                  []any  `json:"merchantBadges"`
+			// MerchantMarkers                 []any  `json:"merchantMarkers"`
 			ID                              int    `json:"id"`
 			Name                            string `json:"name"`
 			OfficialName                    string `json:"officialName"`
@@ -317,22 +317,22 @@ type ProductStruct struct {
 				TaxNumber                       string `json:"taxNumber"`
 				// SellerScore                     float64 `json:"sellerScore"`
 				// SellerScoreColor                string  `json:"sellerScoreColor"`
-				DistrictName               string `json:"districtName"`
-				CountryName                string `json:"countryName"`
-				Address                    string `json:"address"`
-				LogoURL                    string `json:"logoUrl"`
-				Stickers                   []any  `json:"stickers"`
-				MerchantBadges             []any  `json:"merchantBadges"`
-				CorporateInvoiceApplicable bool   `json:"corporateInvoiceApplicable"`
-				Affiliate                  string `json:"affiliate"`
-				MerchantMarkers            []any  `json:"merchantMarkers"`
-				ComponentCodes             []any  `json:"componentCodes"`
-				LocationBasedSales         bool   `json:"locationBasedSales"`
-				MpAgreedDTD                bool   `json:"mpAgreedDTD"`
-				MpEstimatedPackageDTD      bool   `json:"mpEstimatedPackageDTD"`
-				AllMpEstimatedPackageDTD   bool   `json:"allMpEstimatedPackageDTD"`
-				TexApplicable              bool   `json:"texApplicable"`
-				DropShipmentSupplier       bool   `json:"dropShipmentSupplier"`
+				DistrictName string `json:"districtName"`
+				CountryName  string `json:"countryName"`
+				Address      string `json:"address"`
+				LogoURL      string `json:"logoUrl"`
+				// Stickers                   []any  `json:"stickers"`
+				// MerchantBadges             []any  `json:"merchantBadges"`
+				// CorporateInvoiceApplicable bool   `json:"corporateInvoiceApplicable"`
+				// Affiliate                  string `json:"affiliate"`
+				// MerchantMarkers            []any  `json:"merchantMarkers"`
+				// ComponentCodes             []any  `json:"componentCodes"`
+				LocationBasedSales       bool `json:"locationBasedSales"`
+				MpAgreedDTD              bool `json:"mpAgreedDTD"`
+				MpEstimatedPackageDTD    bool `json:"mpEstimatedPackageDTD"`
+				AllMpEstimatedPackageDTD bool `json:"allMpEstimatedPackageDTD"`
+				TexApplicable            bool `json:"texApplicable"`
+				DropShipmentSupplier     bool `json:"dropShipmentSupplier"`
 			} `json:"merchant,omitempty"`
 			Campaign struct {
 				ID                 int    `json:"id"`
@@ -366,19 +366,19 @@ type ProductStruct struct {
 				Quantity       int    `json:"quantity"`
 				Price          struct {
 					// BuyingPrice              int     `json:"buyingPrice"`
-					SellingPrice             float64 `json:"sellingPrice"`
-					OriginalPrice            float64 `json:"originalPrice"`
-					ManipulatedOriginalPrice float64 `json:"manipulatedOriginalPrice"`
-					DiscountedPrice          float64 `json:"discountedPrice"`
-					Currency                 string  `json:"currency"`
-					ProfitMargin             int     `json:"profitMargin"`
+					// SellingPrice             float64 `json:"sellingPrice"`
+					OriginalPrice float64 `json:"originalPrice"`
+					// ManipulatedOriginalPrice float64 `json:"manipulatedOriginalPrice"`
+					// DiscountedPrice float64 `json:"discountedPrice"`
+					// Currency        string  `json:"currency"`
+					// ProfitMargin int `json:"profitMargin"`
 				} `json:"price"`
-				FreeCargo            bool   `json:"freeCargo"`
-				AvailableForClaim    bool   `json:"availableForClaim"`
-				DiscountedPriceInfo  string `json:"discountedPriceInfo"`
-				HasCollectable       bool   `json:"hasCollectable"`
-				Deci                 int    `json:"deci"`
-				RushDeliveryDuration int    `json:"rushDeliveryDuration"`
+				FreeCargo         bool `json:"freeCargo"`
+				AvailableForClaim bool `json:"availableForClaim"`
+				// DiscountedPriceInfo  string `json:"discountedPriceInfo"`
+				HasCollectable       bool `json:"hasCollectable"`
+				Deci                 int  `json:"deci"`
+				RushDeliveryDuration int  `json:"rushDeliveryDuration"`
 				VariantAttributes    []struct {
 					AttributeID    int    `json:"attributeId"`
 					AttributeName  string `json:"attributeName"`
@@ -393,21 +393,21 @@ type ProductStruct struct {
 				MaxProductSaleQuantity int `json:"maxProductSaleQuantity"`
 				UnitInfo               struct {
 				} `json:"unitInfo"`
-				SupplementaryServices            []any    `json:"supplementaryServices"`
+				// SupplementaryServices            []any    `json:"supplementaryServices"`
 				GroupTagIds                      []string `json:"groupTagIds"`
 				RushDeliveryMerchantListingExist bool     `json:"rushDeliveryMerchantListingExist"`
 				RushDeliveryMerchantListing      struct {
 					Exist bool `json:"exist"`
 				} `json:"rushDeliveryMerchantListing"`
-				LowerPriceMerchantListingExist bool  `json:"lowerPriceMerchantListingExist"`
-				HasGroupDeal                   bool  `json:"hasGroupDeal"`
-				FastDeliveryOptions            []any `json:"fastDeliveryOptions"`
-				OverPriced                     bool  `json:"overPriced"`
-				Sellable                       bool  `json:"sellable"`
-				ScheduledDelivery              bool  `json:"scheduledDelivery"`
-				IsFlash                        bool  `json:"isFlash"`
-				IsWinner                       bool  `json:"isWinner"`
-				IsDiscountedListing            bool  `json:"isDiscountedListing"`
+				LowerPriceMerchantListingExist bool `json:"lowerPriceMerchantListingExist"`
+				HasGroupDeal                   bool `json:"hasGroupDeal"`
+				// FastDeliveryOptions            []any `json:"fastDeliveryOptions"`
+				OverPriced          bool `json:"overPriced"`
+				Sellable            bool `json:"sellable"`
+				ScheduledDelivery   bool `json:"scheduledDelivery"`
+				IsFlash             bool `json:"isFlash"`
+				IsWinner            bool `json:"isWinner"`
+				IsDiscountedListing bool `json:"isDiscountedListing"`
 			} `json:"variants"`
 			Stamps []struct {
 				Type          string  `json:"type"`
@@ -417,7 +417,7 @@ type ProductStruct struct {
 				Priority      int     `json:"priority"`
 				PriceTagStamp bool    `json:"priceTagStamp"`
 			} `json:"stamps"`
-			AlternativeVariants    []any  `json:"alternativeVariants"`
+			// AlternativeVariants    []any  `json:"alternativeVariants"`
 			MaxProductSaleQuantity int    `json:"maxProductSaleQuantity"`
 			CargoStartDate         string `json:"cargoStartDate"`
 			CargoRemainingDays     int    `json:"cargoRemainingDays"`
@@ -431,16 +431,16 @@ type ProductStruct struct {
 				Value      string `json:"value"`
 				InStock    bool   `json:"inStock"`
 			} `json:"otherMerchantVariants,omitempty"`
-			HasCheapestVariant       bool  `json:"hasCheapestVariant"`
-			AgreedDeliveryDays       int   `json:"agreedDeliveryDays"`
-			BuyMorePayLessPromotions []any `json:"buyMorePayLessPromotions"`
-			CustomValues             []struct {
+			HasCheapestVariant bool `json:"hasCheapestVariant"`
+			AgreedDeliveryDays int  `json:"agreedDeliveryDays"`
+			// BuyMorePayLessPromotions []any `json:"buyMorePayLessPromotions"`
+			CustomValues []struct {
 				Key   string `json:"key"`
 				Value string `json:"value"`
 			} `json:"customValues"`
-			SearchableTags []any `json:"searchableTags"`
-			FreeCargo      bool  `json:"freeCargo"`
-			IsWinner       bool  `json:"isWinner"`
+			// SearchableTags []any `json:"searchableTags"`
+			FreeCargo bool `json:"freeCargo"`
+			IsWinner  bool `json:"isWinner"`
 			// Merchant0      struct {
 			// 	ID                              int     `json:"id"`
 			// 	Name                            string  `json:"name"`
@@ -499,9 +499,9 @@ type ProductStruct struct {
 			// } `json:"merchant,omitempty"`
 		} `json:"merchantListings"`
 		DeliveryInformation struct {
-			IsRushDelivery      bool   `json:"isRushDelivery"`
-			DeliveryDate        string `json:"deliveryDate"`
-			FastDeliveryOptions []any  `json:"fastDeliveryOptions"`
+			IsRushDelivery bool   `json:"isRushDelivery"`
+			DeliveryDate   string `json:"deliveryDate"`
+			// FastDeliveryOptions []any  `json:"fastDeliveryOptions"`
 		} `json:"deliveryInformation"`
 		CargoRemainingDays int  `json:"cargoRemainingDays"`
 		IsMarketplace      bool `json:"isMarketplace"`
@@ -546,9 +546,9 @@ type ProductStruct struct {
 			MaxPrice    int     `json:"maxPrice"`
 			RebateRatio float64 `json:"rebateRatio"`
 		} `json:"walletRebate"`
-		IsArtWork                bool  `json:"isArtWork"`
-		BuyMorePayLessPromotions []any `json:"buyMorePayLessPromotions"`
-		FilterableLabels         []struct {
+		IsArtWork bool `json:"isArtWork"`
+		// BuyMorePayLessPromotions []any `json:"buyMorePayLessPromotions"`
+		FilterableLabels []struct {
 			ID          string `json:"id"`
 			Name        string `json:"name"`
 			DisplayName string `json:"displayName"`

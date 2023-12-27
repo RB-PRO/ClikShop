@@ -9,8 +9,20 @@ import (
 	"github.com/cheggaaa/pb"
 )
 
-func (bx *bitrixActualizer) md(folder string) {
+// Структура HM для парсинга
+type MD struct {
+	*bitrixActualizer
+}
 
+func NewMD(bx *bitrixActualizer) *MD {
+	return &MD{bx}
+}
+
+// Парсинг данных и сохранение их в файлы
+//
+//	Заменить во всех файлах нужно символы '\u0026' на '&'
+func (bx *MD) screper() (string, error) {
+	folder := "md"
 	MakeDir(folder)
 
 	// Получить все категории
@@ -65,4 +77,5 @@ func (bx *bitrixActualizer) md(folder string) {
 		BarProducts.Finish()
 		index++
 	}
+	return folder, nil
 }

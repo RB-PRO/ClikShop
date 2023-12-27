@@ -87,38 +87,9 @@ func Start() {
 	bx.SKU = sku
 	bx.BX.Nots.Sends(fmt.Sprintf("Получил %d артикулов из Bitrix", len(sku)))
 
-	// FolderFiles := []string{"zara", "md", "hm", "ss"}
-
-	// bx.zara()
-	// bx.md()
-	// bx.hm()
-	// bx.ss()
-
-	// Folder := "ss"
-	// bx.ss(Folder) // Парсинг
-	// ErrSub := bx.Sub(Folder)
-	// if ErrSub != nil {
-	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", Folder, ErrSub))
-	// 	return
-	// }
-	// ErrDR := bx.DeleteRepeated(Folder)
-	// if ErrDR != nil {
-	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", Folder, ErrDR))
-	// 	return
-	// }
-	// ErrTr := bx.Trans(Folder)
-	// if ErrTr != nil {
-	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
-	// 	return
-	// }
-	// ErrPush := bx.Push(Folder)
-	// if ErrPush != nil {
-	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", Folder, ErrPush))
-	// 	return
-	// }
-
 	Folder := "trendyol"
-	bx.trendyol(Folder) // Парсинг
+	ty := NewTY(bx)
+	ty.screper() // Парсинг
 	ErrSub := bx.Sub(Folder)
 	if ErrSub != nil {
 		bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", Folder, ErrSub))
@@ -129,14 +100,57 @@ func Start() {
 		bx.GLOG.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", Folder, ErrDR))
 		return
 	}
-	// ErrTr := bx.Trans(Folder)
-	// if ErrTr != nil {
-	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
-	// 	return
-	// }
-	// ErrPush := bx.Push(Folder)
-	// if ErrPush != nil {
-	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", Folder, ErrPush))
-	// 	return
+	ErrTr := bx.Trans(Folder)
+	if ErrTr != nil {
+		bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
+		return
+	}
+	ErrPush := bx.Push(Folder)
+	if ErrPush != nil {
+		bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", Folder, ErrPush))
+		return
+	}
+
+	// // Цикл по всем магазинам с последующим парсингом
+	// shops := []Shop{NewHM(bx), NewMD(bx), NewSS(bx), NewZARA(bx), NewTY(bx)}
+	// for _, shop := range shops {
+
+	// 	// Парсинг товаров
+	// 	folder, ErrScrap := shop.screper()
+	// 	if ErrScrap != nil {
+	// 		ErrStr := fmt.Sprintf("shop.screper(): %s: %v", folder, ErrScrap)
+	// 		fmt.Println(ErrStr)
+	// 		bx.GLOG.Err(ErrStr)
+	// 		continue
+	// 	}
+
+	// 	// Вычитание товаров
+	// 	ErrSub := bx.Sub(folder)
+	// 	if ErrSub != nil {
+	// 		bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", folder, ErrSub))
+	// 		return
+	// 	}
+
+	// 	// Удаление дубликатов
+	// 	ErrDR := bx.DeleteRepeated(folder)
+	// 	if ErrDR != nil {
+	// 		bx.GLOG.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", folder, ErrDR))
+	// 		return
+	// 	}
+
+	// 	// Перевод
+	// 	ErrTr := bx.Trans(folder)
+	// 	if ErrTr != nil {
+	// 		bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", folder, ErrTr))
+	// 		return
+	// 	}
+
+	// 	// Публикация товара
+	// 	ErrPush := bx.Push(folder)
+	// 	if ErrPush != nil {
+	// 		bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", folder, ErrPush))
+	// 		return
+	// 	}
+
 	// }
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/RB-PRO/ClikShop/pkg/bases"
@@ -69,7 +70,7 @@ func Product(IDs Groupeng, ShopID int) (prod bases.Product2, Err error) {
 
 	// Производитель
 	prod.Manufacturer = pg.Result.SlicingAttributes[0].Brand.BeautifiedName
-	// appendfile(pg.Result.SlicingAttributes[0].Brand.BeautifiedName)
+	appendfile(pg.Result.SlicingAttributes[0].Brand.BeautifiedName)
 
 	// Ссылка на товар
 	prod.Link = fmt.Sprintf(group_URL, IDs.ProductGroupID)
@@ -126,11 +127,11 @@ func Product(IDs Groupeng, ShopID int) (prod bases.Product2, Err error) {
 
 			// Категория
 			CategsStrs := strings.Split(pd.Result.Category.Hierarchy, "/")
-			prod.Cat = make([]bases.Cat, 0, len(CategsStrs)+1)
-			prod.Cat = append(prod.Cat, bases.Cat{
-				Name: "trendyol",
-				Slug: bases.Name2Slug("trendyol"),
-			})
+			prod.Cat = make([]bases.Cat, 0, len(CategsStrs)+2)
+			// prod.Cat = append(prod.Cat, bases.Cat{
+			// 	Name: "trendyol",
+			// 	Slug: bases.Name2Slug("trendyol"),
+			// })
 			for _, categ := range CategsStrs {
 				prod.Cat = append(prod.Cat, bases.Cat{
 					Name: categ,
@@ -218,7 +219,7 @@ func productOwner(ProductID, ShopID int) (prod bases.Product2, Err error) {
 
 	// Бренд
 	prod.Manufacturer = pd.Result.Brand.BeautifiedName
-	// appendfile(pd.Result.Brand.BeautifiedName)
+	appendfile(pd.Result.Brand.BeautifiedName)
 
 	// Категория
 	CategsStrs := strings.Split(pd.Result.Category.Hierarchy, "/")
@@ -257,15 +258,15 @@ func productOwner(ProductID, ShopID int) (prod bases.Product2, Err error) {
 	return prod, nil
 }
 
-// func appendfile(data string) {
-// 	f, err := os.OpenFile("trendyol.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-// 	if err != nil {
-// 		panic(err)
-// 	}
+func appendfile(data string) {
+	f, err := os.OpenFile("trendyol.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		panic(err)
+	}
 
-// 	defer f.Close()
+	defer f.Close()
 
-// 	if _, err = f.WriteString(data + "\n"); err != nil {
-// 		panic(err)
-// 	}
-// }
+	if _, err = f.WriteString(data + "\n"); err != nil {
+		panic(err)
+	}
+}

@@ -10,58 +10,74 @@ import (
 	"github.com/cheggaaa/pb"
 )
 
-func (bx *bitrixActualizer) trendyol(folder string) error {
+// Структура HM для парсинга
+type TY struct {
+	*bitrixActualizer
+}
+
+func NewTY(bx *bitrixActualizer) *TY {
+	return &TY{bx}
+}
+
+// Парсинг данных и сохранение их в файлы
+//
+//	Заменить во всех файлах нужно символы '\u0026' на '&'
+func (bx *TY) screper() (string, error) {
+	folder := "ty"
 
 	ShopIDs := []int{
 		332585, // Levi's
 		107483, // Aktaş Sport AS
-		106871, // SneakSup
 		815951, // HUGO
 		804476, // BOSS
 		742918, // Victoria's secret
+		106871, // SneakSup
 	}
-	fmt.Println(ShopIDs)
 
 	for _, ShopID := range ShopIDs {
 		bx.trendyolOne(folder, ShopID)
 	}
 
-	return nil
+	return folder, nil
 }
 
 func (bx *bitrixActualizer) trendyolOne(folder string, ShopID int) error {
 
 	MakeDir(folder)
 
-	fmt.Println("ShopID trendyolOne", ShopID)
 	ProductGroupIDs, ErrGroup := trendyol.Pages(ShopID)
 	if ErrGroup != nil {
 		return fmt.Errorf("trendyol.Pages: %v", ErrGroup)
 	}
-
-	fmt.Println(ProductGroupIDs)
-	fmt.Println("len(ProductGroupIDs)", len(ProductGroupIDs))
 
 	BarProducts := pb.StartNew(len(ProductGroupIDs))
 	defer BarProducts.Finish()
 	BarProducts.Prefix(strconv.Itoa(ShopID))
 	var Products bases.Variety2
 	for _, ProductGroupID := range ProductGroupIDs {
+
+		// Спарсить информацию по товару
 		Product, ErrProduct := trendyol.Product(ProductGroupID, ShopID)
 		if ErrProduct != nil {
-			// panic(ErrProduct)
-			fmt.Println(ErrProduct)
+			// fmt.Println(ErrProduct)
+			bx.GLOG.Warn(fmt.Sprintf("trendyol Product: %v", ErrProduct))
 			continue
 		}
 
 		// Да-да, может быть такое, что вариаций у товара не будет.
 		// Например это может возникнуть, когда продавец вариаций товаров не оригинальный
 		if len(Product.Item) != 0 {
-			// Product
+			Product.Cat = append([]bases.Cat{{
+				Name: "trendyol",
+				Slug: bases.Name2Slug("trendyol"),
+			}}, Product.Cat...)
+			Product.Cat = append([]bases.Cat{{
+				Name: strconv.Itoa(ShopID),
+				Slug: bases.Name2Slug(strconv.Itoa(ShopID)),
+			}}, Product.Cat...)
 			Product = bases.EditDoubleColors(Product)
 			Product.Size = bases.EditProdSize(Product)
 			Product.Img = bases.EditIMG(Product)
-
 			Products.Product = append(Products.Product, Product)
 		}
 		BarProducts.Increment()

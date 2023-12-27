@@ -25,13 +25,11 @@ func Pages(ShopID int) (ProductGroupIDs []Groupeng, Err error) {
 
 		// Сбор информации о товарах на странице iPage
 
-		fmt.Println("ShopID Pages", ShopID)
 		pg, ErrPage := ParsePage(ShopID, iPage)
 		if Err != nil {
 			return nil, fmt.Errorf("parsePage: %v", ErrPage)
 		}
 		CoutPages = RoundUp(pg.Result.TotalCount, 24)
-		fmt.Println(pg.Result.TotalCount, 24, "-", CoutPages)
 		// fmt.Printf("iPage: %d, pg.Result.TotalCount %d, CoutPages %d\n", iPage, pg.Result.TotalCount, CoutPages)
 
 		// Сохраняем ссылки на группы товаров
@@ -55,7 +53,7 @@ const page_URL string = "https://public.trendyol.com/discovery-web-searchgw-serv
 // Пропарсить страницу товаров для получения списка ID групп
 func ParsePage(ShopID int, page int) (pg PageStruct, Err error) {
 	url := fmt.Sprintf(page_URL, ShopID, page) // Рабочая ссылка для парсинга
-	fmt.Println("Lines:", url)
+	// fmt.Println("Lines:", url)
 	client := &http.Client{Timeout: time.Second * 60}
 	req, ErrNewRequest := http.NewRequest(http.MethodGet, url, nil)
 	if ErrNewRequest != nil {

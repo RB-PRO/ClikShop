@@ -9,7 +9,20 @@ import (
 	"github.com/cheggaaa/pb"
 )
 
-func (bx *bitrixActualizer) ss(folder string) {
+// Структура HM для парсинга
+type SS struct {
+	*bitrixActualizer
+}
+
+func NewSS(bx *bitrixActualizer) *SS {
+	return &SS{bx}
+}
+
+// Парсинг данных и сохранение их в файлы
+//
+//	Заменить во всех файлах нужно символы '\u0026' на '&'
+func (bx *SS) screper() (string, error) {
+	folder := "ss"
 
 	MakeDir(folder)
 
@@ -56,4 +69,5 @@ func (bx *bitrixActualizer) ss(folder string) {
 			folder, iCategory, Namecategory))
 
 	}
+	return folder, nil
 }

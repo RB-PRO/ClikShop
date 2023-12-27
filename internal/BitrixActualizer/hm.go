@@ -8,10 +8,20 @@ import (
 	"github.com/cheggaaa/pb"
 )
 
+// Структура HM для парсинга
+type HM struct {
+	*bitrixActualizer
+}
+
+func NewHM(bx *bitrixActualizer) *HM {
+	return &HM{bx}
+}
+
 // Парсинг данных и сохранение их в файлы
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
-func (bx *bitrixActualizer) hm(folder string) {
+func (bx *HM) screper() (string, error) {
+	folder := "hm"
 
 	MakeDir(folder)
 
@@ -107,4 +117,5 @@ func (bx *bitrixActualizer) hm(folder string) {
 			folder, icateg, categ.Cat[len(categ.Cat)-1].Slug))
 		BarProducts.Finish()
 	}
+	return folder, nil
 }

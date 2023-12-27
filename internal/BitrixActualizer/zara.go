@@ -9,8 +9,20 @@ import (
 	"github.com/cheggaaa/pb"
 )
 
-func (bx *bitrixActualizer) zara(folder string) {
+// Структура HM для парсинга
+type ZARA struct {
+	*bitrixActualizer
+}
 
+func NewZARA(bx *bitrixActualizer) *ZARA {
+	return &ZARA{bx}
+}
+
+// Парсинг данных и сохранение их в файлы
+//
+//	Заменить во всех файлах нужно символы '\u0026' на '&'
+func (bx *ZARA) screper() (string, error) {
+	folder := "zara"
 	MakeDir(folder)
 
 	// Категории
@@ -93,6 +105,7 @@ func (bx *bitrixActualizer) zara(folder string) {
 		barProduct.Finish()
 		index++
 	}
+	return folder, nil
 }
 
 // Удалить дубликаты в товарах ProductsLine
