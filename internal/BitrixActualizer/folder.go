@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/RB-PRO/ClikShop/pkg/bases"
 )
@@ -12,6 +13,25 @@ import (
 // а если она уже создана, то удалить её нахуй и пересоздать
 func MakeDir(Path string) error {
 	ErrMkdirAll := os.MkdirAll(Path, os.ModePerm)
+	if ErrMkdirAll != nil {
+		return ErrMkdirAll
+	}
+	return nil
+}
+
+// Пересоздать папку
+func ReMakeDir(Path string) error {
+
+	// Абсолютный путь до папки. Если его нет, то удаляем всё
+	absFolderPath, _ := filepath.Abs(Path)
+
+	// Если папка существует - удаляем
+	if _, err := os.Stat(absFolderPath); err == nil {
+		os.RemoveAll(Path)
+	}
+
+	// Создание пути
+	ErrMkdirAll := os.MkdirAll(Path, 0777)
 	if ErrMkdirAll != nil {
 		return ErrMkdirAll
 	}

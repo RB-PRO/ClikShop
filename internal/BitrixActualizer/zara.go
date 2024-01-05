@@ -23,7 +23,7 @@ func NewZARA(bx *bitrixActualizer) *ZARA {
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (bx *ZARA) screper() (string, error) {
 	folder := "zara"
-	MakeDir(folder)
+	ReMakeDir(folder)
 
 	// Категории
 	CatArr, _ := zaratr.CatCycle2() // Получить все категории

@@ -1,6 +1,8 @@
 package main
 
-import bitrixupdate "github.com/RB-PRO/ClikShop/internal/BitrixUpdate"
+import (
+	bitrixupdate "github.com/RB-PRO/ClikShop/internal/BitrixUpdate"
+)
 
 func main() {
 	//app.Run(os.Args[1])

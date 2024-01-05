@@ -22,8 +22,7 @@ func NewHM(bx *bitrixActualizer) *HM {
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (bx *HM) screper() (string, error) {
 	folder := "hm"
-
-	MakeDir(folder)
+	ReMakeDir(folder)
 
 	// Получить слайс категорий
 	Categorys, ErrorCategorys := hm.Categorys()

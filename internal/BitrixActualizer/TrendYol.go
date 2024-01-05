@@ -24,6 +24,7 @@ func NewTY(bx *bitrixActualizer) *TY {
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (bx *TY) screper() (string, error) {
 	folder := "ty"
+	ReMakeDir(folder)
 
 	ShopIDs := []int{
 		332585, // Levi's
@@ -42,8 +43,6 @@ func (bx *TY) screper() (string, error) {
 }
 
 func (bx *bitrixActualizer) trendyolOne(folder string, ShopID int) error {
-
-	MakeDir(folder)
 
 	ProductGroupIDs, ErrGroup := trendyol.Pages(ShopID)
 	if ErrGroup != nil {
@@ -67,14 +66,16 @@ func (bx *bitrixActualizer) trendyolOne(folder string, ShopID int) error {
 		// Да-да, может быть такое, что вариаций у товара не будет.
 		// Например это может возникнуть, когда продавец вариаций товаров не оригинальный
 		if len(Product.Item) != 0 {
-			Product.Cat = append([]bases.Cat{{
-				Name: "trendyol",
-				Slug: bases.Name2Slug("trendyol"),
-			}}, Product.Cat...)
-			Product.Cat = append([]bases.Cat{{
-				Name: strconv.Itoa(ShopID),
-				Slug: bases.Name2Slug(strconv.Itoa(ShopID)),
-			}}, Product.Cat...)
+			Product.Cat = append([]bases.Cat{
+				{
+					Name: "trendyol",
+					Slug: bases.Name2Slug("trendyol"),
+				},
+				{
+					Name: strconv.Itoa(ShopID),
+					Slug: bases.Name2Slug(strconv.Itoa(ShopID)),
+				},
+			}, Product.Cat...)
 			Product = bases.EditDoubleColors(Product)
 			Product.Size = bases.EditProdSize(Product)
 			Product.Img = bases.EditIMG(Product)

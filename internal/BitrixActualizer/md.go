@@ -23,7 +23,7 @@ func NewMD(bx *bitrixActualizer) *MD {
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (bx *MD) screper() (string, error) {
 	folder := "md"
-	MakeDir(folder)
+	ReMakeDir(folder)
 
 	// Получить все категории
 	categ, ErrCateg := massimodutti.Category()

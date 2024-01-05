@@ -24,7 +24,7 @@ func NewSS(bx *bitrixActualizer) *SS {
 func (bx *SS) screper() (string, error) {
 	folder := "ss"
 
-	MakeDir(folder)
+	ReMakeDir(folder)
 
 	SneakSupCategory := sneasup.Category()
 
