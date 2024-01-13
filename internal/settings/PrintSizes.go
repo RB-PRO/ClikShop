@@ -51,12 +51,12 @@ func PrintSizes() {
 		}
 
 		for j := range varient.Product {
-			for jj := range varient.Product[j].Item {
-				for jjj := range varient.Product[j].Item[jj].Size {
-					mapingSize[varient.Product[j].Item[jj].Size[jjj].Val]++
-				}
-			}
-			// mapingSize[varient.Product[j].Manufacturer]++
+			// for jj := range varient.Product[j].Item {
+			// 	for jjj := range varient.Product[j].Item[jj].Size {
+			// 		mapingSize[varient.Product[j].Item[jj].Size[jjj].Val]++
+			// 	}
+			// }
+			mapingSize[varient.Product[j].Manufacturer]++
 		}
 
 		// for j := range varient.Product {

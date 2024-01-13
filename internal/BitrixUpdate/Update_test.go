@@ -24,7 +24,7 @@ func TestREject(t *testing.T) {
 
 func TestUpdates(t *testing.T) {
 	// https://www2.hm.com/tr_tr/productpage.1115995001.html
-	ProductID := "420286"
+	ProductID := "470684"
 
 	// Приложение Битрикс
 	// bx := NewBitrixUser()

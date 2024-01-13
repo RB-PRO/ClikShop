@@ -166,8 +166,25 @@ func (bx *bitrixActualizer) Trans(Folder string) error {
 
 			}
 
-			barProduct.Increment()
+			// Автоперевод размеров по годам.
+			for Item_i := range Variety.Product[i].Item {
+				for Size_i := range Variety.Product[i].Item[Item_i].Size {
+					Variety.Product[i].Item[Item_i].Size[Size_i].Val = strings.ReplaceAll(
+						Variety.Product[i].Item[Item_i].Size[Size_i].Val,
+						"Yaş", "лет",
+					)
+				}
+			}
+			for Size_i := range Variety.Product[i].Size {
+				Variety.Product[i].Size[Size_i] = strings.ReplaceAll(
+					Variety.Product[i].Size[Size_i],
+					"Yaş", "лет",
+				)
+			}
 
+			// "Yaş"
+
+			barProduct.Increment()
 		}
 		barProduct.Finish()
 

@@ -49,11 +49,13 @@ func main() {
 	// settings.UpSizesEditProduct()
 	// settings.EditIsExitHM()
 
-	// settings.EDITSIZES()
-	bitrixupdate.Start()
-	// actualizer.Start()
-
 	// settings.PrintSizes()
 
 	// patrendyol.Parsing()
+
+	//
+
+	// settings.PrintSizes()
+	// actualizer.Start()
+	bitrixupdate.Start()
 }

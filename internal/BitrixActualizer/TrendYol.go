@@ -33,6 +33,16 @@ func (bx *TY) screper() (string, error) {
 		804476, // BOSS
 		742918, // Victoria's secret
 		106871, // SneakSup
+
+		110890, // New Balance
+		230712, // Tommy Hilfiger
+		194194, // Guess
+		1920,   // Lacoste
+		104961, // BERSHKA
+		112044, // Pull&Bear
+		104723, // MANGO
+		// 155194, // ExxeSelection
+
 	}
 
 	for _, ShopID := range ShopIDs {
