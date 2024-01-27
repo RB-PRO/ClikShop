@@ -237,3 +237,17 @@ func EditDoubleColors(prod Product2) Product2 {
 
 	return prod
 }
+
+// Редактирование размер для NOSIZE
+func EditOneSize(prod Product2) Product2 {
+	for indexKey := range prod.Item {
+
+		if len(prod.Item[indexKey].Size) == 1 {
+			if prod.Item[indexKey].Size[0].Val == "" {
+				prod.Item[indexKey].Size[0].Val = "NOSIZE"
+			}
+		}
+
+	}
+	return prod
+}

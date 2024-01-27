@@ -88,23 +88,23 @@ func Start() {
 	bx.BX.Nots.Sends(fmt.Sprintf("Получил %d артикулов из Bitrix", len(sku)))
 
 	Folder := "ty"
-	ty := NewTY(bx)
-	ty.screper() // Парсинг
-	ErrSub := bx.Sub(Folder)
-	if ErrSub != nil {
-		bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", Folder, ErrSub))
-		return
-	}
-	ErrDR := bx.DeleteRepeated(Folder)
-	if ErrDR != nil {
-		bx.GLOG.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", Folder, ErrDR))
-		return
-	}
-	ErrTr := bx.Trans(Folder)
-	if ErrTr != nil {
-		bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
-		return
-	}
+	// ty := NewTY(bx)
+	// ty.screper() // Парсинг
+	// ErrSub := bx.Sub(Folder)
+	// if ErrSub != nil {
+	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Sub: %v", Folder, ErrSub))
+	// 	return
+	// }
+	// ErrDR := bx.DeleteRepeated(Folder)
+	// if ErrDR != nil {
+	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", Folder, ErrDR))
+	// 	return
+	// }
+	// ErrTr := bx.Trans(Folder)
+	// if ErrTr != nil {
+	// 	bx.GLOG.Err(fmt.Sprintf("%v: bx.Trans: %v", Folder, ErrTr))
+	// 	return
+	// }
 	ErrPush := bx.Push(Folder)
 	if ErrPush != nil {
 		bx.GLOG.Err(fmt.Sprintf("%v: bx.ErrPush: %v", Folder, ErrPush))

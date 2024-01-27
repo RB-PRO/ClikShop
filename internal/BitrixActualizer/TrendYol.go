@@ -41,7 +41,7 @@ func (bx *TY) screper() (string, error) {
 		104961, // BERSHKA
 		112044, // Pull&Bear
 		104723, // MANGO
-		// 155194, // ExxeSelection
+		155194, // ExxeSelection
 
 	}
 
@@ -86,6 +86,7 @@ func (bx *bitrixActualizer) trendyolOne(folder string, ShopID int) error {
 					Slug: bases.Name2Slug(strconv.Itoa(ShopID)),
 				},
 			}, Product.Cat...)
+			Product = bases.EditOneSize(Product)
 			Product = bases.EditDoubleColors(Product)
 			Product.Size = bases.EditProdSize(Product)
 			Product.Img = bases.EditIMG(Product)
