@@ -31,11 +31,11 @@ func (bx *BitrixUpdator) UpdateProduct(ProductID string) error {
 		if ErrUpdate != nil {
 			return fmt.Errorf("update: MD: %w", ErrUpdate)
 		}
-	case strings.Contains(Link, "hm.com"):
-		variationReq, ErrUpdate = bx.UpdateHandM(ProductsDetail)
-		if ErrUpdate != nil {
-			return fmt.Errorf("update: HM: %w", ErrUpdate)
-		}
+	//case strings.Contains(Link, "hm.com"):
+	//	variationReq, ErrUpdate = bx.UpdateHandM(ProductsDetail)
+	//	if ErrUpdate != nil {
+	//		return fmt.Errorf("update: HM: %w", ErrUpdate)
+	//	}
 	case strings.Contains(Link, "zara"):
 		variationReq, ErrUpdate = bx.UpdateZara(ProductsDetail)
 		if ErrUpdate != nil {
