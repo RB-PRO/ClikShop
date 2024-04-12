@@ -26,17 +26,17 @@ func (bx *BitrixUpdator) UpdateHandM(ProductsDetail apibitrix.Product_Response) 
 	Avalibs, Aavailability := hm.Aavailability(ProductsDetail.Products[0].Link)
 	// Тут надо хендлить ошибки, чтобы отделить ошибки сети от товаров которых просто нет
 	if Aavailability != nil {
-		//return nil, fmt.Errorf("hm.Aavailability: Не получилось получить данные по артикулу %s из ссылки %s", SKUhm[:7], ProductsDetail.Products[0].Link)
+		return nil, fmt.Errorf("hm.Aavailability: Не получилось получить данные по артикулу %s из ссылки %s", SKUhm[:7], ProductsDetail.Products[0].Link)
 	}
 	// fmt.Println(Avalibs)
-	//time.Sleep(300 * time.Millisecond)
+	time.Sleep(1300 * time.Millisecond)
 
 	AvalibMap, ErrAavailability2 := hm.AavailabilityMap(ProductsDetail.Products[0].Link)
 	// и тут бы тоже хенлдить ошибки нормально
 	if ErrAavailability2 != nil {
-		//return nil, fmt.Errorf("hm.Aavailability2: %v: Не получилось получить данные по артикулу %s из ссылки %s", ErrAavailability2, SKUhm[:7], ProductsDetail.Products[0].Link)
+		return nil, fmt.Errorf("hm.Aavailability2: %v: Не получилось получить данные по артикулу %s из ссылки %s", ErrAavailability2, SKUhm[:7], ProductsDetail.Products[0].Link)
 	}
-	time.Sleep(300 * time.Millisecond)
+	time.Sleep(1300 * time.Millisecond)
 
 	// Формирование мапы наличия для каждой вариации
 	MapAvalibs := make(map[key]bool)
@@ -76,7 +76,7 @@ func (bx *BitrixUpdator) UpdateHandM(ProductsDetail apibitrix.Product_Response) 
 			if ErrVariablePrice2 != nil {
 				//return nil, fmt.Errorf("hm.VariablePrice2: Не получилось получить данные цене по артикулу %s из ссылки https://www2.hm.com/tr_tr/productpage/_jcr_content/product.quickbuy.%s.html", SKUhm, SKUhm)
 			}
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(1500 * time.Millisecond)
 			PriceMap[SKU] = Price
 		}
 	}
