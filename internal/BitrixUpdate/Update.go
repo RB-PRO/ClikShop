@@ -26,34 +26,34 @@ func (bx *BitrixUpdator) UpdateProduct(ProductID string) error {
 	// Смотрим ссылку  для определения источника того, откуда пришёл товар
 	Link := ProductsDetail.Products[0].Link
 	switch {
-	case strings.Contains(Link, "massimodutti"):
-		variationReq, ErrUpdate = bx.UpdateMassimoDutti(ProductsDetail)
-		if ErrUpdate != nil {
-			return fmt.Errorf("update: MD: %w", ErrUpdate)
-		}
+	//case strings.Contains(Link, "massimodutti"):
+	//	variationReq, ErrUpdate = bx.UpdateMassimoDutti(ProductsDetail)
+	//	if ErrUpdate != nil {
+	//		return fmt.Errorf("update: MD: %w", ErrUpdate)
+	//	}
 	case strings.Contains(Link, "hm.com"):
 		variationReq, ErrUpdate = bx.UpdateHandM(ProductsDetail)
 		if ErrUpdate != nil {
 			return fmt.Errorf("update: HM: %w", ErrUpdate)
 		}
-	case strings.Contains(Link, "zara"):
-		variationReq, ErrUpdate = bx.UpdateZara(ProductsDetail)
-		if ErrUpdate != nil {
-			// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
-			return fmt.Errorf("update: Zara: %w", ErrUpdate)
-		}
-	case strings.Contains(Link, "sneaksup.com"):
-		variationReq, ErrUpdate = bx.UpdateSS(ProductsDetail)
-		if ErrUpdate != nil {
-			// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
-			return fmt.Errorf("update: SS: %w", ErrUpdate)
-		}
-	case strings.Contains(Link, "trendyol"):
-		variationReq, ErrUpdate = bx.UpdateTrandYol(ProductsDetail)
-		if ErrUpdate != nil {
-			// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
-			return fmt.Errorf("update: trendyol: %w", ErrUpdate)
-		}
+	//case strings.Contains(Link, "zara"):
+	//	variationReq, ErrUpdate = bx.UpdateZara(ProductsDetail)
+	//	if ErrUpdate != nil {
+	//		// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
+	//		return fmt.Errorf("update: Zara: %w", ErrUpdate)
+	//	}
+	//case strings.Contains(Link, "sneaksup.com"):
+	//	variationReq, ErrUpdate = bx.UpdateSS(ProductsDetail)
+	//	if ErrUpdate != nil {
+	//		// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
+	//		return fmt.Errorf("update: SS: %w", ErrUpdate)
+	//	}
+	//case strings.Contains(Link, "trendyol"):
+	//	variationReq, ErrUpdate = bx.UpdateTrandYol(ProductsDetail)
+	//	if ErrUpdate != nil {
+	//		// fmt.Println(fmt.Errorf("bitrix: Update: Zara: %w", ErrUpdate), Link)
+	//		return fmt.Errorf("update: trendyol: %w", ErrUpdate)
+	//	}
 	default:
 		return fmt.Errorf("update: Не знаю, какую логику применить к товару %s", ProductsDetail.Products[0].ID)
 	}
