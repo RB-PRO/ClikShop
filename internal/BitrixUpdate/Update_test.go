@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
-	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"ClikShop/common/apibitrix"
+	"ClikShop/common/cbbank"
 )
 
 // Печать запросника

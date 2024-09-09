@@ -1,26 +1,29 @@
 package actualizer
 
 import (
+	"ClikShop/common/gol"
 	"fmt"
 
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	"github.com/RB-PRO/ClikShop/pkg/hm"
+	"ClikShop/common/bases"
+	"ClikShop/common/hm"
 	"github.com/cheggaaa/pb"
 )
 
 // Структура HM для парсинга
 type HM struct {
-	*bitrixActualizer
+	*gol.Gol
 }
 
-func NewHM(bx *bitrixActualizer) *HM {
-	return &HM{bx}
+func NewHM() *HM {
+	return &HM{
+		Gol: gol.NewGol("HM"),
+	}
 }
 
 // Парсинг данных и сохранение их в файлы
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
-func (bx *HM) screper() (string, error) {
+func (bx *HM) Scraper() (string, error) {
 	folder := "hm"
 	ReMakeDir(folder)
 
@@ -29,7 +32,7 @@ func (bx *HM) screper() (string, error) {
 	if ErrorCategorys != nil {
 		panic(ErrorCategorys)
 	}
-	bx.GLOG.Info("hm.Categorys: Получен слайс категорий")
+	bx.Info("hm.Categorys: Получен слайс категорий")
 
 	var count int
 	for icateg, categ := range Categorys {
@@ -40,7 +43,7 @@ func (bx *HM) screper() (string, error) {
 		// Получить ссылку на все товары json
 		LineUrl, ErrLineUrl := hm.LineUrl2(categ.Link)
 		if ErrLineUrl != nil {
-			bx.GLOG.Err(ErrLineUrl)
+			bx.Err(ErrLineUrl)
 			panic(ErrLineUrl)
 		}
 		if LineUrl == "" {
@@ -79,16 +82,15 @@ func (bx *HM) screper() (string, error) {
 			var ErrorParseProduct error
 			AddingProduct, ErrorParseProduct = hm.VariableProduct2(AddingProduct)
 			if ErrorParseProduct != nil {
-				bx.GLOG.Err("VariableProduct2:", ErrorParseProduct)
+				bx.Err("VariableProduct2:", ErrorParseProduct)
 				continue
-				// panic(ErrorParseProduct)
 			}
 
 			// Данные по рамерам
 			var ErrAvailabilityProduct error
 			AddingProduct, ErrAvailabilityProduct = hm.AvailabilityProduct(AddingProduct)
 			if ErrAvailabilityProduct != nil {
-				bx.GLOG.Err("AvailabilityProduct:", ErrAvailabilityProduct)
+				bx.Err("AvailabilityProduct:", ErrAvailabilityProduct)
 				continue
 				// panic(ErrAvailabilityProduct)
 			}
@@ -97,7 +99,7 @@ func (bx *HM) screper() (string, error) {
 			var ErrVariableDescription2 error
 			AddingProduct, ErrVariableDescription2 = hm.VariableDescription2(AddingProduct)
 			if ErrVariableDescription2 != nil {
-				bx.GLOG.Err("VariableDescription2:", ErrVariableDescription2)
+				bx.Err("VariableDescription2:", ErrVariableDescription2)
 				continue
 				// panic(ErrVariableDescription2)
 			}

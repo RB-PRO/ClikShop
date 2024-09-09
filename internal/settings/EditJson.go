@@ -8,10 +8,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"ClikShop/common/bases"
 )
 
-// go build -o settings cmd/main/main.go
+// go build -o settings cmd/main/bank.go
 // settings MD_SubSlice_3_2000-3000.json  MD_SubSlice_5_4000-5000.json  MD_SubSlice_7_6000-7000.json MD_SubSlice_2_1000-2000.json  MD_SubSlice_4_3000-4000.json  MD_SubSlice_6_5000-6000.json  MD_SubSlice_8_7000-8000.json
 func EditJson1() {
 	if len(os.Args) == 1 {

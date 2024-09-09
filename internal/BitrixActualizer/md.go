@@ -1,27 +1,30 @@
 package actualizer
 
 import (
+	"ClikShop/common/gol"
 	"fmt"
 	"strconv"
 
-	massimodutti "github.com/RB-PRO/ClikShop/pkg/MassimoDutti"
-	"github.com/RB-PRO/ClikShop/pkg/bases"
+	massimodutti "ClikShop/common/MassimoDutti"
+	"ClikShop/common/bases"
 	"github.com/cheggaaa/pb"
 )
 
 // Структура HM для парсинга
 type MD struct {
-	*bitrixActualizer
+	*gol.Gol
 }
 
-func NewMD(bx *bitrixActualizer) *MD {
-	return &MD{bx}
+func NewMD() *MD {
+	return &MD{
+		Gol: gol.NewGol("HM"),
+	}
 }
 
 // Парсинг данных и сохранение их в файлы
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
-func (bx *MD) screper() (string, error) {
+func (bx *MD) Scraper() (string, error) {
 	folder := "md"
 	ReMakeDir(folder)
 

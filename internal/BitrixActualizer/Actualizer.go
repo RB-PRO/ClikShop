@@ -3,12 +3,12 @@ package actualizer
 import (
 	"fmt"
 
-	notification "github.com/RB-PRO/ClikShop/pkg/Notification"
-	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
-	"github.com/RB-PRO/ClikShop/pkg/cbbank"
-	"github.com/RB-PRO/ClikShop/pkg/gol"
-	"github.com/RB-PRO/ClikShop/pkg/transrb"
-	"github.com/RB-PRO/ClikShop/pkg/wcprod"
+	"ClikShop/common/apibitrix"
+	"ClikShop/common/cbbank"
+	"ClikShop/common/gol"
+	notification "ClikShop/common/notify"
+	"ClikShop/common/transrb"
+	"ClikShop/common/wcprod"
 )
 
 type bitrixActualizer struct {
@@ -89,7 +89,7 @@ func Start() {
 
 	// Цикл по всем магазинам с последующим парсингом
 	// shops := []Shop{NewHM(bx), NewMD(bx), NewZARA(bx), NewTY(bx)}
-	shops := []Shop{NewMD(bx), NewZARA(bx), NewTY(bx)}
+	shops := []Shop{NewMD(bx), NewZARA(bx), NewTY(bx), NewSS(bx)}
 	for _, shop := range shops {
 
 		// Парсинг товаров

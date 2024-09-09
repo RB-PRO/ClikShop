@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"ClikShop/common/bases"
 )
 
 // ////////////////////////////

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	"github.com/RB-PRO/ClikShop/pkg/gol"
-	"github.com/RB-PRO/ClikShop/pkg/hm"
-	"github.com/RB-PRO/ClikShop/pkg/transrb"
-	"github.com/RB-PRO/ClikShop/pkg/wcprod"
+	"ClikShop/common/bases"
+	"ClikShop/common/gol"
+	"ClikShop/common/hm"
+	"ClikShop/common/transrb"
+	"ClikShop/common/wcprod"
 	"github.com/cheggaaa/pb"
 )
 

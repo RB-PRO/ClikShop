@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
+	"ClikShop/common/apibitrix"
 )
 
 func TestGetdatafromsizes(t *testing.T) {

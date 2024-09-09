@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	hm "github.com/RB-PRO/ClikShop/pkg/hm"
+	"ClikShop/common/apibitrix"
+	"ClikShop/common/bases"
+	hm "ClikShop/common/hm"
 )
 
 // Ключ для хэш-мапы для определения каждой вариации
@@ -23,10 +23,10 @@ func (bx *BitrixUpdator) UpdateHandM(ProductsDetail apibitrix.Product_Response) 
 	SKUhm := ProductsDetail.Products[0].Link
 	SKUhm = strings.ReplaceAll(SKUhm, "https://www2.hm.com/tr_tr/productpage.", "")
 	SKUhm = strings.ReplaceAll(SKUhm, ".html", "")
-	Avalibs, Aavailability := hm.Aavailability(ProductsDetail.Products[0].Link)
+	Avalibs, Aavailability := hm.Availability(ProductsDetail.Products[0].Link)
 	// Тут надо хендлить ошибки, чтобы отделить ошибки сети от товаров которых просто нет
 	if Aavailability != nil {
-		return nil, fmt.Errorf("hm.Aavailability: Не получилось получить данные по артикулу %s из ссылки %s", SKUhm[:7], ProductsDetail.Products[0].Link)
+		return nil, fmt.Errorf("hm.Availability: Не получилось получить данные по артикулу %s из ссылки %s", SKUhm[:7], ProductsDetail.Products[0].Link)
 	}
 	// fmt.Println(Avalibs)
 	time.Sleep(1300 * time.Millisecond)

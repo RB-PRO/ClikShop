@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
+	"ClikShop/common/apibitrix"
 )
 
 // Обновить цены и наличие по ОДНОМУ товару

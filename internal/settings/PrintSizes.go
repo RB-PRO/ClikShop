@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/RB-PRO/ClikShop/pkg/bases"
+	"ClikShop/common/bases"
 )
 
 func PrintSizes() {

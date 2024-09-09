@@ -1,27 +1,30 @@
 package actualizer
 
 import (
+	"ClikShop/common/gol"
 	"fmt"
 	"log"
 
-	zaratr "github.com/RB-PRO/ClikShop/pkg/ZaraTR"
-	"github.com/RB-PRO/ClikShop/pkg/bases"
+	zaratr "ClikShop/common/ZaraTR"
+	"ClikShop/common/bases"
 	"github.com/cheggaaa/pb"
 )
 
 // Структура HM для парсинга
 type ZARA struct {
-	*bitrixActualizer
+	*gol.Gol
 }
 
-func NewZARA(bx *bitrixActualizer) *ZARA {
-	return &ZARA{bx}
+func NewZARA() *ZARA {
+	return &ZARA{
+		Gol: gol.NewGol("HM"),
+	}
 }
 
 // Парсинг данных и сохранение их в файлы
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
-func (bx *ZARA) screper() (string, error) {
+func (bx *ZARA) Scraper() (string, error) {
 	folder := "zara"
 	ReMakeDir(folder)
 
@@ -39,8 +42,8 @@ func (bx *ZARA) screper() (string, error) {
 		line, ErrorLine := zaratr.LoadLine(fmt.Sprintf("%v", cat.RedirectCategoryID))
 		if ErrorLine != nil {
 			fmt.Println(ErrorLine)
-			bx.GLOG.Err(fmt.Sprintf("Парсера ZARA: i=%d, Неудачная загрузка по ссылке: https://www.zara.com/tr/en/category/%d/products Ошибка: %v",
-				i, cat.RedirectCategoryID, ErrorLine))
+			bx.Errf("Парсера ZARA: i=%d, Неудачная загрузка по ссылке: https://www.zara.com/tr/en/category/%d/products Ошибка: %v",
+				i, cat.RedirectCategoryID, ErrorLine)
 		}
 		// bar.Increment()
 

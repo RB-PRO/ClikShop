@@ -4,12 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	"github.com/RB-PRO/ClikShop/pkg/cbbank"
-	"github.com/RB-PRO/ClikShop/pkg/gol"
-	"github.com/RB-PRO/ClikShop/pkg/hm"
-	"github.com/RB-PRO/ClikShop/pkg/transrb"
-	"github.com/RB-PRO/ClikShop/pkg/wcprod"
+	"ClikShop/common/bases"
+	"ClikShop/common/hm"
+	"ClikShop/common/transrb"
 	"github.com/cheggaaa/pb"
 )
 
@@ -17,21 +14,6 @@ import (
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func Parsing() {
-	glog, _ := gol.NewGol("logs/")
-
-	// Нало работы с центральным банком
-	cb, ErrorCB := cbbank.New() // Получить курс валюты
-	if ErrorCB != nil {
-		panic(ErrorCB)
-	}
-	glog.Info("Курс лиры", cb.Data.Valute.Try.Value/10)
-
-	// Создать оьбъект переводчика
-	Adding, ErrNewTranslate := wcprod.NewTranslate()
-	if ErrNewTranslate != nil {
-		panic(ErrNewTranslate)
-	}
-	glog.Info("Загрузил переводчик", Adding.Tr.OAuthToken)
 
 	// Получить слайс категорий
 	Categorys, ErrorCategorys := hm.Categorys()

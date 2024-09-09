@@ -3,9 +3,9 @@ package bitrixupdate
 import (
 	"fmt"
 
-	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	"github.com/RB-PRO/ClikShop/pkg/trendyol"
+	"ClikShop/common/apibitrix"
+	"ClikShop/common/bases"
+	"ClikShop/common/trendyol"
 )
 
 // Обновить цены и наличие по ОДНОМУ товару

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"log"
 
-	zaratr "github.com/RB-PRO/ClikShop/pkg/ZaraTR"
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	"github.com/RB-PRO/ClikShop/pkg/cbbank"
-	"github.com/RB-PRO/ClikShop/pkg/gol"
-	"github.com/RB-PRO/ClikShop/pkg/transrb"
-	"github.com/RB-PRO/ClikShop/pkg/wcprod"
+	zaratr "ClikShop/common/ZaraTR"
+	"ClikShop/common/bases"
+	"ClikShop/common/cbbank"
+	"ClikShop/common/gol"
+	"ClikShop/common/transrb"
+	"ClikShop/common/wcprod"
 	"github.com/cheggaaa/pb"
 )
 

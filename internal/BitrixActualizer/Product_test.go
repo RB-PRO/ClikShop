@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RB-PRO/ClikShop/pkg/cbbank"
+	"ClikShop/common/cbbank"
 )
 
 func TestUploadProduct(t *testing.T) {

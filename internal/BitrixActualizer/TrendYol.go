@@ -5,24 +5,23 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	"github.com/RB-PRO/ClikShop/pkg/trendyol"
+	"ClikShop/common/bases"
+	"ClikShop/common/trendyol"
 	"github.com/cheggaaa/pb"
 )
 
 // Структура HM для парсинга
 type TY struct {
-	*bitrixActualizer
 }
 
-func NewTY(bx *bitrixActualizer) *TY {
-	return &TY{bx}
+func NewTY() *TY {
+	return &TY{}
 }
 
 // Парсинг данных и сохранение их в файлы
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
-func (bx *TY) screper() (string, error) {
+func (bx *TY) Scraper() (string, error) {
 	folder := "ty"
 	ReMakeDir(folder)
 

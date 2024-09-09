@@ -10,14 +10,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
-	"github.com/RB-PRO/ClikShop/pkg/cbbank"
-	tg "github.com/RB-PRO/ClikShop/pkg/tginformer"
+	"ClikShop/common/apibitrix"
+	"ClikShop/common/cbbank"
+	tg "ClikShop/common/tginformer"
 )
 
 type BitrixUpdator struct {
 	BX            *apibitrix.BitrixUser
-	TG            *tg.Telegram
+	TG            *tg.Service
 	ActiveWorkers int // Количество активных воркеров
 }
 

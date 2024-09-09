@@ -3,7 +3,7 @@ package settings
 import (
 	"fmt"
 
-	"github.com/RB-PRO/ClikShop/pkg/apibitrix"
+	"ClikShop/common/apibitrix"
 )
 
 func EDITSIZES() {

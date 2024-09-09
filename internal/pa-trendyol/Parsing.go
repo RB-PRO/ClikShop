@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	"github.com/RB-PRO/ClikShop/pkg/trendyol"
+	"ClikShop/common/bases"
+	"ClikShop/common/trendyol"
 )
 
 func Parsing() {

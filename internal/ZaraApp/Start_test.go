@@ -5,14 +5,14 @@ import (
 	"log"
 	"testing"
 
-	zaratr "github.com/RB-PRO/ClikShop/pkg/ZaraTR"
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	"github.com/RB-PRO/ClikShop/pkg/cbbank"
-	"github.com/RB-PRO/ClikShop/pkg/wcprod"
+	zaratr "ClikShop/common/ZaraTR"
+	"ClikShop/common/bases"
+	"ClikShop/common/cbbank"
+	"ClikShop/common/wcprod"
 )
 
 // Тестовая загрузка единичного товара
-// go test -v -run ^TestSingleAddProduct$ github.com/RB-PRO/ClikShop/internal/ZaraApp
+// go test -v -run ^TestSingleAddProduct$ ClikShop/internal/ZaraApp
 func TestSingleAddProduct(t *testing.T) {
 
 	// Нало работы с центральным банком
@@ -108,7 +108,7 @@ func TestSingleAddProduct(t *testing.T) {
 }
 
 // go clean -testcache
-// go test -v -run ^TestSingleAddProductLink$ github.com/RB-PRO/ClikShop/internal/ZaraApp
+// go test -v -run ^TestSingleAddProductLink$ ClikShop/internal/ZaraApp
 func TestSingleAddProductLink(t *testing.T) {
 
 	// Нало работы с центральным банком

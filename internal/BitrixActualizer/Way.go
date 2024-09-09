@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/RB-PRO/ClikShop/pkg/bases"
-	"github.com/RB-PRO/ClikShop/pkg/transrb"
+	"ClikShop/common/bases"
+	"ClikShop/common/transrb"
 	"github.com/cheggaaa/pb"
 )
 

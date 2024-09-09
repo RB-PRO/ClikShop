@@ -10,10 +10,10 @@ pull:
 	git pull git@github.com:RB-PRO/ClikShop.git
 
 pushW:
-	git push https://github.com/RB-PRO/ClikShop.git
+	git push https://ClikShop.git
 
 pullW:
-	git pull https://github.com/RB-PRO/ClikShop.git
+	git pull https://ClikShop.git
 
 pushCar:
 	scp main root@194.87.107.129:go/ClikShop/
@@ -26,6 +26,22 @@ build-windows-to-linux:
 
 build-linux-to-windows:
 	export GOARCH=amd64 export GOOS=windows go build cmd/main/main.go 
+
+build-updater:
+	set GOARCH=amd64
+	set GOOS=linux
+	set CGO_ENABLED=0
+	go env GOOS GOARCH
+	go build -o updater ./updator/cmd/main.go
+	#scp main config.json root@194.87.107.129:go/ClikShop/
+
+build-actualizer:
+	set GOARCH=amd64
+	set GOOS=linux
+	set CGO_ENABLED=0
+	go env GOOS GOARCH
+	go build -o actualizer ./actualizer/cmd/main.go
+	#scp main config.json root@194.87.107.129:go/ClikShop/
 
 build-car:
 	set GOARCH=amd64
