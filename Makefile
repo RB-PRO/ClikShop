@@ -27,40 +27,30 @@ build-windows-to-linux:
 build-linux-to-windows:
 	export GOARCH=amd64 export GOOS=windows go build cmd/main/main.go 
 
-build-updater:
+build-updator:
 	set GOARCH=amd64
 	set GOOS=linux
 	set CGO_ENABLED=0
 	go env GOOS GOARCH
-	go build -o updater ./updator/cmd/main.go
-	#scp main config.json root@194.87.107.129:go/ClikShop/
+	go build -o bin/updator ./updator/cmd/main.go
 
 build-actualizer:
 	set GOARCH=amd64
 	set GOOS=linux
 	set CGO_ENABLED=0
 	go env GOOS GOARCH
-	go build -o actualizer ./actualizer/cmd/main.go
-	#scp main config.json root@194.87.107.129:go/ClikShop/
+	go build -o bin/actualizer ./actualizer/cmd/main.go
 
-build-car:
+scp-car:
 	set GOARCH=amd64
 	set GOOS=linux
 	set CGO_ENABLED=0
 	go env GOOS GOARCH
 	go build -o updator cmd/main/main.go
-	scp main Delivery.xlsx config_rb.json config_wp.json root@194.87.107.129:go/ClikShop/
-
-build-carW:
-	set GOARCH=amd64
-	set GOOS=windows 
-	go env GOOS GOARCH
-	go build -o main.exe cmd/main/main.go
-	scp main Delivery.xlsx config_rb.json config_wp.json root@194.87.107.129:go/ClikShop/
-
+	scp bin/updator config.json root@194.87.107.129:go/clikshop/
 
 pushBaraki:
-	scp main notification_updator.json sender.json root@185.154.192.111:updator/
+	scp updator config.json root@185.154.192.111:updator/
 
 pushTrudeks:
-	scp main notification_updator.json sender.json root@193.124.117.19:go/clikshopupd/
+	scp updator config.json root@193.124.117.19:go/clikshopupd/
