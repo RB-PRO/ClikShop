@@ -62,9 +62,10 @@ func TestUpdates(t *testing.T) {
 		)
 	}
 
-	ProductID := "757294"
+	ProductID := "1026427"
 
 	var wg sync.WaitGroup
+	wg.Add(1)
 	go service.updating(
 		[]string{ProductID},
 		1,

@@ -29,7 +29,7 @@ func (s *Service) updateProduct(ProductID string, priceFunc func(brand string, p
 	var variationReq []apibitrix.Variation_Request
 	var err error
 
-	// Смотрим ссылку  для определения источника того, откуда пришёл товар
+	// Смотрим ссылку для определения источника того, откуда пришёл товар
 	link := ProductsDetail.Products[0].Link
 	switch {
 	case strings.Contains(link, bases.TagMD):
@@ -65,10 +65,10 @@ func (s *Service) updateProduct(ProductID string, priceFunc func(brand string, p
 	if len(variationReq) != 0 {
 		s.Gol.Info(fmt.Sprintf("Для товара с ID %s https://213.226.124.16/bitrix/admin/iblock_element_edit.php?IBLOCK_ID=15&type=aspro_lite_catalog&lang=ru&ID=%s&find_section_section=0&WF=Y, с ссылкой на донора %s была подготовлена структура на обновление: %+v",
 			ProductID, ProductID, link, variationReq))
-		_, ErrVariation := s.BitrixService.Variation(variationReq)
-		if ErrVariation != nil {
-			s.Gol.Err(fmt.Errorf("bitrix: Variation: %w", ErrVariation))
-			return fmt.Errorf("bitrix: Variation: %w", ErrVariation)
+
+		if _, err := s.BitrixService.Variation(variationReq); err != nil {
+			s.Gol.Err(fmt.Errorf("bitrix: Variation: %w", err))
+			return fmt.Errorf("bitrix: Variation: %w", err)
 		}
 	}
 

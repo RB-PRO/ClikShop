@@ -51,7 +51,7 @@ func (s *Service) updateMassimoDutti(ProductsDetail apibitrix.Product_Response, 
 			}
 	}
 
-	// Теперь донорская мапа с данными по товарами со специфичной структурой в качестве ключа
+	// Теперь донорская мапа с данными по товарам со специфичной структурой в качестве ключа
 	DonMap := make(map[key]apibitrix.Variation_Request)
 	for _, Item := range Product.Item {
 		for _, Size := range Item.Size {
