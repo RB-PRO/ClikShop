@@ -28,25 +28,12 @@ build-linux-to-windows:
 	export GOARCH=amd64 export GOOS=windows go build cmd/main/main.go 
 
 build-updator:
-	set GOARCH=amd64
-	set GOOS=linux
-	set CGO_ENABLED=0
-	go env GOOS GOARCH
-	go build -o bin/updator ./updator/cmd/main.go
+	GOARCH=amd64 && GOOS=linux && CGO_ENABLED=0 && go build -o bin/updator ./updator/cmd/main.go
 
 build-actualizer:
-	set GOARCH=amd64
-	set GOOS=linux
-	set CGO_ENABLED=0
-	go env GOOS GOARCH
-	go build -o bin/actualizer ./actualizer/cmd/main.go
+	GOARCH=amd64 && GOOS=linux && CGO_ENABLED=0 && go build -o bin/actualizer ./actualizer/cmd/main.go
 
 scp-car:
-	set GOARCH=amd64
-	set GOOS=linux
-	set CGO_ENABLED=0
-	go env GOOS GOARCH
-	go build -o updator cmd/main/main.go
 	scp bin/updator config.json root@194.87.107.129:go/clikshop/
 
 pushBaraki:
