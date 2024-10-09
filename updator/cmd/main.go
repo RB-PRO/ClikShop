@@ -17,15 +17,10 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	updateService.Run()
-
-	//go func() {
-	//	for {
-	//		if err := updateService.Run(); err != nil {
-	//			log.Fatalln(err)
-	//		}
-	//		break
-	//	}
-	//}()
+	for {
+		if err := updateService.Run(); err != nil {
+			log.Fatalln(err)
+		}
+	}
 
 }
