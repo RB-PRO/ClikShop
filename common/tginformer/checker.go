@@ -53,7 +53,7 @@ func (s *Checker) Run(cfg config.Config, parseFunc func(cfg config.Config, link 
 
 			// And finally, send a message containing the data received.
 			if _, err := s.tg.Send(msg); err != nil {
-				panic(err)
+				msg = tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, err.Error())
 			}
 		}
 	}

@@ -31,6 +31,7 @@ func (s *Service) updateProduct(ProductID string, priceFunc func(brand string, p
 
 	// Смотрим ссылку для определения источника того, откуда пришёл товар
 	link := ProductsDetail.Products[0].Link
+	s.Gol.Infof("Обновляю товар по ссылке %s", link)
 	switch {
 	case strings.Contains(link, bases.TagMD):
 		variationReq, err = s.updateMassimoDutti(ProductsDetail, priceFunc)

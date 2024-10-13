@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+var iterationNumber = 1
+
 func (s *Service) Run() error {
 	defer func() {
 		if r := recover(); r != nil {
@@ -45,7 +47,7 @@ func (s *Service) Run() error {
 		log.Fatalln(err)
 	}
 
-	checker, err := s.TG.NewChecker("START", tg.LoadNumericFromConfig(cfg))
+	checker, err := s.TG.NewChecker(fmt.Sprintf("Запуск обновлятора.\nНомер №%d", iterationNumber), tg.LoadNumericFromConfig(cfg))
 	if err != nil {
 		panic(errors.Wrap(err, "error start checker: %w"))
 	}
@@ -78,6 +80,7 @@ func (s *Service) Run() error {
 		go s.updating(subProductsID, i, priceFunc, &wg)
 	}
 	wg.Wait()
+	iterationNumber++
 
 	return nil
 }
@@ -100,7 +103,7 @@ func (s *Service) updating(productsID []string, number int, priceFunc func(brand
 		}
 
 		if err := s.updateProduct(ProdID, priceFunc); err != nil {
-			s.Gol.Warn(fmt.Sprintf("МикроОбновлятор №%d: UpdateProduct %s: %s", number, ProdID, err))
+			s.Gol.Warn(fmt.Sprintf("МикроОбновлятор №%d: обновление товара %s: %s", number, ProdID, err))
 		} else {
 			MicroGoodUpdate++
 			//DoneUpdateProduct++
