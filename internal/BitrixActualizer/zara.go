@@ -25,7 +25,7 @@ func NewZARA() *ZARA {
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (bx *ZARA) Scraper() (string, error) {
-	folder := "zara"
+	folder := "tmp/zara"
 	ReMakeDir(folder)
 
 	// Категории

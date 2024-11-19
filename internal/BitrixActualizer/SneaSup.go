@@ -25,7 +25,7 @@ func NewSS() *SS {
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (bx *SS) Scraper() (string, error) {
-	folder := "ss"
+	folder := "tmp/ss"
 
 	ReMakeDir(folder)
 

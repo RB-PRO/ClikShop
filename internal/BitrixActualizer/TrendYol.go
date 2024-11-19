@@ -22,7 +22,7 @@ func NewTY() *TY {
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (bx *TY) Scraper() (string, error) {
-	folder := "ty"
+	folder := "tmp/ty"
 	ReMakeDir(folder)
 
 	ShopIDs := []int{

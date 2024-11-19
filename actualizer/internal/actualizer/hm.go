@@ -27,27 +27,27 @@ func NewHM(serviceHM *hm.Service) *HM {
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (s *HM) Scraper() (string, error) {
-	folder := "hm"
+	folder := "tmp/hm"
 	ReMakeDir(folder)
 
 	// Получить слайс категорий
-	Categorys, err := s.service.Categorys()
+	categories, err := s.service.Categorys()
 	if err != nil {
 		panic(err)
 	}
 	s.Info("hm.Categorys: Получен слайс категорий")
 
-	for icateg, categ := range Categorys {
+	for icateg, category := range categories {
 		// if icateg < 28 {
 		// 	continue
 		// }
 
-		if strings.Contains(categ.Link, "view-all") {
+		if strings.Contains(category.Link, "view-all") {
 			continue
 		}
 
 		// Получить ссылку на все товары json
-		categoryURLs, err := s.service.LineUrl2(categ.Link, categ.Cat)
+		categoryURLs, err := s.service.LineUrl2(category.Link, category.Cat)
 		if err != nil {
 			s.Err(err)
 			panic(err)
@@ -75,7 +75,7 @@ func (s *HM) Scraper() (string, error) {
 
 			// Перевести полученный ответ от сервера в слайс Product2 и добавить в него соответствующие данные по каждому товару
 			// в зависимости от категории, а именно: Гендер, Каталог.
-			SubSlice := hm.Line2Product2(line, categ.Cat, categ.GendetTag)
+			SubSlice := hm.Line2Product2(line, category.Cat, category.GendetTag)
 
 			// Переведённая категория
 			if len(SubSlice) == 0 {
@@ -84,7 +84,7 @@ func (s *HM) Scraper() (string, error) {
 			ProdTranslateCat := SubSlice[0].Cat
 
 			BarProducts := pb.StartNew(len(SubSlice))
-			BarProducts.Prefix(fmt.Sprintf("[%d/%d]", icateg+1, len(Categorys)))
+			BarProducts.Prefix(fmt.Sprintf("[%d/%d]", icateg+1, len(categories)))
 			for i := range SubSlice {
 				// Парсинг всех под-продуктов
 				AddingProduct := SubSlice[i]
@@ -120,7 +120,7 @@ func (s *HM) Scraper() (string, error) {
 				BarProducts.Increment()
 			}
 			_ = bases.Variety2{Product: SubSlice}.SaveJson(fmt.Sprintf("%s/hm_%d_%s",
-				folder, icateg, categ.Cat[len(categ.Cat)-1].Slug))
+				folder, icateg, category.Cat[len(category.Cat)-1].Slug))
 			BarProducts.Finish()
 		}
 

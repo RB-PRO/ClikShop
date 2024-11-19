@@ -24,7 +24,7 @@ func NewHM() *HM {
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (bx *HM) Scraper() (string, error) {
-	folder := "hm"
+	folder := "tmp/hm"
 	ReMakeDir(folder)
 
 	// Получить слайс категорий

@@ -27,7 +27,7 @@ func NewMD(service *md.Service) *MD {
 //
 //	Заменить во всех файлах нужно символы '\u0026' на '&'
 func (s *MD) Scraper() (string, error) {
-	folder := "md"
+	folder := "tmp/md"
 	ReMakeDir(folder)
 
 	// Получить все категории

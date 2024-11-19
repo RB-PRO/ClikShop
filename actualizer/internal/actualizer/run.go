@@ -36,38 +36,34 @@ func (s *Service) run() {
 	}
 	_ = s.TG.Message(fmt.Sprintf("Получил %d артикулов из Bitrix", len(s.SKU)))
 
-	//shops := []Shop{NewHM(s.hmService), NewMD(s.mdService), NewZARA(s.zaraService), NewTY(), NewSS()}
-	//shops := []Shop{NewTY()}
-	shops := []Shop{NewTY()}
+	shops := []Shop{NewHM(s.hmService), NewMD(s.mdService), NewZARA(s.zaraService), NewTY(), NewSS()}
+	//shops := []Shop{NewZARA(s.zaraService), NewTY(), NewSS()}
 	for _, shop := range shops {
 
-		//// Парсинг товаров
-		//folder, err := shop.Scraper()
-		//if err != nil {
-		//	s.Gol.Err(fmt.Sprintf("shop.screper(): %s: %v", folder, err))
-		//	continue
-		//}
-		//
-		//// Вычитание товаров
-		//if err := s.Sub(folder); err != nil {
-		//	s.Gol.Err(fmt.Sprintf("%v: bx.Sub: %v", folder, err))
-		//	return
-		//}
-		//
-		//// Удаление дубликатов
-		//if err := s.DeleteRepeated(folder); err != nil {
-		//	s.Gol.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", folder, err))
-		//	return
-		//}
-		//
-		//// Перевод
-		//if err := s.Trans(folder); err != nil {
-		//	s.Gol.Err(fmt.Sprintf("%v: bx.Trans: %v", folder, err))
-		//	return
-		//}
+		// Парсинг товаров
+		folder, err := shop.Scraper()
+		if err != nil {
+			s.Gol.Err(fmt.Sprintf("shop.screper(): %s: %v", folder, err))
+			continue
+		}
 
-		_ = shop
-		folder := "ty"
+		// Вычитание товаров
+		if err := s.Sub(folder); err != nil {
+			s.Gol.Err(fmt.Sprintf("%v: bx.Sub: %v", folder, err))
+			return
+		}
+
+		// Удаление дубликатов
+		if err := s.DeleteRepeated(folder); err != nil {
+			s.Gol.Err(fmt.Sprintf("%v: bx.DeleteRepeated: %v", folder, err))
+			return
+		}
+
+		// Перевод
+		if err := s.Trans(folder); err != nil {
+			s.Gol.Err(fmt.Sprintf("%v: bx.Trans: %v", folder, err))
+			return
+		}
 
 		// Публикация товара
 		if err := s.Push(folder); err != nil {
